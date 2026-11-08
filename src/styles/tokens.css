@@ -18,6 +18,10 @@
   --color-blush: #ffdcdc; /* photo event cards */
   --color-green: #3f7652; /* "Photos!!" button */
   --color-line: #282626;
+  --color-line-soft: #525252; /* era card dividers */
+  --color-rose: #dd7376; /* eras reflection band */
+  --color-salmon: #ff6161; /* era names */
+  --color-off-white: #fafafa; /* eras banner */
   --color-border: #959595; /* language select border */
 
   /* Fonts. Swap the families here (and the <link> in BaseLayout) in one place. */
@@ -27,6 +31,8 @@
   --font-jp: "Noto Sans JP", "Poppins", system-ui, sans-serif;
   --font-mono: "Courier Prime", "Courier New", monospace; /* photo event titles */
   --font-title: "Aboreto", "Poppins", system-ui, sans-serif; /* Photo Gallery heading */
+  --font-serif: "Inknut Antiqua", Georgia, serif; /* Eras page title */
+  --font-accent: "Jost", "Poppins", system-ui, sans-serif; /* Eras reflection sign-off */
 
   /* Font weights */
   --weight-extralight: 200;

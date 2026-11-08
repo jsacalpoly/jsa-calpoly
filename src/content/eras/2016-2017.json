@@ -1,0 +1,30 @@
+{
+  "year": "2016-2017",
+  "heading": "2016-2017",
+  "size": "small",
+  "order": 10,
+  "president": "Takumi Arai",
+  "vicePresident": "Katherine Adelman",
+  "roles": [
+    {
+      "title": "Treasurer",
+      "icon": "treasurer",
+      "names": "Luke McBee"
+    },
+    {
+      "title": "Secretary",
+      "icon": "secretary",
+      "names": "Mark Lorea"
+    },
+    {
+      "title": "Publicity Chair",
+      "icon": "events",
+      "names": "Kailen Mark"
+    },
+    {
+      "title": "Publicity Chair",
+      "icon": "media",
+      "names": "Keanan Oviedo"
+    }
+  ]
+}

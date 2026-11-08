@@ -1,0 +1,45 @@
+{
+  "year": "2022-2023",
+  "heading": "Paripi Jidai",
+  "size": "large",
+  "order": 4,
+  "president": "Samantha Valentine",
+  "vicePresident": "Eddie Pascua",
+  "roles": [
+    {
+      "title": "Treasurer",
+      "icon": "treasurer",
+      "names": "Noel Murao-Rolufs"
+    },
+    {
+      "title": "Secretary",
+      "icon": "secretary",
+      "names": "Sam Huang"
+    },
+    {
+      "title": "Event Coordinators",
+      "icon": "events",
+      "names": "Bridget Morgan, Eric Shan, Erika Murase, JP Haratani, Nick Buccino"
+    },
+    {
+      "title": "Sports Coordinators",
+      "icon": "sports",
+      "names": "Ashwin Athale, Kozy Tonn"
+    },
+    {
+      "title": "Media Coordinators",
+      "icon": "media",
+      "names": "Erina Miyamoto"
+    },
+    {
+      "title": "Historian",
+      "icon": "historian",
+      "names": "Jesse Lopez, Jini Kim"
+    },
+    {
+      "title": "Cultural Ambassadors",
+      "icon": "cultural",
+      "names": "N/A"
+    }
+  ]
+}

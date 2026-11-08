@@ -1,0 +1,45 @@
+{
+  "year": "2018-2019",
+  "heading": "2018-2019",
+  "size": "small",
+  "order": 8,
+  "president": "Mark Loera",
+  "vicePresident": "Takumi Arai",
+  "roles": [
+    {
+      "title": "Treasurer",
+      "icon": "treasurer",
+      "names": "Mimi Mason"
+    },
+    {
+      "title": "Secretary",
+      "icon": "secretary",
+      "names": "Ryo Takatori"
+    },
+    {
+      "title": "Event Coordinators",
+      "icon": "events",
+      "names": "Faye Ramirez"
+    },
+    {
+      "title": "Sports Coordinator",
+      "icon": "sports",
+      "names": "Justin Rodriguez"
+    },
+    {
+      "title": "Social / Public Outreach",
+      "icon": "media",
+      "names": "Will Kriss, DH Park"
+    },
+    {
+      "title": "Historian",
+      "icon": "historian",
+      "names": "Amanda Rondez"
+    },
+    {
+      "title": "Food Coordinator",
+      "icon": "cultural",
+      "names": "PJ Yebisu"
+    }
+  ]
+}

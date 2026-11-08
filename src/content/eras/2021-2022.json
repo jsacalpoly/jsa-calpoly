@@ -1,0 +1,36 @@
+{
+  "year": "2021-2022",
+  "heading": "21-22 : Kanpai Jidai",
+  "size": "small",
+  "order": 5,
+  "president": "Mitchell Cronin",
+  "vicePresident": "Kenny Won",
+  "roles": [
+    {
+      "title": "Treasurer",
+      "icon": "treasurer",
+      "names": "Keeley Martinez"
+    },
+    {
+      "title": "Secretary",
+      "icon": "secretary",
+      "names": "Julio Serrano"
+    },
+    {
+      "title": "Event Coordinators",
+      "icon": "events",
+      "names": "Eddie Pascua, Sean Murphy, Eriko Murase, Kyoko Hall",
+      "compact": true
+    },
+    {
+      "title": "Sports",
+      "icon": "sports",
+      "names": "Ryan Christian Iglesias"
+    },
+    {
+      "title": "Treasuerer",
+      "icon": "cultural",
+      "names": "Samantha Valentine, Ryuhei Shida"
+    }
+  ]
+}

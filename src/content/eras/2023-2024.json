@@ -1,0 +1,45 @@
+{
+  "year": "2023-2024",
+  "heading": "Konton Jidai",
+  "size": "large",
+  "order": 3,
+  "president": "JP Haratani",
+  "vicePresident": "Bridget Morgan",
+  "roles": [
+    {
+      "title": "Treasurer",
+      "icon": "treasurer",
+      "names": "Faye Ramirez"
+    },
+    {
+      "title": "Secretary",
+      "icon": "secretary",
+      "names": "McCain Potasky"
+    },
+    {
+      "title": "Event Coordinators",
+      "icon": "events",
+      "names": "Bennett Klusman, Chase Bradley, Matthew Manzanarez, Sam Huang"
+    },
+    {
+      "title": "Sports Coordinators",
+      "icon": "sports",
+      "names": "Cameron Hafer, Ethan Yi"
+    },
+    {
+      "title": "Media Coordinators",
+      "icon": "media",
+      "names": "Alex Nishida, Jessica Mason"
+    },
+    {
+      "title": "Historian",
+      "icon": "historian",
+      "names": "Denise Heredia"
+    },
+    {
+      "title": "Cultural Ambassadors",
+      "icon": "cultural",
+      "names": "Michiru Warren, Takanori Nonomura"
+    }
+  ]
+}

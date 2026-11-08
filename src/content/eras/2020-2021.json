@@ -1,0 +1,41 @@
+{
+  "year": "2020-2021",
+  "heading": "20-21 : Off White",
+  "size": "small",
+  "order": 6,
+  "president": "Laura Kuffner",
+  "vicePresident": "Thucmy Dang",
+  "roles": [
+    {
+      "title": "Treasurer",
+      "icon": "treasurer",
+      "names": "Dylan Talaban"
+    },
+    {
+      "title": "Secretary",
+      "icon": "secretary",
+      "names": "Laurent Chang"
+    },
+    {
+      "title": "Event Coordinators",
+      "icon": "events",
+      "names": "Shawn von Chance-Stutler, May Thiri Kyaw, Kenny Won",
+      "compact": true
+    },
+    {
+      "title": "Sports Coordinators",
+      "icon": "sports",
+      "names": "Ryan Christian Iglesias"
+    },
+    {
+      "title": "Historian",
+      "icon": "historian",
+      "names": "Gracie Kitayama"
+    },
+    {
+      "title": "Cultural Ambassador",
+      "icon": "cultural",
+      "names": "Kana Suzuki"
+    }
+  ]
+}

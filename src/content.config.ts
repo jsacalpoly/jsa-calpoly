@@ -21,4 +21,28 @@ const boards = defineCollection({
     }),
 });
 
-export const collections = { boards };
+// One file per past board era, shown on the Eras page.
+const eras = defineCollection({
+  loader: glob({ pattern: "**/*.json", base: "./src/content/eras" }),
+  schema: z.object({
+    year: z.string(),
+    /** Heading under the officers. Older eras include the year, e.g. "21-22 : Kanpai Jidai". */
+    heading: z.string(),
+    /** "large" cards feature the four most recent eras; "small" cards are the archive. */
+    size: z.enum(["large", "small"]),
+    order: z.number(),
+    president: z.string(),
+    vicePresident: z.string(),
+    roles: z.array(
+      z.object({
+        title: z.string(),
+        names: z.string(),
+        icon: z.enum(["treasurer", "secretary", "events", "sports", "media", "cultural", "historian"]),
+        /** Use the smaller 9px names size for long lists. */
+        compact: z.boolean().default(false),
+      }),
+    ),
+  }),
+});
+
+export const collections = { boards, eras };

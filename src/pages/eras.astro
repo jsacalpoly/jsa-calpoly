@@ -1,0 +1,395 @@
+---
+import { Image } from "astro:assets";
+import { getCollection } from "astro:content";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import EraCard from "../components/EraCard.astro";
+
+import blossomsLeft from "../assets/board/blossoms-left.png";
+import blossomsRight from "../assets/board/blossoms-right.png";
+import headerFlower from "../assets/eras/header-flower.png";
+import blossom from "../assets/eras/blossom.png";
+
+const eras = (await getCollection("eras")).sort((a, b) => a.data.order - b.data.order);
+const recent = eras.filter((era) => era.data.size === "large");
+const archive = eras.filter((era) => era.data.size === "small");
+
+// The Wix layout staggers the recent eras in two columns and the archive in three.
+const recentColumns = [recent.filter((_, i) => i % 2 === 0), recent.filter((_, i) => i % 2 === 1)];
+const archiveColumns = [0, 1, 2].map((col) => archive.filter((_, i) => i % 3 === col));
+---
+
+<BaseLayout title="Eras | Cal Poly JSA" description="JSA board through the eras: honoring our founders.">
+  <!-- Banner (79 to 257) -->
+  <section class="banner">
+    <div class="stage banner__stage">
+      <div class="banner__blossoms-right">
+        <Image src={blossomsRight} alt="" width={458} height={305} />
+      </div>
+      <Image class="banner__blossoms-left" src={blossomsLeft} alt="" width={238} height={212} />
+
+      <p class="banner__kicker">Our Legacy</p>
+      <h1 class="banner__title">JSA Board Through the Eras</h1>
+      <p class="banner__subtitle">Honoring our founders</p>
+
+      <span class="banner__rule banner__rule--left"></span>
+      <Image class="banner__flower" src={headerFlower} alt="" width={45} height={45} />
+      <span class="banner__rule banner__rule--right"></span>
+    </div>
+  </section>
+
+  <div class="stage">
+    <!-- Recent eras: large cards -->
+    <section class="panel panel--recent">
+      <Image class="panel__blossom panel__blossom--left" src={blossom} alt="" width={152} height={154} />
+      <Image class="panel__blossom panel__blossom--right" src={blossom} alt="" width={152} height={154} />
+
+      {
+        recentColumns.map((column, index) => (
+          <div class:list={["recent-column", index === 0 ? "recent-column--left" : "recent-column--right"]}>
+            {column.map((era) => (
+              <EraCard {...era.data} />
+            ))}
+          </div>
+        ))
+      }
+    </section>
+
+    <!-- Archive: small cards -->
+    <section class="panel panel--archive">
+      {
+        archiveColumns.map((column, index) => (
+          <div class:list={["archive-column", `archive-column--${index + 1}`]}>
+            {column.map((era) => (
+              <EraCard {...era.data} />
+            ))}
+          </div>
+        ))
+      }
+    </section>
+  </div>
+
+  <!-- Will Kriss's White Dream reflection -->
+  <section class="reflection">
+    <div class="stage reflection__stage">
+      <h2 class="reflection__name">WILL KRISS'S</h2>
+      <p class="reflection__label reflection__label--highlights">HIGHLIGHTS:</p>
+      <p class="reflection__text reflection__text--highlights">
+        The general meetings were definitely my favorite part of the White Dream era. Going through a period of
+        transition from small club to big club, the general meetings were the main time we got to interact and entertain
+        the majority of JSA. I really like to think that we made our general meetings unique and exciting every week.
+        It's hard to narrow it down, but some of my favorite things we did were: rats being thrown at me, laser pointer,
+        eating a whole thing of cabbage, T-posing for way too long, and punishment jan-ken-pon. I absolutely loved the
+        energy at the meetings and I think that's where we as a board shined the brightest.
+      </p>
+
+      <p class="reflection__label reflection__label--advice">ADVICE FOR FUTURE JSA:</p>
+      <p class="reflection__text reflection__text--advice">
+        There are two main responsibilities or elements or whatever you want to call it for being on JSA board. The
+        first is obviously making stuff happen. You can plan it all out beforehand or learn how to do it on the fly, but
+        you have a responsibility to make things actually happen. The second element is creative direction. JSA is
+        weird. Not in like a "society doesn't understand me" weird, but a fun, do things out of the box type of way. Be
+        creative. Try to do things differently. The worst thing you can be is boring.
+      </p>
+      <p class="reflection__text reflection__text--passion">
+        Now none of this is going to happen without your passion. Find what you're passionate about and find a way to
+        bring it into JSA. Keep in mind that what you want to do needs to be for the best of the club, but the club won't
+        strive unless you fully believe in what you're doing. If you're passionate about what you're doing for the club,
+        it will show and you'll be able to go above and beyond.
+      </p>
+
+      <h2 class="reflection__title">
+        <span class="reflection__title-line reflection__title-line--white-dream">WHITE DREAM</span>
+        <span class="reflection__title-line reflection__title-line--reflection">REFLECTION</span>
+      </h2>
+      <p class="reflection__love">AS ALWAYS love y'all &lt;3 &lt;3 &lt;3</p>
+      <p class="reflection__sign">- Will Kriss</p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  /* Everything is positioned against the 1440px design width. */
+  .stage {
+    position: relative;
+    width: var(--page-width);
+    margin-inline: auto;
+  }
+
+  /* ---------- Banner (79 to 257) ---------- */
+  .banner {
+    height: 178px;
+    background: var(--color-off-white);
+    position: relative;
+    z-index: 1;
+  }
+
+  .banner__stage {
+    height: 100%;
+  }
+
+  /* The right blossoms start 37px above the banner, behind the header. Show only the part below it. */
+  .banner__blossoms-right {
+    position: absolute;
+    left: 838px;
+    top: 0;
+    width: 458px;
+    height: 268px;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .banner__blossoms-right :global(img) {
+    width: 458px;
+    height: 305px;
+    margin-top: -37px;
+  }
+
+  .banner__blossoms-left {
+    position: absolute;
+    left: 138px;
+    top: 0;
+    width: 238px;
+    height: 212px;
+    pointer-events: none;
+  }
+
+  .banner__kicker,
+  .banner__title,
+  .banner__subtitle {
+    position: absolute;
+    white-space: nowrap;
+  }
+
+  .banner__kicker {
+    left: 634px;
+    top: 13px;
+    font-size: 30px;
+    font-weight: var(--weight-extralight);
+    line-height: 42px;
+  }
+
+  .banner__title {
+    left: 725.5px;
+    top: 56.5px;
+    translate: -50% 0;
+    color: var(--color-salmon);
+    font-family: var(--font-serif);
+    font-size: 43px;
+    font-weight: var(--weight-regular);
+    line-height: 43px;
+    text-align: center;
+  }
+
+  .banner__subtitle {
+    left: 614px;
+    top: 101px;
+    font-size: 20px;
+    font-weight: var(--weight-extralight);
+    line-height: 28px;
+  }
+
+  .banner__rule {
+    position: absolute;
+    top: 151px;
+    width: 405px;
+    height: 1px;
+    background: var(--color-line);
+  }
+
+  .banner__rule--left {
+    left: 230px;
+  }
+
+  .banner__rule--right {
+    left: 790px;
+  }
+
+  .banner__flower {
+    position: absolute;
+    left: 698px;
+    top: 129px;
+    width: 45px;
+    height: 45px;
+  }
+
+  /* ---------- Pink panels ---------- */
+  .panel {
+    position: relative;
+    width: 1120px;
+    border-radius: 30px;
+    background: var(--color-blush);
+  }
+
+  .panel--recent {
+    margin: 10px 0 0 147px;
+    height: 1713.6px;
+  }
+
+  .panel--archive {
+    margin: 25px 0 0 166px;
+    height: 1037.6px;
+  }
+
+  .panel__blossom {
+    position: absolute;
+    width: 152px;
+    height: 154px;
+    pointer-events: none;
+  }
+
+  .panel__blossom--left {
+    left: 52px;
+    top: 1545.6px;
+  }
+
+  .panel__blossom--right {
+    left: 916px;
+    top: 49px;
+  }
+
+  .recent-column,
+  .archive-column {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .recent-column--left {
+    left: 26px;
+    top: 82.7px;
+    gap: 89.6px;
+  }
+
+  .recent-column--right {
+    left: 593px;
+    top: 244.7px;
+    gap: 84.7px;
+  }
+
+  /* Wix places the fourth card 12px to the right of the second. */
+  .recent-column--right > :global(.era-card:nth-child(2)) {
+    margin-left: 12px;
+  }
+
+  .archive-column {
+    top: 10px;
+  }
+
+  .archive-column--1 {
+    left: 23px;
+    gap: 11.4px;
+  }
+
+  .archive-column--2 {
+    left: 381px;
+    gap: 23.2px;
+  }
+
+  .archive-column--3 {
+    left: 742px;
+    gap: 11px;
+  }
+
+  /* ---------- Reflection band (3046.2 to 3596.4) ---------- */
+  .reflection {
+    margin-top: 3px;
+    height: 550.2px;
+    background: var(--color-rose);
+    color: var(--color-white);
+  }
+
+  .reflection__stage {
+    height: 100%;
+  }
+
+  .reflection__stage > * {
+    position: absolute;
+  }
+
+  .reflection__name {
+    left: 250px;
+    top: 16px;
+    width: 391px;
+    font-size: 102px;
+    font-weight: var(--weight-bold);
+    line-height: 71.4px;
+  }
+
+  .reflection__label,
+  .reflection__text {
+    font-size: 12px;
+    font-weight: var(--weight-extralight);
+    line-height: 20.4px;
+  }
+
+  .reflection__label--highlights {
+    left: 640px;
+    top: 15.7px;
+  }
+
+  .reflection__text--highlights {
+    left: 640px;
+    top: 36.4px;
+    width: 529px;
+  }
+
+  .reflection__label--advice {
+    left: 240px;
+    top: 196.9px;
+  }
+
+  .reflection__text--advice {
+    left: 240px;
+    top: 217.6px;
+    width: 537px;
+  }
+
+  .reflection__text--passion {
+    left: 240px;
+    top: 360.4px;
+    width: 537px;
+  }
+
+  .reflection__title {
+    left: 785px;
+    top: 279.8px;
+    width: 415px;
+    font-size: 70px;
+    font-weight: var(--weight-semibold);
+    line-height: 49px;
+    text-align: right;
+  }
+
+  .reflection__title-line {
+    display: block;
+  }
+
+  .reflection__title-line--reflection {
+    /* Figma sets this line 1px left of the others. */
+    margin-right: 1px;
+    white-space: nowrap;
+  }
+
+  .reflection__love {
+    left: 803px;
+    top: 440.9px;
+    font-family: var(--font-accent);
+    font-size: 12px;
+    font-weight: var(--weight-light);
+    line-height: 20.4px;
+    white-space: nowrap;
+  }
+
+  .reflection__sign {
+    left: 1113px;
+    top: 481.6px;
+    width: 68px;
+    font-family: var(--font-accent);
+    font-size: 16px;
+    font-style: italic;
+    font-weight: var(--weight-light);
+    line-height: 27.2px;
+    text-align: right;
+    white-space: nowrap;
+  }
+</style>
