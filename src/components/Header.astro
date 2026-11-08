@@ -3,12 +3,13 @@ import { Image } from "astro:assets";
 import logo from "../assets/shared/jsa-logo.png";
 import chevron from "../assets/shared/select-chevron.png";
 
+// gap = space before the link in px, measured from the Figma nav (the Wix menu spacing is not uniform).
 const links = [
-  { label: "ABOUT", href: "/board" },
-  { label: "ERAS", href: "/eras" },
-  { label: "26-27", href: "/26-27" },
-  { label: "PHOTOS", href: "/photos" },
-  { label: "SENPAI KOUHAI", href: "/senpai-kouhai-mentorship" },
+  { label: "ABOUT", href: "/board", gap: 0 },
+  { label: "ERAS", href: "/eras", gap: 29.85 },
+  { label: "26-27", href: "/26-27", gap: 29.55 },
+  { label: "PHOTOS", href: "/photos", gap: 29.25 },
+  { label: "SENPAI KOUHAI", href: "/senpai-kouhai-mentorship", gap: 28.75 },
 ];
 ---
 
@@ -24,7 +25,13 @@ const links = [
     </a>
 
     <nav class="site-header__nav" aria-label="Main">
-      {links.map((link) => <a class="site-header__link" href={link.href}>{link.label}</a>)}
+      {
+        links.map((link) => (
+          <a class="site-header__link" href={link.href} style={`margin-left: ${link.gap}px`}>
+            {link.label}
+          </a>
+        ))
+      }
     </nav>
 
     <div class="site-header__language">
@@ -79,7 +86,6 @@ const links = [
 
   .site-header__nav {
     display: flex;
-    gap: 33px;
     margin: 15px 0 0 auto;
   }
 
@@ -93,7 +99,7 @@ const links = [
 
   .site-header__language {
     position: relative;
-    margin: 15px 136.4px 0 17px;
+    margin: 15px 136.4px 0 13.1px;
     width: 116px;
     height: 45px;
   }
