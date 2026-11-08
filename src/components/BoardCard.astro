@@ -1,0 +1,133 @@
+---
+import { Image } from "astro:assets";
+import type { ImageMetadata } from "astro";
+import badge from "../assets/board/badge-sakura.png";
+
+interface Props {
+  name: string;
+  role: string;
+  photo: ImageMetadata;
+  /** Executive cards are larger than board member cards. */
+  variant?: "executive" | "member";
+}
+
+const { name, role, photo, variant = "member" } = Astro.props;
+---
+
+<article class:list={["board-card", `board-card--${variant}`]}>
+  <div class="board-card__photo">
+    <Image src={photo} alt={`Photo of ${name}`} width={258} height={252} />
+    <Image class="board-card__badge" src={badge} alt="" width={45} height={45} />
+  </div>
+  <h3 class="board-card__name">{name}</h3>
+  <p class="board-card__role">{role}</p>
+</article>
+
+<style>
+  .board-card {
+    position: relative;
+    border-radius: 10px;
+    background: var(--color-white);
+    text-align: center;
+    color: var(--color-ink);
+  }
+
+  .board-card__photo {
+    position: absolute;
+    left: 50%;
+    translate: -50% 0;
+  }
+
+  .board-card__photo :global(img:first-child) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .board-card__badge {
+    position: absolute;
+    left: 50%;
+    translate: -50% 0;
+    width: 45px;
+    height: 45px;
+  }
+
+  .board-card__name,
+  .board-card__role {
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin-inline: auto;
+    width: 195px;
+  }
+
+  .board-card__name {
+    font-weight: var(--weight-semibold);
+  }
+
+  .board-card__role {
+    font-weight: var(--weight-extralight);
+    color: #000;
+  }
+
+  /* ---------- Executive: 244 x 216.4 ---------- */
+  .board-card--executive {
+    width: 244px;
+    height: 216.4px;
+  }
+
+  .board-card--executive .board-card__photo {
+    top: 8px;
+    width: 129px;
+    height: 126px;
+    /* Figma centers the photo 0.5px left of the card center. */
+    margin-left: -0.5px;
+  }
+
+  .board-card--executive .board-card__badge {
+    top: 92px;
+  }
+
+  .board-card--executive .board-card__name {
+    top: 144.7px;
+    width: 236px;
+    font-size: 18px;
+    line-height: 25.4px;
+  }
+
+  .board-card--executive .board-card__role {
+    top: 169.9px;
+    width: 236px;
+    font-size: 13px;
+    line-height: 18.2px;
+  }
+
+  /* ---------- Member: 203 x 187.6 ---------- */
+  .board-card--member {
+    width: 203px;
+    height: 187.6px;
+  }
+
+  .board-card--member .board-card__photo {
+    top: 11px;
+    width: 95px;
+    height: 92px;
+    margin-left: 0;
+  }
+
+  .board-card--member .board-card__badge {
+    top: 73px;
+  }
+
+  .board-card--member .board-card__name {
+    top: 128.85px;
+    font-size: 14px;
+    line-height: 19.7px;
+  }
+
+  .board-card--member .board-card__role {
+    top: 149.4px;
+    font-size: 11px;
+    line-height: 15.4px;
+  }
+</style>

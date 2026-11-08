@@ -1,0 +1,24 @@
+{
+  "year": "2026-2027",
+  "eraName": "",
+  "members": [
+    { "name": "Karl Aannestad", "role": "Vice President", "tier": "executive", "photo": "../../assets/board/karl-aannestad.png" },
+    { "name": "Lorraina Uyeno", "role": "President", "tier": "executive", "photo": "../../assets/board/lorraina-uyeno.png" },
+    { "name": "Momo Dobashi", "role": "Treasurer", "tier": "executive", "photo": "../../assets/board/momo-dobashi.png" },
+
+    { "name": "Lindsay Wong", "role": "Secretary", "photo": "../../assets/board/lindsay-wong.png" },
+    { "name": "Zachariah Myers", "role": "Sports Coordinator", "photo": "../../assets/board/zachariah-myers.png" },
+    { "name": "Ethan Ikenaga", "role": "Historian", "photo": "../../assets/board/ethan-ikenaga.png" },
+    { "name": "Grace Shigeyama", "role": "Media Coordinator", "photo": "../../assets/board/grace-shigeyama.png" },
+
+    { "name": "Jenna Shahid", "role": "Media Coordinator", "photo": "../../assets/board/jenna-shahid.png" },
+    { "name": "Maileia Rivera", "role": "Media Coordinator", "photo": "../../assets/board/maileia-rivera.png" },
+    { "name": "Kim Vuong", "role": "Cultural Ambassador", "photo": "../../assets/board/kim-vuong.png" },
+    { "name": "Noah Kaku", "role": "Culture / Events", "photo": "../../assets/board/noah-kaku.png" },
+
+    { "name": "Natalie Warrens", "role": "Culture / Events", "photo": "../../assets/board/natalie-warrens.png" },
+    { "name": "Tom Duffy", "role": "Event Coordinator", "photo": "../../assets/board/tom-duffy.png" },
+    { "name": "Alex Otis", "role": "Event Coordinator", "photo": "../../assets/board/alex-otis.png" },
+    { "name": "Bryce Imai", "role": "Event Coordinator", "photo": "../../assets/board/bryce-imai.png" }
+  ]
+}
