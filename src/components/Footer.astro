@@ -1,0 +1,69 @@
+---
+import { Image } from "astro:assets";
+import instagram from "../assets/shared/social-instagram.png";
+import groupme from "../assets/shared/social-groupme.png";
+import tiktok from "../assets/shared/social-tiktok.png";
+import linkedin from "../assets/shared/social-linkedin.png";
+
+// TODO: confirm the real GroupMe, TikTok and LinkedIn URLs (only Instagram is documented in the README).
+const socials = [
+  { label: "Instagram", href: "https://www.instagram.com/calpolyjsa", icon: instagram },
+  { label: "GroupMe", href: "#", icon: groupme },
+  { label: "TikTok", href: "#", icon: tiktok },
+  { label: "LinkedIn", href: "#", icon: linkedin },
+];
+---
+
+<footer class="site-footer">
+  <div class="site-footer__inner">
+    <p class="site-footer__copy">© 2026 Japanese Student Association, Cal Poly SLO</p>
+    <ul class="site-footer__social">
+      {
+        socials.map((social) => (
+          <li>
+            <a href={social.href} aria-label={social.label}>
+              <Image src={social.icon} alt="" width={39} height={39} />
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    background: var(--color-white);
+    height: 104px;
+  }
+
+  .site-footer__inner {
+    width: var(--page-width);
+    margin-inline: auto;
+    /* Figma centers the footer content at x=722, 2px right of the page center. */
+    padding-left: 4px;
+    text-align: center;
+  }
+
+  .site-footer__copy {
+    padding-top: 12.55px;
+    font-size: 14px;
+    font-weight: var(--weight-extralight);
+    line-height: 25.1px;
+    color: var(--color-ink);
+  }
+
+  .site-footer__social {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin: 6.35px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .site-footer__social a,
+  .site-footer__social img {
+    display: block;
+  }
+</style>

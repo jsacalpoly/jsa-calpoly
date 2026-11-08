@@ -1,0 +1,8 @@
+{
+  "name": "jsa-calpoly",
+  // Set this to the date you first deploy
+  "compatibility_date": "2026-11-08",
+  "assets": {
+    "directory": "./dist"
+  }
+}

@@ -1,0 +1,48 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--color-white);
+  color: #000;
+  font-family: var(--font-body);
+  font-weight: var(--weight-regular);
+  /* Phase 1 is desktop only: keep the 1440px design from collapsing. */
+  min-width: var(--page-width);
+}
+
+img {
+  display: block;
+  max-width: none;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Centered 980px column used by every page section. */
+.container {
+  width: var(--content-width);
+  margin-inline: auto;
+  position: relative;
+}
+
+/* Full-width colored band. */
+.band {
+  width: 100%;
+}
