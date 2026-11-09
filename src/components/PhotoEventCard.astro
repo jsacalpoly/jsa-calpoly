@@ -10,24 +10,22 @@ interface Props {
 }
 
 const { title, cover, album } = Astro.props;
+const Tag = album ? "a" : "article";
 ---
 
-<article class="photo-event-card">
+<Tag
+  class:list={["photo-event-card", { "photo-event-card--link": album }]}
+  {...(album
+    ? { href: album, target: "_blank", rel: "noopener noreferrer", "aria-label": `Open the ${title} photo album` }
+    : {})}
+>
   <h3 class="photo-event-card__title">{title}</h3>
   <span class="photo-event-card__rule"></span>
   <div class="photo-event-card__text"><slot /></div>
-  {
-    album ? (
-      <a class="photo-event-card__photo" href={album} target="_blank" rel="noopener noreferrer" aria-label={`Open the ${title} photo album`}>
-        <Image src={cover} alt={`Photos from ${title}`} width={400} height={242} />
-      </a>
-    ) : (
-      <div class="photo-event-card__photo">
-        <Image src={cover} alt={`Photos from ${title}`} width={400} height={242} />
-      </div>
-    )
-  }
-</article>
+  <div class="photo-event-card__photo">
+    <Image src={cover} alt={`Photos from ${title}`} width={400} height={242} />
+  </div>
+</Tag>
 
 <style>
   .photo-event-card {
@@ -39,6 +37,24 @@ const { title, cover, album } = Astro.props;
     background: var(--color-blush);
     box-shadow: 0 1px 3px #000;
     color: var(--color-ink);
+  }
+
+  .photo-event-card--link {
+    display: block;
+    cursor: pointer;
+    text-decoration: none;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .photo-event-card--link:hover,
+  .photo-event-card--link:focus-visible {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+  }
+
+  .photo-event-card--link:focus-visible {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 3px;
   }
 
   .photo-event-card__title {
