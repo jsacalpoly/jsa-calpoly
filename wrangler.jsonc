@@ -8,5 +8,7 @@
   },
   "assets": {
     "directory": "./dist"
-  }
+  },
+  // Required by `wrangler preview`, which Workers Builds runs for non-production branches.
+  "previews": {}
 }

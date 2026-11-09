@@ -12,21 +12,23 @@ interface Props {
 const { title, cover, album } = Astro.props;
 ---
 
-<article class="photo-event-card">
+<article class:list={["photo-event-card", { "photo-event-card--link": album }]}>
   <h3 class="photo-event-card__title">{title}</h3>
   <span class="photo-event-card__rule"></span>
   <div class="photo-event-card__text"><slot /></div>
   {
-    album ? (
-      <a class="photo-event-card__photo" href={album} target="_blank" rel="noopener noreferrer" aria-label={`Open the ${title} photo album`}>
-        <Image src={cover} alt={`Photos from ${title}`} width={400} height={242} />
+    album && (
+      <a class="photo-event-card__button" href={album} target="_blank" rel="noopener noreferrer" aria-label={`Open the ${title} photo album`}>
+        Open album
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M7 17L17 7M9 7h8v8" />
+        </svg>
       </a>
-    ) : (
-      <div class="photo-event-card__photo">
-        <Image src={cover} alt={`Photos from ${title}`} width={400} height={242} />
-      </div>
     )
   }
+  <div class="photo-event-card__photo">
+    <Image src={cover} alt={`Photos from ${title}`} width={400} height={242} />
+  </div>
 </article>
 
 <style>
@@ -39,6 +41,66 @@ const { title, cover, album } = Astro.props;
     background: var(--color-blush);
     box-shadow: 0 1px 3px #000;
     color: var(--color-ink);
+  }
+
+  .photo-event-card--link {
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .photo-event-card--link:hover,
+  .photo-event-card--link:focus-within {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+  }
+
+  /* On hover or keyboard focus the blurb gives way to an "Open album" button. */
+  .photo-event-card__text {
+    transition: opacity 0.15s ease;
+  }
+
+  .photo-event-card--link:hover .photo-event-card__text,
+  .photo-event-card--link:focus-within .photo-event-card__text {
+    opacity: 0;
+  }
+
+  .photo-event-card__button {
+    position: absolute;
+    left: 18px;
+    top: 98px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 16px;
+    border-radius: 20px;
+    background: var(--color-green);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
+    color: var(--color-white);
+    font-family: var(--font-ui);
+    font-size: 13px;
+    font-weight: 600;
+    line-height: normal;
+    opacity: 0;
+    text-decoration: none;
+    cursor: pointer;
+    transition: opacity 0.15s ease;
+  }
+
+  .photo-event-card--link:hover .photo-event-card__button,
+  .photo-event-card__button:focus-visible {
+    opacity: 1;
+  }
+
+  .photo-event-card__button:focus-visible {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 3px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .photo-event-card--link,
+    .photo-event-card__text,
+    .photo-event-card__button {
+      transition: none;
+    }
   }
 
   .photo-event-card__title {
