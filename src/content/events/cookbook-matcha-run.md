@@ -1,7 +1,6 @@
 ---
 title: "Cookbook / Matcha Run"
 date: 2026-09-15
-showDate: false
 cover: ../../assets/events/cookbook-matcha-run.jpg
 album: https://photos.app.goo.gl/ytE949mUMUEifkSf6
 ---
