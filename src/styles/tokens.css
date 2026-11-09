@@ -29,6 +29,7 @@
   /* Fonts. Swap the families here (and the <link> in BaseLayout) in one place. */
   --font-body: "Poppins", system-ui, sans-serif;
   --font-display: "Krona One", "Poppins", system-ui, sans-serif; /* hero + contact button */
+  --font-hero: "Montserrat", "Poppins", system-ui, sans-serif; /* home hero title */
   --font-ui: "Nunito Sans", "Poppins", system-ui, sans-serif; /* language select, buttons */
   --font-jp: "Noto Sans JP", "Poppins", system-ui, sans-serif;
   --font-mono: "Courier Prime", "Courier New", monospace; /* photo event titles */
