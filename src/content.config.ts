@@ -30,6 +30,8 @@ const events = defineCollection({
       title: z.string(),
       order: z.number(),
       cover: image(),
+      /** Google Photos album for this event. */
+      album: z.string().url().optional(),
     }),
 });
 

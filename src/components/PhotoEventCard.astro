@@ -5,18 +5,28 @@ import type { ImageMetadata } from "astro";
 interface Props {
   title: string;
   cover: ImageMetadata;
+  /** Optional photo album URL; the photo links to it when set. */
+  album?: string;
 }
 
-const { title, cover } = Astro.props;
+const { title, cover, album } = Astro.props;
 ---
 
 <article class="photo-event-card">
   <h3 class="photo-event-card__title">{title}</h3>
   <span class="photo-event-card__rule"></span>
   <div class="photo-event-card__text"><slot /></div>
-  <div class="photo-event-card__photo">
-    <Image src={cover} alt={`Photos from ${title}`} width={400} height={242} />
-  </div>
+  {
+    album ? (
+      <a class="photo-event-card__photo" href={album} target="_blank" rel="noopener noreferrer" aria-label={`Open the ${title} photo album`}>
+        <Image src={cover} alt={`Photos from ${title}`} width={400} height={242} />
+      </a>
+    ) : (
+      <div class="photo-event-card__photo">
+        <Image src={cover} alt={`Photos from ${title}`} width={400} height={242} />
+      </div>
+    )
+  }
 </article>
 
 <style>
