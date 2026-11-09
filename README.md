@@ -43,12 +43,18 @@ The site runs at `http://localhost:4321` and reloads as you edit.
 
 ### Commands
 
-| Command            | What it does                                              |
-| ------------------ | --------------------------------------------------------- |
-| `npm run dev`      | Start the local dev server                                |
-| `npm run build`    | Build the production site into `dist/`                    |
-| `npm run preview`  | Serve the built site locally to check it before deploying |
-| `npx wrangler dev` | Preview the built site in Cloudflare's local runtime      |
+| Command            | What it does                                                      |
+| ------------------ | ----------------------------------------------------------------- |
+| `npm run dev`      | Start the local dev server                                        |
+| `npm run build`    | Build the production site into `dist/`                            |
+| `npm run preview`  | Serve the built site locally to check it before deploying         |
+| `npx wrangler dev` | Preview the built site in Cloudflare's local runtime              |
+| `npm run format`   | Format all files with Prettier                                    |
+| `npm run lint`     | Check the code with ESLint (`npm run lint:fix` fixes what it can) |
+
+### Checks
+
+Every pull request runs `npm run format:check`, `npm run lint` and `npm run build` in GitHub Actions (`.github/workflows/ci.yml`). Run `npm run format` and `npm run lint` before you push so the checks pass.
 
 ---
 
