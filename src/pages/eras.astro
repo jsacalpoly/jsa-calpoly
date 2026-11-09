@@ -7,15 +7,15 @@ import EraCard from "../components/EraCard.astro";
 import blossomsLeft from "../assets/board/blossoms-left.png";
 import blossomsRight from "../assets/board/blossoms-right.png";
 import headerFlower from "../assets/eras/header-flower.png";
+import ornament from "../assets/eras/ornament-flower.png";
 import blossom from "../assets/eras/blossom.png";
 
 const eras = (await getCollection("eras")).sort((a, b) => a.data.order - b.data.order);
-const recent = eras.filter((era) => era.data.size === "large");
+// Newest era gets the wide feature card, the next three sit in a row, the rest are the archive.
+const [last, ...rest] = eras.filter((era) => era.data.size === "large");
+const recent = rest;
 const archive = eras.filter((era) => era.data.size === "small");
-
-// The Wix layout staggers the recent eras in two columns and the archive in three.
-const recentColumns = [recent.filter((_, i) => i % 2 === 0), recent.filter((_, i) => i % 2 === 1)];
-const archiveColumns = [0, 1, 2].map((col) => archive.filter((_, i) => i % 3 === col));
+const archiveRows = [archive.slice(0, 3), archive.slice(3, 6), archive.slice(6, 9)].filter((row) => row.length > 0);
 ---
 
 <BaseLayout title="Eras | Cal Poly JSA" description="JSA board through the eras: honoring our founders." flushFooter>
@@ -37,32 +37,50 @@ const archiveColumns = [0, 1, 2].map((col) => archive.filter((_, i) => i % 3 ===
     </div>
   </section>
 
-  <div class="stage">
-    <!-- Recent eras: large cards -->
-    <section class="panel panel--recent">
-      <Image class="panel__blossom panel__blossom--left" src={blossom} alt="" width={152} height={154} />
-      <Image class="panel__blossom panel__blossom--right" src={blossom} alt="" width={152} height={154} />
+  <!-- Eras -->
+  <section class="eras">
+    <div class="eras__drift" aria-hidden="true">
+      <Image class="eras__blossom eras__blossom--a" src={blossom} alt="" width={304} height={308} />
+      <Image class="eras__blossom eras__blossom--b" src={blossom} alt="" width={304} height={308} />
+      <Image class="eras__blossom eras__blossom--c" src={blossom} alt="" width={304} height={308} />
+    </div>
 
-      {recentColumns.map((column, index) => (
-        <div class:list={["recent-column", index === 0 ? "recent-column--left" : "recent-column--right"]}>
-          {column.map((era) => (
-            <EraCard {...era.data} />
+    <div class="eras__inner container">
+      {last && <EraCard {...last.data} variant="feature" badge="Last era" />}
+
+      <div class="eras__heading">
+        <span class="eras__jp">近年</span>
+        <h2 class="eras__title">Recent eras</h2>
+        <div class="eras__divider">
+          <span></span>
+          <Image src={ornament} alt="" width={34} height={40} />
+          <span></span>
+        </div>
+      </div>
+      <div class="eras__row">
+        {recent.map((era) => (
+          <EraCard {...era.data} variant="recent" />
+        ))}
+      </div>
+
+      <div class="eras__heading">
+        <span class="eras__jp">歴代</span>
+        <h2 class="eras__title">Earlier eras</h2>
+        <div class="eras__divider">
+          <span></span>
+          <Image src={ornament} alt="" width={34} height={40} />
+          <span></span>
+        </div>
+      </div>
+      {archiveRows.map((row) => (
+        <div class="eras__row">
+          {row.map((era) => (
+            <EraCard {...era.data} variant="small" />
           ))}
         </div>
       ))}
-    </section>
-
-    <!-- Archive: small cards -->
-    <section class="panel panel--archive">
-      {archiveColumns.map((column, index) => (
-        <div class:list={["archive-column", `archive-column--${index + 1}`]}>
-          {column.map((era) => (
-            <EraCard {...era.data} />
-          ))}
-        </div>
-      ))}
-    </section>
-  </div>
+    </div>
+  </section>
 
   <!-- Will Kriss's White Dream reflection -->
   <section class="reflection">
@@ -208,82 +226,105 @@ const archiveColumns = [0, 1, 2].map((col) => archive.filter((_, i) => i % 3 ===
     height: 45px;
   }
 
-  /* ---------- Pink panels ---------- */
-  .panel {
+  /* ---------- Eras ---------- */
+  .eras {
     position: relative;
-    width: 1120px;
-    border-radius: 30px;
-    background: var(--color-blush);
+    padding: 72px 0 96px;
+    background: var(--color-peach);
+    overflow: hidden;
   }
 
-  .panel--recent {
-    margin: 10px 0 0 147px;
-    height: 1713.6px;
+  .eras__inner {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
   }
 
-  .panel--archive {
-    margin: 25px 0 0 166px;
-    height: 1037.6px;
+  .eras__row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    align-items: stretch;
   }
 
-  .panel__blossom {
+  .eras__heading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .eras__jp {
+    color: var(--color-red);
+    font-family: var(--font-serif-jp);
+    font-size: 15px;
+    font-weight: var(--weight-medium);
+  }
+
+  .eras__title {
+    color: var(--color-ink);
+    font-size: 32px;
+    font-weight: var(--weight-semibold);
+    letter-spacing: -0.01em;
+  }
+
+  .eras__divider {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 300px;
+  }
+
+  .eras__divider span {
+    flex: 1;
+    height: 1px;
+    background: #fbd0cc;
+  }
+
+  .eras__divider :global(img) {
+    width: 17px;
+    height: auto;
+  }
+
+  /* Faint blossoms drifting at the page edges, placed against the 1440px design width. */
+  .eras__drift {
     position: absolute;
-    width: 152px;
-    height: 154px;
+    left: 50%;
+    top: 0;
+    width: var(--page-width);
+    height: 100%;
+    translate: -50% 0;
     pointer-events: none;
   }
 
-  .panel__blossom--left {
-    left: 52px;
-    top: 1545.6px;
-  }
-
-  .panel__blossom--right {
-    left: 916px;
-    top: 49px;
-  }
-
-  .recent-column,
-  .archive-column {
+  .eras__blossom {
     position: absolute;
-    display: flex;
-    flex-direction: column;
+    width: 152px;
+    height: auto;
+    opacity: 0.7;
   }
 
-  .recent-column--left {
-    left: 26px;
-    top: 82.7px;
-    gap: 89.6px;
+  .eras__blossom--a {
+    left: 1170px;
+    top: 420px;
+    rotate: -20deg;
   }
 
-  .recent-column--right {
-    left: 593px;
-    top: 244.7px;
-    gap: 84.7px;
+  .eras__blossom--b {
+    left: -46px;
+    top: 1230px;
+    rotate: 25deg;
   }
 
-  /* Wix places the fourth card 12px to the right of the second. */
-  .recent-column--right > :global(.era-card:nth-child(2)) {
-    margin-left: 12px;
+  .eras__blossom--c {
+    left: 1190px;
+    top: 1980px;
+    rotate: 10deg;
+    opacity: 0.6;
   }
 
-  .archive-column {
-    top: 10px;
-  }
-
-  .archive-column--1 {
-    left: 23px;
-    gap: 11.4px;
-  }
-
-  .archive-column--2 {
-    left: 381px;
-    gap: 23.2px;
-  }
-
-  .archive-column--3 {
-    left: 742px;
-    gap: 11px;
+  .eras__inner {
+    position: relative;
   }
 
   /* ---------- Reflection band (3046.2 to 3596.4) ---------- */
