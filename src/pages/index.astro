@@ -11,6 +11,9 @@ import cookbook from "../assets/projects/cookbook.png";
 import torii from "../assets/projects/torii.jpg";
 import genkey from "../assets/projects/genkey.jpg";
 
+// Column photos are at most 720px wide; ask for 2x and 3x versions for sharp screens.
+const photoWidths = [640, 960, 1440, 2160];
+
 // TODO: move into src/content/projects once the Projects page is built.
 const projects = [
   {
@@ -55,7 +58,7 @@ const projects = [
   <section class="split" id="welcome">
     <div class="split__content">
       <div class="photo-frame split__photo" data-reveal>
-        <Image src={welcome} alt="A large group of JSA members posing outdoors" width={1056} height={702} />
+        <Image src={welcome} alt="A large group of JSA members posing outdoors" widths={photoWidths} sizes="(min-width: 1760px) 720px, calc(50vw - 100px)" quality={85} />
       </div>
       <div class="split__text" data-reveal>
         <h2 class="split__heading split__heading--regular">Welcome :D</h2>
@@ -84,7 +87,7 @@ const projects = [
         </p>
       </div>
       <div class="photo-frame photo-frame--crimson split__photo split__photo--short">
-        <Image src={join} alt="JSA members smiling together in a park" width={956} height={666} />
+        <Image src={join} alt="JSA members smiling together in a park" widths={photoWidths} sizes="(min-width: 1760px) 720px, calc(50vw - 100px)" quality={85} />
       </div>
     </div>
   </section>
@@ -93,7 +96,7 @@ const projects = [
   <section class="split">
     <div class="split__content">
       <div class="photo-frame split__photo">
-        <Image src={events} alt="Smiling JSA members in front of blooming flowers" width={1030} height={770} />
+        <Image src={events} alt="Smiling JSA members in front of blooming flowers" widths={photoWidths} sizes="(min-width: 1760px) 720px, calc(50vw - 100px)" quality={85} />
       </div>
       <div class="split__text">
         <h2 class="split__heading">Our Events</h2>

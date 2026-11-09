@@ -6,6 +6,9 @@ import lawn from "../assets/home/slides/lawn.jpg";
 import sunset from "../assets/home/slides/sunset.jpg";
 
 // The Wix hero photos, minus the sign photo.
+// The browser picks the closest size for the visitor's screen. Sizes bigger than the original file are skipped.
+const heroWidths = [1280, 1920, 2560, 3200];
+
 const slides = [
   { src: pier, alt: "JSA members posing in front of a pier at the beach" },
   { src: stage, alt: "JSA members posing on a stage with a moon and stars backdrop" },
@@ -22,7 +25,14 @@ const slides = [
   {
     slides.map((slide, index) => (
       <div class="slideshow__slide" data-slide hidden={index !== 0}>
-        <Image src={slide.src} alt={slide.alt} width={1920} height={813} loading={index === 0 ? "eager" : "lazy"} />
+        <Image
+          src={slide.src}
+          alt={slide.alt}
+          widths={heroWidths}
+          sizes="100vw"
+          quality={85}
+          loading={index === 0 ? "eager" : "lazy"}
+        />
       </div>
     ))
   }

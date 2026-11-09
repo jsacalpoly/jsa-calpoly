@@ -17,7 +17,7 @@ const { title, description, image, color, jpTitle = false } = Astro.props;
 
 <article class="project-card" style={`--card-color: ${color};`}>
   <div class="project-card__photo">
-    <Image src={image} alt="" width={574} height={574} />
+    <Image src={image} alt="" widths={[480, 960, 1440]} sizes="(min-width: 1760px) 480px, 30vw" quality={85} />
   </div>
   <h3 class:list={["project-card__title", { "project-card__title--jp": jpTitle }]}>{title}</h3>
   <p class="project-card__description">{description}</p>
