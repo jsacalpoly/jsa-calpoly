@@ -149,13 +149,14 @@ const projects = [
     event.preventDefault();
     const from = window.scrollY;
     const distance = welcome.getBoundingClientRect().top;
-    const duration = 1400;
+    const duration = 1600;
     const start = performance.now();
-    const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+    const ease = (t: number) => -(Math.cos(Math.PI * t) - 1) / 2; // gentle sine ease-in-out
 
     function step(now: number) {
       const t = Math.min((now - start) / duration, 1);
-      window.scrollTo(0, from + distance * ease(t));
+      // "instant" matters: the page has CSS smooth scrolling, which would otherwise re-animate every frame and cause the lag.
+      window.scrollTo({ top: from + distance * ease(t), behavior: "instant" });
       if (t < 1) requestAnimationFrame(step);
     }
     requestAnimationFrame(step);

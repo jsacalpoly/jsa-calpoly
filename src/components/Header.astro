@@ -8,7 +8,7 @@ import { navLinks } from "../data/navigation";
 <header class="site-header">
   <div class="site-header__inner">
     <a class="site-header__logo" href="/" aria-label="JSA home">
-      <Image src={logo} alt="" width={68} height={64} />
+      <Image src={logo} alt="" width={78} height={73} />
     </a>
 
     <a class="site-header__title" href="/">
@@ -19,7 +19,7 @@ import { navLinks } from "../data/navigation";
     <nav class="site-header__nav" aria-label="Main">
       {
         navLinks.map((link) => (
-          <a class="site-header__link" href={link.href} style={`margin-left: ${link.gap}px`}>
+          <a class="site-header__link" href={link.href} style={`margin-left: ${Math.round(link.gap * 1.17)}px`}>
             {link.name}
           </a>
         ))
@@ -47,20 +47,20 @@ import { navLinks } from "../data/navigation";
     margin-inline: auto;
     display: flex;
     align-items: flex-start;
-    padding-left: 53px;
+    padding-left: 53px; /* logo left edge, same as Figma */
   }
 
   .site-header__logo {
-    margin-top: 8px;
+    margin-top: 9.5px;
     flex: none;
   }
 
   .site-header__title {
-    margin: 11px 0 0 14px;
-    width: 406px;
+    margin: 13px 0 0 14px;
+    width: 470px;
     color: var(--color-maroon);
     font-weight: var(--weight-semibold);
-    line-height: 24px;
+    line-height: 28px;
   }
 
   .site-header__name,
@@ -69,22 +69,22 @@ import { navLinks } from "../data/navigation";
   }
 
   .site-header__name {
-    font-size: 20px;
+    font-size: 23px;
   }
 
   .site-header__school {
-    font-size: 15px;
+    font-size: 17px;
   }
 
   .site-header__nav {
     display: flex;
-    margin: 15px 0 0 auto;
+    margin: 20px 0 0 auto;
   }
 
   .site-header__link {
-    font-size: 14px;
+    font-size: 16px;
     font-weight: var(--weight-extralight);
-    line-height: 45px;
+    line-height: 52px;
     text-transform: uppercase;
     color: var(--color-ink);
     white-space: nowrap;
@@ -92,9 +92,9 @@ import { navLinks } from "../data/navigation";
 
   .site-header__language {
     position: relative;
-    margin: 15px 136.4px 0 13.1px;
-    width: 116px;
-    height: 45px;
+    margin: 20px 136.4px 0 15px;
+    width: 132px;
+    height: 52px;
   }
 
   .site-header__language select {
@@ -107,7 +107,7 @@ import { navLinks } from "../data/navigation";
     background: var(--color-white);
     color: #000;
     font-family: var(--font-ui);
-    font-size: 16px;
+    font-size: 18px;
     font-weight: var(--weight-light);
     cursor: pointer;
   }
@@ -115,7 +115,7 @@ import { navLinks } from "../data/navigation";
   .site-header__chevron {
     position: absolute;
     right: 16px;
-    top: 19.3px;
+    top: 23px;
     pointer-events: none;
   }
 </style>
