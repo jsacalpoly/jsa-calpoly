@@ -6,6 +6,7 @@ import Polaroid from "../components/Polaroid.astro";
 
 import bannerBlossoms from "../assets/photos/banner-blossoms.png";
 import ornament from "../assets/eras/ornament-flower.png";
+import blossom from "../assets/eras/blossom.png";
 
 // Newest first. The date field is the only thing that decides the order, so a new album needs no renumbering.
 const events = (await getCollection("events")).sort(
@@ -41,31 +42,48 @@ const polaroids = await Promise.all(
   }),
 );
 
-// Three staggered columns, filled left to right in date order.
-const columns = [0, 1, 2].map((col) => polaroids.filter((_, i) => i % 3 === col));
+// Four staggered columns, filled left to right in date order. Each column starts a little later than the last.
+const COLUMNS = 4;
+const columns = Array.from({ length: COLUMNS }, (_, col) => polaroids.filter((_, i) => i % COLUMNS === col));
+
+// Blossoms drifting in the margins: [left, top, rotation, opacity, size], placed against the 1440px design width.
+const topBlossoms = [
+  [40, 330, 24, 0.75, 132],
+  [1290, 470, -18, 0.7, 120],
+];
+const galleryBlossoms = [
+  [18, 560, 28, 0.7, 128],
+  [1296, 1180, -22, 0.65, 128],
+  [24, 1700, 12, 0.6, 116],
+];
 ---
 
 <BaseLayout title="Photos | Cal Poly JSA" description="Photo gallery of Cal Poly JSA events." flushFooter>
-  <div class="gallery container">
-    <!-- Banner + latest album -->
-    <section class="top">
-      <span class="top__backdrop"></span>
+  <!-- Banner + latest album: cream and gray run edge to edge, the content sits in the 1440px stage -->
+  <section class="top">
+    <div class="top__stage">
+      <Image class="top__branch" src={bannerBlossoms} alt="" width={616} height={164} />
 
-      <header class="top__banner">
-        <Image class="top__banner-art" src={bannerBlossoms} alt="" width={616} height={164} />
-        <h1 class="top__title">Photo Gallery</h1>
-        <p class="top__subtitle">Capturing those precious memories</p>
-        <span class="top__title-rule"></span>
-      </header>
+      <h1 class="top__title">
+        <span class="word" style="--i: 0">
+          Photo
+        </span>{" "}
+        <span class="word" style="--i: 1">
+          Gallery
+        </span>
+      </h1>
+      <p class="top__subtitle">Capturing those precious memories</p>
+      <span class="top__title-rule"></span>
 
+      <!-- The latest album as a big taped polaroid -->
       <div class="latest">
         <span class="latest__tape"></span>
         <div class="latest__photo">
           <Image
             src={featured.data.cover}
             alt={`Photos from ${featured.data.title}`}
-            width={860}
-            height={600}
+            width={1016}
+            height={680}
             quality={85}
           />
         </div>
@@ -103,90 +121,236 @@ const columns = [0, 1, 2].map((col) => polaroids.filter((_, i) => i % 3 === col)
           </a>
         )}
       </div>
-    </section>
 
-    <!-- All albums -->
-    <section class="panel">
-      <div class="panel__heading">
-        <span class="panel__jp">写真</span>
-        <h2 class="panel__title">All albums</h2>
-        <p class="panel__count">{events.length} albums, newest first</p>
-        <div class="panel__divider">
-          <span></span>
-          <Image src={ornament} alt="" width={34} height={40} />
-          <span></span>
-        </div>
-      </div>
-
-      <div class="polaroids">
-        {columns.map((column) => (
-          <div class="polaroids__column">
-            {column.map(({ event, Content, photoHeight, tilt, tape }) => (
-              <Polaroid
-                title={event.data.title}
-                dateLabel={dateLabel(event)}
-                cover={event.data.cover}
-                album={event.data.album}
-                tilt={tilt}
-                photoHeight={photoHeight}
-                tape={tape}
-              >
-                <Content />
-              </Polaroid>
-            ))}
-          </div>
+      <div class="drift" data-drift aria-hidden="true">
+        {topBlossoms.map(([left, top, rot, opacity, size]) => (
+          <Image
+            class="drift__blossom"
+            style={`left:${left}px; top:${top}px; width:${size}px; --rot:${rot}deg; opacity:${opacity};`}
+            src={blossom}
+            alt=""
+            width={size * 2}
+            height={Math.round(size * 2 * (154 / 152))}
+          />
         ))}
       </div>
-    </section>
-  </div>
+    </div>
+  </section>
+
+  <!-- All albums -->
+  <section class="gallery">
+    <div class="gallery__stage">
+      <div class="drift" data-drift aria-hidden="true">
+        {galleryBlossoms.map(([left, top, rot, opacity, size]) => (
+          <Image
+            class="drift__blossom"
+            style={`left:${left}px; top:${top}px; width:${size}px; --rot:${rot}deg; opacity:${opacity};`}
+            src={blossom}
+            alt=""
+            width={size * 2}
+            height={Math.round(size * 2 * (154 / 152))}
+          />
+        ))}
+      </div>
+
+      <div class="gallery__inner">
+        <div class="panel__heading">
+          <span class="panel__jp" data-rise style="--delay: 0ms">
+            写真
+          </span>
+          <h2 class="panel__title" data-rise style="--delay: 90ms">
+            All albums
+          </h2>
+          <p class="panel__count" data-rise style="--delay: 180ms">
+            {events.length} albums, newest first
+          </p>
+          <div class="panel__divider" data-rise style="--delay: 270ms">
+            <span class="panel__line panel__line--left"></span>
+            <Image src={ornament} alt="" width={34} height={40} />
+            <span class="panel__line panel__line--right"></span>
+          </div>
+        </div>
+
+        <div class="polaroids">
+          {columns.map((column, col) => (
+            <div class="polaroids__column">
+              {column.map(({ event, Content, photoHeight, tilt, tape }) => (
+                <Polaroid
+                  title={event.data.title}
+                  dateLabel={dateLabel(event)}
+                  cover={event.data.cover}
+                  album={event.data.album}
+                  tilt={tilt}
+                  photoHeight={photoHeight}
+                  tape={tape}
+                  delay={col * 80}
+                >
+                  <Content />
+                </Polaroid>
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
 </BaseLayout>
 
+<script>
+  // Elements marked data-rise start hidden and play their entrance the first time they scroll into view.
+  const calm = window.matchMedia("(prefers-reduced-motion: reduce)");
+  const targets = document.querySelectorAll<HTMLElement>("[data-rise]");
+  if (calm.matches) {
+    targets.forEach((target) => target.classList.add("is-in"));
+  } else {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          entry.target.classList.add("is-in");
+          observer.unobserve(entry.target);
+        }
+      },
+      { threshold: 0.12 },
+    );
+    targets.forEach((target) => observer.observe(target));
+
+    // Blossoms lag slightly behind the scroll, so the margins feel like they are floating.
+    const drifts = document.querySelectorAll<HTMLElement>("[data-drift]");
+    let waiting = false;
+    const update = () => {
+      waiting = false;
+      for (const drift of drifts) {
+        const parent = drift.parentElement;
+        if (!parent) continue;
+        const offset = (window.scrollY - (parent.getBoundingClientRect().top + window.scrollY)) * 0.08;
+        drift.style.setProperty("--drift", `${offset}px`);
+      }
+    };
+    window.addEventListener(
+      "scroll",
+      () => {
+        if (!waiting) {
+          waiting = true;
+          requestAnimationFrame(update);
+        }
+      },
+      { passive: true },
+    );
+    update();
+  }
+</script>
+
 <style>
-  .gallery {
-    /* 980px column; the gray panel runs from the top block down through all the polaroids. */
-    background: var(--color-gray-bg);
+  /* ---------- Shared motion ---------- */
+  @keyframes rise {
+    from {
+      opacity: 0;
+      translate: 0 24px;
+    }
+    to {
+      opacity: 1;
+      translate: 0 0;
+    }
+  }
+
+  @keyframes fade {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes draw {
+    from {
+      scale: 0 1;
+    }
+    to {
+      scale: 1 1;
+    }
+  }
+
+  @keyframes drop {
+    from {
+      opacity: 0;
+      translate: 0 -60px;
+      rotate: -10deg;
+    }
+    to {
+      opacity: 1;
+      translate: 0 0;
+      rotate: -2.5deg;
+    }
+  }
+
+  @keyframes tape {
+    from {
+      clip-path: inset(0 100% 0 0);
+    }
+    to {
+      clip-path: inset(0 0 0 0);
+    }
+  }
+
+  @keyframes pop {
+    from {
+      opacity: 0;
+      scale: 0.85;
+      rotate: 8deg;
+    }
+    to {
+      opacity: 1;
+      scale: 1;
+      rotate: 2.5deg;
+    }
+  }
+
+  @keyframes sway {
+    from {
+      rotate: calc(var(--rot) - 6deg);
+    }
+    to {
+      rotate: calc(var(--rot) + 6deg);
+    }
   }
 
   /* ---------- Banner + latest album ---------- */
+  /* Cream runs 164px across the whole width; the gray starts 16px higher, behind the cream's lower edge. */
   .top {
     position: relative;
-    height: 580px;
+    background: linear-gradient(to bottom, transparent 148px, var(--color-gray-bg) 148px);
   }
 
-  .top > * {
+  .top::before {
+    content: "";
     position: absolute;
-  }
-
-  /* The gray starts 16px under the top of the featured photo, behind the banner's lower edge. */
-  .top__backdrop {
-    left: 0;
-    right: 0;
-    top: 148px;
-    bottom: 0;
-    background: var(--color-gray-bg);
-  }
-
-  .top__banner {
-    left: 0;
-    top: 0;
-    width: 980px;
+    inset: 0 0 auto;
     height: 164px;
     background: var(--color-cream-photos);
   }
 
-  .top__banner > * {
+  .top__stage {
+    position: relative;
+    width: var(--page-width);
+    height: 640px;
+    margin-inline: auto;
+  }
+
+  .top__stage > :not(.drift) {
     position: absolute;
   }
 
-  .top__banner-art {
-    left: 376px;
+  .top__branch {
+    left: 824px;
     top: 0;
     width: 616px;
     height: 164px;
   }
 
   .top__title {
-    left: 40px;
+    left: 170px;
     top: 23.9px;
     color: var(--color-ink);
     font-family: var(--font-title);
@@ -196,8 +360,12 @@ const columns = [0, 1, 2].map((col) => polaroids.filter((_, i) => i % 3 === col)
     white-space: nowrap;
   }
 
+  .word {
+    display: inline-block;
+  }
+
   .top__subtitle {
-    left: 45px;
+    left: 175px;
     top: 97.8px;
     font-size: 15px;
     font-weight: var(--weight-extralight);
@@ -206,19 +374,19 @@ const columns = [0, 1, 2].map((col) => polaroids.filter((_, i) => i % 3 === col)
   }
 
   .top__title-rule {
-    left: 45px;
+    left: 175px;
     top: 134px;
     width: 139px;
     height: 1px;
     background: var(--color-line);
+    transform-origin: left;
   }
 
-  /* The latest album as a big taped polaroid. */
   .latest {
-    left: 52px;
+    left: 170px;
     top: 150px;
-    width: 462px;
-    padding: 16px 16px 46px;
+    width: 540px;
+    padding: 18px 16px 50px;
     background: var(--color-white);
     border-radius: 3px;
     box-shadow: 0 6px 14px rgba(0, 0, 0, 0.32);
@@ -227,10 +395,10 @@ const columns = [0, 1, 2].map((col) => polaroids.filter((_, i) => i % 3 === col)
 
   .latest__tape {
     position: absolute;
-    top: -15px;
+    top: -16px;
     left: 50%;
-    width: 92px;
-    height: 28px;
+    width: 100px;
+    height: 30px;
     translate: -50% 0;
     rotate: -4deg;
     background: rgba(239, 224, 160, 0.8);
@@ -238,7 +406,7 @@ const columns = [0, 1, 2].map((col) => polaroids.filter((_, i) => i % 3 === col)
   }
 
   .latest__photo {
-    height: 300px;
+    height: 340px;
     overflow: hidden;
     box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08);
   }
@@ -250,9 +418,9 @@ const columns = [0, 1, 2].map((col) => polaroids.filter((_, i) => i % 3 === col)
   }
 
   .latest__caption {
-    margin-top: 12px;
+    margin-top: 14px;
     font-family: var(--font-mono);
-    font-size: 20px;
+    font-size: 22px;
     line-height: 1.25;
   }
 
@@ -262,41 +430,41 @@ const columns = [0, 1, 2].map((col) => polaroids.filter((_, i) => i % 3 === col)
   }
 
   .top__copy {
-    left: 560px;
-    top: 176px;
+    left: 780px;
+    top: 190px;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    width: 380px;
+    width: 470px;
   }
 
   .top__album-title {
     font-family: var(--font-mono);
-    font-size: 30px;
+    font-size: 34px;
     font-weight: var(--weight-regular);
-    line-height: 1.33;
+    line-height: 1.3;
   }
 
   .top__album-text {
-    margin-top: 14px;
+    margin-top: 16px;
     color: var(--color-text-soft);
-    font-size: 15px;
+    font-size: 16px;
     font-weight: var(--weight-light);
-    line-height: 1.55;
+    line-height: 1.58;
   }
 
   /* Sticky note */
   .note {
-    margin: 26px 0 0 6px;
-    width: 250px;
-    min-height: 104px;
-    padding: 20px;
+    margin: 28px 0 0 6px;
+    width: 270px;
+    min-height: 112px;
+    padding: 22px 21px;
     background: #fff3a6;
     border-radius: 2px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.22);
     color: #4a3f1a;
     font-family: var(--font-mono);
-    font-size: 16px;
+    font-size: 17px;
     font-weight: var(--weight-bold);
     line-height: 1.4;
     rotate: 2.5deg;
@@ -306,8 +474,8 @@ const columns = [0, 1, 2].map((col) => polaroids.filter((_, i) => i % 3 === col)
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    margin-top: 34px;
-    padding: 13px 26px;
+    margin-top: 36px;
+    padding: 14px 28px;
     border-radius: 999px;
     background: var(--color-green);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
@@ -322,9 +490,38 @@ const columns = [0, 1, 2].map((col) => polaroids.filter((_, i) => i % 3 === col)
     background: #346344;
   }
 
+  /* ---------- Drifting blossoms ---------- */
+  .drift {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    translate: 0 var(--drift, 0px);
+  }
+
+  .drift__blossom {
+    position: absolute;
+    height: auto;
+    rotate: var(--rot, 0deg);
+  }
+
   /* ---------- All albums ---------- */
-  .panel {
-    padding: 36px 22px 64px;
+  .gallery {
+    position: relative;
+    padding: 24px 0 88px;
+    background: var(--color-gray-bg);
+    overflow: hidden;
+  }
+
+  .gallery__stage {
+    position: relative;
+    width: var(--page-width);
+    margin-inline: auto;
+  }
+
+  .gallery__inner {
+    position: relative;
+    width: 1180px;
+    margin-inline: auto;
   }
 
   .panel__heading {
@@ -332,7 +529,7 @@ const columns = [0, 1, 2].map((col) => polaroids.filter((_, i) => i % 3 === col)
     flex-direction: column;
     align-items: center;
     gap: 8px;
-    margin-bottom: 32px;
+    margin-bottom: 36px;
   }
 
   .panel__jp {
@@ -362,10 +559,18 @@ const columns = [0, 1, 2].map((col) => polaroids.filter((_, i) => i % 3 === col)
     width: 300px;
   }
 
-  .panel__divider span {
+  .panel__line {
     flex: 1;
     height: 1px;
     background: #fbd0cc;
+  }
+
+  .panel__line--left {
+    transform-origin: right;
+  }
+
+  .panel__line--right {
+    transform-origin: left;
   }
 
   .panel__divider :global(img) {
@@ -373,18 +578,18 @@ const columns = [0, 1, 2].map((col) => polaroids.filter((_, i) => i % 3 === col)
     height: auto;
   }
 
-  /* Three columns, each starting at a different height so the prints do not line up in rows. */
+  /* Four columns, each starting at a different height so the prints do not line up in rows. */
   .polaroids {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 14px;
+    grid-template-columns: repeat(4, 295px);
+    justify-content: center;
   }
 
   .polaroids__column {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 34px;
+    gap: 36px;
   }
 
   .polaroids__column:nth-child(1) {
@@ -392,10 +597,71 @@ const columns = [0, 1, 2].map((col) => polaroids.filter((_, i) => i % 3 === col)
   }
 
   .polaroids__column:nth-child(2) {
-    padding-top: 64px;
+    padding-top: 72px;
   }
 
   .polaroids__column:nth-child(3) {
-    padding-top: 30px;
+    padding-top: 28px;
+  }
+
+  .polaroids__column:nth-child(4) {
+    padding-top: 96px;
+  }
+
+  /* ---------- Entrances (skipped when the visitor prefers reduced motion) ---------- */
+  @media (prefers-reduced-motion: no-preference) {
+    /* On load */
+    .word {
+      animation: rise 0.6s ease-out calc(var(--i) * 80ms) backwards;
+    }
+
+    .top__subtitle {
+      animation: fade 0.6s ease-out 0.3s backwards;
+    }
+
+    .top__title-rule {
+      animation: draw 0.5s ease-out 0.55s backwards;
+    }
+
+    .latest {
+      animation: drop 0.7s cubic-bezier(0.34, 1.4, 0.64, 1) 0.2s backwards;
+    }
+
+    .latest__tape {
+      animation: tape 0.25s ease-out 0.85s backwards;
+    }
+
+    .top__album-title {
+      animation: rise 0.6s ease-out 0.35s backwards;
+    }
+
+    .top__album-text {
+      animation: rise 0.6s ease-out 0.45s backwards;
+    }
+
+    .note {
+      animation: pop 0.35s cubic-bezier(0.34, 1.4, 0.64, 1) 0.95s backwards;
+    }
+
+    .top__button {
+      animation: rise 0.5s ease-out 1.2s backwards;
+    }
+
+    .drift__blossom {
+      animation: sway 4s ease-in-out infinite alternate;
+    }
+
+    /* On scroll: hidden until the page script adds .is-in */
+    :global(.js) [data-rise]:not(.is-in) {
+      opacity: 0;
+    }
+
+    [data-rise].is-in {
+      animation: rise 0.6s ease-out var(--delay, 0ms) backwards;
+    }
+
+    .panel__divider.is-in .panel__line {
+      animation: draw 0.6s ease-out calc(var(--delay, 0ms) + 200ms) backwards;
+    }
   }
 </style>
