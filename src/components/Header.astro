@@ -13,7 +13,12 @@ import { navLinks } from "../data/navigation";
 
     <a class="site-header__title" href="/">
       <span class="site-header__name">JAPANESE STUDENT ASSOCIATION</span>
-      <span class="site-header__school">CAL POLY SAN LUIS OBISPO</span>
+      <span class="site-header__school">
+        <span data-school-live aria-hidden="true">
+          CAL POLY SAN LUIS OBISPO
+        </span>
+        <span class="site-header__sr">CAL POLY SAN LUIS OBISPO</span>
+      </span>
     </a>
 
     <nav class="site-header__nav" aria-label="Main">
@@ -74,6 +79,16 @@ import { navLinks } from "../data/navigation";
     font-size: 17px;
   }
 
+  /* Read by screen readers, hidden while the visible text is scrambling. */
+  .site-header__sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
   .site-header__nav {
     display: flex;
     margin: 20px 0 0 auto;
@@ -117,3 +132,68 @@ import { navLinks } from "../data/navigation";
     pointer-events: none;
   }
 </style>
+
+<script>
+  // The subtitle starts as "CHAPTER", then the letters shuffle and settle into the full name.
+  const live = document.querySelector<HTMLElement>("[data-school-live]");
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  if (live && !reduceMotion) {
+    const finalText = live.textContent ?? "";
+    const startText = "CHAPTER";
+    const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    let frame = 0;
+
+    live.textContent = startText;
+
+    document.fonts.ready.then(() => {
+      // Each position gets a fixed-width cell so the shuffling letters never push the line wider.
+      const style = getComputedStyle(live);
+      const ctx = document.createElement("canvas").getContext("2d");
+      if (!ctx) return;
+      ctx.font = `${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
+      const width = (char: string) => ctx.measureText(char).width;
+      const letterWidths = [...letters].map((char) => ({ char, w: width(char) }));
+
+      function run(from: string, delay: number) {
+        const cells = [...finalText].map((char, i) => {
+          const w = width(char);
+          // Shuffle only through letters about as wide as the one that belongs here.
+          const similar = letterWidths.filter((l) => Math.abs(l.w - w) < w * 0.25 + 2).map((l) => l.char);
+          return { char, w, pool: similar.length ? similar : [...letters], start: from[i] ?? "" };
+        });
+        const spans = cells.map((cell) => {
+          const el = document.createElement("span");
+          el.style.cssText = `display:inline-block;width:${cell.w}px;text-align:center;white-space:pre`;
+          return el;
+        });
+
+        window.setTimeout(() => {
+          live!.replaceChildren(...spans);
+          const begin = performance.now();
+          const step = (time: number) => {
+            const elapsed = time - begin;
+            let done = true;
+            cells.forEach((cell, i) => {
+              const settled = cell.char === " " || elapsed > 300 + i * 45;
+              if (settled) spans[i].textContent = cell.char;
+              else {
+                spans[i].textContent = cell.pool[Math.floor(Math.random() * cell.pool.length)];
+                done = false;
+              }
+            });
+            if (done) live!.textContent = finalText;
+            else frame = requestAnimationFrame(step);
+          };
+          frame = requestAnimationFrame(step);
+        }, delay);
+      }
+
+      run(startText, 1400);
+      live.closest("a")?.addEventListener("mouseenter", () => {
+        cancelAnimationFrame(frame);
+        run(finalText, 0);
+      });
+    });
+  }
+</script>
