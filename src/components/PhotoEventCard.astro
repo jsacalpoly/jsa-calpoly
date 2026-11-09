@@ -22,6 +22,16 @@ const Tag = album ? "a" : "article";
   <h3 class="photo-event-card__title">{title}</h3>
   <span class="photo-event-card__rule"></span>
   <div class="photo-event-card__text"><slot /></div>
+  {
+    album && (
+      <span class="photo-event-card__button" aria-hidden="true">
+        Open album
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M7 17L17 7M9 7h8v8" />
+        </svg>
+      </span>
+    )
+  }
   <div class="photo-event-card__photo">
     <Image src={cover} alt={`Photos from ${title}`} width={400} height={242} />
   </div>
@@ -48,8 +58,52 @@ const Tag = album ? "a" : "article";
 
   .photo-event-card--link:hover,
   .photo-event-card--link:focus-visible {
-    transform: translateY(-2px);
+    transform: translateY(-4px);
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+  }
+
+  /* On hover or keyboard focus the blurb gives way to an "Open album" button. */
+  .photo-event-card__text {
+    transition: opacity 0.15s ease;
+  }
+
+  .photo-event-card--link:hover .photo-event-card__text,
+  .photo-event-card--link:focus-visible .photo-event-card__text {
+    opacity: 0;
+  }
+
+  .photo-event-card__button {
+    position: absolute;
+    left: 18px;
+    top: 98px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 16px;
+    border-radius: 20px;
+    background: var(--color-green);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
+    color: var(--color-white);
+    font-family: var(--font-ui);
+    font-size: 13px;
+    font-weight: 600;
+    line-height: normal;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+    pointer-events: none;
+  }
+
+  .photo-event-card--link:hover .photo-event-card__button,
+  .photo-event-card--link:focus-visible .photo-event-card__button {
+    opacity: 1;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .photo-event-card--link,
+    .photo-event-card__text,
+    .photo-event-card__button {
+      transition: none;
+    }
   }
 
   .photo-event-card--link:focus-visible {
