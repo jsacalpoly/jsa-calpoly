@@ -67,3 +67,10 @@ a {
     animation: fade-in 1.1s ease-in-out forwards;
   }
 }
+
+/* Anchor links (like the hero button) glide instead of jumping. */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}

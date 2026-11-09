@@ -134,6 +134,9 @@ const slides = [
         return;
       }
 
+      // Tell the page a slide change started so the hero title can travel with it.
+      document.dispatchEvent(new CustomEvent("hero:slide", { detail: { direction } }));
+
       const options: KeyframeAnimationOptions = { duration: 450, easing: "ease-in-out", fill: "forwards" };
       current.animate(
         [{ transform: "translateX(0)" }, { transform: `translateX(${-100 * direction}%)` }],
