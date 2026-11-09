@@ -21,52 +21,58 @@ for (let i = 0; i < members.length; i += 4) memberRows.push(members.slice(i, i +
 ---
 
 <BaseLayout title="26-27 | Cal Poly JSA" description="Meet the 2026-2027 Cal Poly JSA board.">
-  <div class="board container">
-    <div class="board__banner">
-      <Image src={banner} alt="Meet JSA: the 2026-27 board posing together" width={1882} height={1048} />
-    </div>
+  <div class="board-wrap">
+    <div class="board container">
+      <div class="board__banner">
+        <Image src={banner} alt="Meet JSA: the 2026-27 board posing together" width={1882} height={1048} />
+      </div>
 
-    <Image class="board__blossoms board__blossoms--left" src={blossomsLeft} alt="" width={238} height={212} />
-    <Image class="board__blossoms board__blossoms--right" src={blossomsRight} alt="" width={458} height={305} />
+      <Image class="board__blossoms board__blossoms--left" src={blossomsLeft} alt="" width={238} height={212} />
+      <Image class="board__blossoms board__blossoms--right" src={blossomsRight} alt="" width={458} height={305} />
 
-    <h1 class="board__title">OUR BOARD</h1>
-    <Image class="board__flower" src={flowerDivider} alt="" width={34} height={34} />
-    <p class="board__subtitle">Meet the leaders behind JSA</p>
+      <h1 class="board__title">OUR BOARD</h1>
+      <Image class="board__flower" src={flowerDivider} alt="" width={34} height={34} />
+      <p class="board__subtitle">Meet the leaders behind JSA</p>
 
-    <div class="divider divider--executive">
-      <span class="divider__line"></span>
-      <h2 class="divider__text">EXECUTIVE</h2>
-      <span class="divider__line"></span>
-    </div>
+      <div class="divider divider--executive">
+        <span class="divider__line"></span>
+        <h2 class="divider__text">EXECUTIVE</h2>
+        <span class="divider__line"></span>
+      </div>
 
-    <div class="board__executives">
-      {executives.map((member) => (
-        <BoardCard variant="executive" {...member} />
-      ))}
-    </div>
-
-    <div class="divider divider--members">
-      <span class="divider__line"></span>
-      <h2 class="divider__text">Board Members</h2>
-      <span class="divider__line"></span>
-    </div>
-
-    {memberRows.map((row, index) => (
-      <div class:list={["board__members", `board__members--row${index + 1}`]}>
-        {row.map((member) => (
-          <BoardCard {...member} />
+      <div class="board__executives">
+        {executives.map((member) => (
+          <BoardCard variant="executive" {...member} />
         ))}
       </div>
-    ))}
+
+      <div class="divider divider--members">
+        <span class="divider__line"></span>
+        <h2 class="divider__text">Board Members</h2>
+        <span class="divider__line"></span>
+      </div>
+
+      {memberRows.map((row, index) => (
+        <div class:list={["board__members", `board__members--row${index + 1}`]}>
+          {row.map((member) => (
+            <BoardCard {...member} />
+          ))}
+        </div>
+      ))}
+    </div>
   </div>
 </BaseLayout>
 
 <style>
-  /* Backdrop is 1659.3px tall (79 to 1738.3) and leaves a 20px gap above the footer. */
+  /* The cream backdrop runs the full width of the screen; the content stays in the 980px column. */
+  .board-wrap {
+    background: var(--color-cream);
+  }
+
+  /* The column is 1659.3px tall (79 to 1738.3) and leaves a 20px gap above the footer. */
   .board {
     height: 1659.3px;
     padding-top: 10px;
-    background: var(--color-cream);
   }
 
   .board__banner {
