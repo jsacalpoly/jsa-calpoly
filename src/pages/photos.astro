@@ -206,33 +206,70 @@ const galleryBlossoms = [
     // Text scramble: every letter flickers through random characters, then locks onto the right one, left to right.
     if (subtitle && scramble) {
       const final = scramble.textContent ?? "";
-      const pool = "abcdefghijklmnopqrstuvwxyz!<>-_/[]{}=+*^?#%&";
+      const pool = "abcdefghijklmnopqrstuvwxyz";
       const delay = 300;
       const duration = 900;
-      // Keep the line from jittering while the letters change width.
-      scramble.style.width = `${scramble.getBoundingClientRect().width}px`;
+
+      // One cell per letter, each locked to the width its real letter has, so the line can never get longer or
+      // shorter while the letters change.
+      // The page is scaled down with CSS zoom on narrow windows, so measured sizes need converting back.
+      const zoom = scramble.getBoundingClientRect().width / scramble.offsetWidth || 1;
+      scramble.textContent = "";
+      const cells = [...final].map((char) => {
+        const cell = document.createElement("span");
+        cell.textContent = char;
+        scramble.append(cell);
+        return cell;
+      });
+      const measure = (char: string) => {
+        const probe = document.createElement("span");
+        probe.textContent = char;
+        scramble.append(probe);
+        const width = probe.getBoundingClientRect().width / zoom;
+        probe.remove();
+        return width;
+      };
+      const widths = cells.map((cell) => cell.getBoundingClientRect().width / zoom);
+      cells.forEach((cell, i) => {
+        cell.style.display = "inline-block";
+        cell.style.width = `${widths[i]}px`;
+        cell.style.whiteSpace = "pre";
+      });
+
+      // Each cell only flickers through letters about as wide as its real letter, so they never pile on top of
+      // their neighbours.
+      const poolWidths = [...pool].map((char) => ({ char, width: measure(char) }));
+      const options = widths.map((width) => {
+        const close = poolWidths.filter((entry) => Math.abs(entry.width - width) <= Math.max(1.5, width * 0.22));
+        const nearest = [...poolWidths].sort((a, b) => Math.abs(a.width - width) - Math.abs(b.width - width))[0];
+        return (close.length > 0 ? close : [nearest]).map((entry) => entry.char);
+      });
+
+      const letters = [...final];
       const start = performance.now() + delay;
       let lastFlicker = 0;
       const frame = (now: number) => {
-        const progress = Math.min(Math.max((now - start) / duration, 0), 1);
         if (now < start) {
           requestAnimationFrame(frame);
           return;
         }
         subtitle.classList.add("is-on");
+        const progress = Math.min((now - start) / duration, 1);
         if (progress < 1) {
           // Re-roll the unsettled letters about every 45 ms instead of every frame.
           if (now - lastFlicker > 45) {
             lastFlicker = now;
-            const settled = Math.floor(progress * final.length);
-            scramble.textContent = [...final]
-              .map((char, i) => (i < settled || char === " " ? char : pool[Math.floor(Math.random() * pool.length)]))
-              .join("");
+            const settled = Math.floor(progress * letters.length);
+            cells.forEach((cell, i) => {
+              const char = letters[i];
+              const choices = options[i];
+              cell.textContent =
+                i < settled || char === " " ? char : choices[Math.floor(Math.random() * choices.length)];
+            });
           }
           requestAnimationFrame(frame);
         } else {
           scramble.textContent = final;
-          scramble.style.width = "";
         }
       };
       requestAnimationFrame(frame);
@@ -307,16 +344,22 @@ const galleryBlossoms = [
     }
   }
 
-  @keyframes drop {
+  /* An instant photo developing: washed-out and soft at first, then it gains colour and sharpens. */
+  @keyframes develop {
     from {
-      opacity: 0;
-      translate: 0 -60px;
-      rotate: -10deg;
+      filter: brightness(1.8) saturate(0) contrast(0.55) blur(8px);
     }
     to {
+      filter: none;
+    }
+  }
+
+  @keyframes clear {
+    from {
       opacity: 1;
-      translate: 0 0;
-      rotate: -2.5deg;
+    }
+    to {
+      opacity: 0;
     }
   }
 
@@ -438,9 +481,20 @@ const galleryBlossoms = [
   }
 
   .latest__photo {
+    position: relative;
     height: 340px;
     overflow: hidden;
     box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08);
+  }
+
+  /* The undeveloped film: invisible normally, only used by the entrance animation below. */
+  .latest__photo::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: #ddd8cc;
+    opacity: 0;
+    pointer-events: none;
   }
 
   .latest__photo :global(img) {
@@ -656,17 +710,26 @@ const galleryBlossoms = [
       animation: draw 0.5s ease-out 0.3s backwards;
     }
 
+    /* The polaroid appears in place and then develops, like an instant photo. */
     .latest {
-      animation: drop 0.7s cubic-bezier(0.34, 1.4, 0.64, 1) 0.2s backwards;
+      animation: fade 0.4s ease-out 0.1s backwards;
+    }
+
+    .latest__photo :global(img) {
+      animation: develop 1.8s ease-out 0.15s backwards;
+    }
+
+    .latest__photo::after {
+      animation: clear 1.8s ease-out 0.15s backwards;
     }
 
     .latest__tape {
-      animation: tape 0.25s ease-out 0.9s backwards;
+      animation: tape 0.25s ease-out 0.6s backwards;
     }
 
-    /* Title, description, sticky note and button all arrive together, once the polaroid has landed. */
+    /* Title, description, sticky note and button all arrive together, early and unhurried. */
     .top__copy {
-      animation: fade 0.5s ease-out 0.9s backwards;
+      animation: fade 0.9s ease-out 0.5s backwards;
     }
 
     .drift__blossom {
