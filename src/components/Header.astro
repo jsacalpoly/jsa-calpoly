@@ -142,7 +142,6 @@ import { navLinks } from "../data/navigation";
     const finalText = live.textContent ?? "";
     const startText = "CHAPTER";
     const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    let frame = 0;
 
     live.textContent = startText;
 
@@ -175,7 +174,7 @@ import { navLinks } from "../data/navigation";
             const elapsed = time - begin;
             let done = true;
             cells.forEach((cell, i) => {
-              const settled = cell.char === " " || elapsed > 300 + i * 45;
+              const settled = cell.char === " " || elapsed > 500 + i * 75;
               if (settled) spans[i].textContent = cell.char;
               else {
                 spans[i].textContent = cell.pool[Math.floor(Math.random() * cell.pool.length)];
@@ -183,17 +182,13 @@ import { navLinks } from "../data/navigation";
               }
             });
             if (done) live!.textContent = finalText;
-            else frame = requestAnimationFrame(step);
+            else requestAnimationFrame(step);
           };
-          frame = requestAnimationFrame(step);
+          requestAnimationFrame(step);
         }, delay);
       }
 
-      run(startText, 1400);
-      live.closest("a")?.addEventListener("mouseenter", () => {
-        cancelAnimationFrame(frame);
-        run(finalText, 0);
-      });
+      run(startText, 2000);
     });
   }
 </script>
