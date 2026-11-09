@@ -1,8 +1,8 @@
 ---
-import { Image } from "astro:assets";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import ProjectCard from "../components/ProjectCard.astro";
 import HeroSlideshow from "../components/HeroSlideshow.astro";
+import TapedPhoto from "../components/TapedPhoto.astro";
 
 import welcome from "../assets/home/welcome.jpg";
 import join from "../assets/home/join.jpg";
@@ -10,9 +10,6 @@ import events from "../assets/home/events.jpg";
 import cookbook from "../assets/projects/cookbook.png";
 import torii from "../assets/projects/torii.jpg";
 import genkey from "../assets/projects/genkey.jpg";
-
-// Column photos are at most 720px wide; ask for 2x and 3x versions for sharp screens.
-const photoWidths = [640, 960, 1440, 2160];
 
 // TODO: move into src/content/projects once the Projects page is built.
 const projects = [
@@ -56,78 +53,75 @@ const projects = [
     </div>
   </section>
 
-  <!-- Welcome -->
-  <section class="split" id="welcome">
-    <div class="split__content">
-      <div class="photo-frame split__photo" data-reveal>
-        <Image
-          src={welcome}
-          alt="A large group of JSA members posing outdoors"
-          widths={photoWidths}
-          sizes="(min-width: 1760px) 720px, calc(50vw - 100px)"
-          quality={85}
-        />
-      </div>
-      <div class="split__text" data-reveal>
-        <h2 class="split__heading split__heading--regular">Welcome :D</h2>
+  <!-- Welcome: photo on the left -->
+  <section class="story" id="welcome">
+    <div class="story__inner">
+      <TapedPhoto
+        src={welcome}
+        alt="A large group of JSA members posing outdoors"
+        width={548}
+        height={400}
+        tilt={-2.5}
+        sizes="548px"
+      />
+      <div class="story__text" data-reveal>
+        <h2 class="story__heading">Welcome :D</h2>
         <p>
           We are Cal Poly's Japanese Student Association, dedicated to sharing and celebrating Japanese culture in
           addition to fostering a JSA "family" on campus.
         </p>
-        <p class="split__gap">JSA is open to everyone at Cal Poly!</p>
+        <p class="story__strong">JSA is open to everyone at Cal Poly!</p>
       </div>
     </div>
   </section>
 
-  <!-- Join the family -->
-  <section class="split split--red">
-    <div class="split__content">
-      <div class="split__text split__text--white">
-        <h2 class="split__heading">Join the family!!</h2>
+  <!-- Join the family: red band, photo on the right -->
+  <section class="story story--red">
+    <div class="story__inner">
+      <div class="story__text story__text--white" data-reveal>
+        <h2 class="story__heading story__heading--bold">Join the family!!</h2>
         <p>
           The easiest way to join JSA is to drop by our general meetings - in Baker 107, every Wednesday at 7pm. We hope
           to see you there!
         </p>
-        <p class="split__gap">
+        <p class="story__small">
           Follow the{" "}
-          <a href="https://www.instagram.com/calpolyjsa" class="split__link">
+          <a href="https://www.instagram.com/calpolyjsa" class="story__link">
             Cal Poly JSA Instagram
           </a>{" "}
           (@calpolyjsa) where we post club updates and event/meeting reminders! You can also join the JSA GroupMe or dm
           the instagram for more info!
         </p>
       </div>
-      <div class="photo-frame photo-frame--crimson split__photo split__photo--short">
-        <Image
-          src={join}
-          alt="JSA members smiling together in a park"
-          widths={photoWidths}
-          sizes="(min-width: 1760px) 720px, calc(50vw - 100px)"
-          quality={85}
-        />
-      </div>
+      <TapedPhoto
+        src={join}
+        alt="JSA members smiling together in a park"
+        width={528}
+        height={380}
+        tilt={2.2}
+        sizes="528px"
+      />
     </div>
   </section>
 
-  <!-- Our events -->
-  <section class="split">
-    <div class="split__content">
-      <div class="photo-frame split__photo">
-        <Image
-          src={events}
-          alt="Smiling JSA members in front of blooming flowers"
-          widths={photoWidths}
-          sizes="(min-width: 1760px) 720px, calc(50vw - 100px)"
-          quality={85}
-        />
-      </div>
-      <div class="split__text">
-        <h2 class="split__heading">Our Events</h2>
+  <!-- Our events: photo on the left -->
+  <section class="story">
+    <div class="story__inner">
+      <TapedPhoto
+        src={events}
+        alt="Smiling JSA members in front of blooming flowers"
+        width={548}
+        height={400}
+        tilt={-1.8}
+        sizes="548px"
+      />
+      <div class="story__text" data-reveal>
+        <h2 class="story__heading">Our Events</h2>
         <p>
           JSA hosts weekly general meetings and weekend events, as well as project teams, and SPOOOORTS to keep your
           calendar packed with fun times.
         </p>
-        <p class="split__gap">
+        <p>
           Like most culture clubs on campus, JSA also has a “senpai-kouhai” (big-little) program that pairs older,
           experienced members with new members.
         </p>
@@ -267,88 +261,67 @@ const projects = [
     border-color: transparent;
   }
 
-  /* ---------- Shared photo frame: white border + shadow, rounded photo ---------- */
-  .photo-frame {
-    border: 2px solid var(--color-white);
-    border-radius: 10px;
-    background: var(--color-white);
-    box-shadow: var(--shadow-frame);
-    overflow: hidden;
-    flex: none;
+  /* ---------- Story sections: a taped photo next to the text, alternating sides ---------- */
+  .story {
+    padding: 110px 0;
   }
 
-  .photo-frame--crimson {
-    border-color: var(--color-crimson);
-    background: var(--color-crimson);
-  }
-
-  .photo-frame :global(img) {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 8px;
-  }
-
-  /* ---------- Text + photo sections: fluid, up to 1600px wide, like the Figma Home ---------- */
-  .split--red {
+  .story--red {
+    padding: 96px 0;
     background: var(--color-red);
   }
 
-  .split__content {
+  .story__inner {
     display: flex;
     align-items: center;
-    gap: 64px;
-    max-width: 1600px;
+    gap: 100px;
+    max-width: 1440px;
     margin-inline: auto;
-    padding: 64px 80px;
+    padding-inline: 120px;
   }
 
-  .split__photo,
-  .split__text {
+  .story__text {
     flex: 1 1 0;
     min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    color: var(--color-text-soft);
+    font-size: 21px;
+    font-weight: var(--weight-light);
+    line-height: 1.6;
   }
 
-  .split__photo {
-    height: 440px;
-  }
-
-  .split__photo--short {
-    height: 420px;
-  }
-
-  .split__text {
-    color: var(--color-ink);
-    font-size: 22px;
-    line-height: 33px;
-  }
-
-  .split__text--white {
+  .story__text--white {
     color: var(--color-white);
   }
 
-  .split__heading {
+  .story__heading {
     color: var(--color-red);
-    font-size: 56px;
-    font-weight: var(--weight-bold);
-    line-height: 64.4px;
-    margin-bottom: 28px;
+    font-size: 76px;
+    font-weight: var(--weight-semibold);
+    letter-spacing: -0.02em;
+    line-height: 1.05;
   }
 
-  .split__heading--regular {
-    font-weight: var(--weight-regular);
-    margin-bottom: 0;
-  }
-
-  .split--red .split__heading {
+  .story__heading--bold {
     color: var(--color-white);
+    font-size: 64px;
+    font-weight: var(--weight-bold);
+    letter-spacing: -0.025em;
+    line-height: 1.08;
   }
 
-  .split__gap {
-    margin-top: 28px;
+  .story__strong {
+    color: var(--color-ink);
+    font-weight: var(--weight-medium);
   }
 
-  .split__link {
+  .story__small {
+    font-size: 19px;
+  }
+
+  .story__link {
     text-decoration: underline;
   }
 
