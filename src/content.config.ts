@@ -21,6 +21,18 @@ const boards = defineCollection({
     }),
 });
 
+// One Markdown file per photo gallery event. `order` runs newest first; odd orders fill the left column
+// of the Photos page and even orders the right column, matching the Wix layout.
+const events = defineCollection({
+  loader: glob({ pattern: "**/*.md", base: "./src/content/events" }),
+  schema: ({ image }) =>
+    z.object({
+      title: z.string(),
+      order: z.number(),
+      cover: image(),
+    }),
+});
+
 // One file per past board era, shown on the Eras page.
 const eras = defineCollection({
   loader: glob({ pattern: "**/*.json", base: "./src/content/eras" }),
@@ -45,4 +57,4 @@ const eras = defineCollection({
   }),
 });
 
-export const collections = { boards, eras };
+export const collections = { boards, eras, events };
