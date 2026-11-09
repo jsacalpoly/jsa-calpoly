@@ -20,6 +20,9 @@ const projects = [
       "Recipes, cooking events, and more! Cookbook welcomes everyone who loves to cook (or eat)! Keep up with the GroupMe to see when we meet!",
     image: cookbook,
     color: "var(--color-coral)",
+    photoTilt: -2.5,
+    paperTilt: -1.2,
+    offset: 0,
   },
   {
     title: "Torii",
@@ -27,6 +30,9 @@ const projects = [
       "We're building a life size torii gate at the Cal Poly Arboretum this fall! Learn by doing - Armstrong would be proud.",
     image: torii,
     color: "var(--color-orange)",
+    photoTilt: 2,
+    paperTilt: 1,
+    offset: 52,
   },
   {
     title: "ゲンKEY",
@@ -35,6 +41,11 @@ const projects = [
     image: genkey,
     color: "var(--color-pink)",
     jpTitle: true,
+    photoTilt: -1.6,
+    paperTilt: -0.6,
+    offset: 20,
+    // Keep the top of the photo so both performers' faces stay in frame.
+    focus: "50% 0%",
   },
 ];
 ---
@@ -329,24 +340,26 @@ const projects = [
   }
 
   /* ---------- Projects ---------- */
-  .projects__title {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 178.4px;
-    background: var(--color-red);
-    color: var(--color-white);
-    font-size: 72px;
-    font-weight: var(--weight-semibold);
-    line-height: 86.4px;
+  .projects {
+    padding: 120px 80px 130px;
+    background: var(--color-white);
   }
 
+  .projects__title {
+    color: var(--color-red);
+    font-size: 68px;
+    font-weight: var(--weight-semibold);
+    letter-spacing: -0.015em;
+    line-height: 1.05;
+    text-align: center;
+  }
+
+  /* The photos stick out above the papers, so leave room for them under the title. */
   .projects__cards {
     display: flex;
-    align-items: stretch;
-    gap: 24px;
-    max-width: 1600px;
-    margin-inline: auto;
-    padding: 15px 80px 0;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 32px;
+    margin-top: 70px;
   }
 </style>
