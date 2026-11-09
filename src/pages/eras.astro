@@ -23,17 +23,39 @@ const archiveRows = [archive.slice(0, 3), archive.slice(3, 6), archive.slice(6, 
   <section class="banner">
     <div class="stage banner__stage">
       <div class="banner__blossoms-right">
-        <Image src={blossomsRight} alt="" width={458} height={305} />
+        <Image src={blossomsRight} alt="" width={458} height={305} data-reveal style="--reveal-delay: 0.3s" />
       </div>
-      <Image class="banner__blossoms-left" src={blossomsLeft} alt="" width={238} height={212} />
+      <Image
+        class="banner__blossoms-left"
+        src={blossomsLeft}
+        alt=""
+        width={238}
+        height={212}
+        data-reveal
+        style="--reveal-delay: 0.3s"
+      />
 
-      <p class="banner__kicker">Our Legacy</p>
-      <h1 class="banner__title">JSA Board Through the Eras</h1>
-      <p class="banner__subtitle">Honoring our founders</p>
+      <p class="banner__kicker" data-reveal>
+        Our Legacy
+      </p>
+      <h1 class="banner__title" data-reveal style="--reveal-delay: 0.1s">
+        JSA Board Through the Eras
+      </h1>
+      <p class="banner__subtitle" data-reveal style="--reveal-delay: 0.2s">
+        Honoring our founders
+      </p>
 
-      <span class="banner__rule banner__rule--left"></span>
-      <Image class="banner__flower" src={headerFlower} alt="" width={45} height={45} />
-      <span class="banner__rule banner__rule--right"></span>
+      <span class="banner__rule banner__rule--left" data-reveal="line" style="--reveal-delay: 0.35s"></span>
+      <Image
+        class="banner__flower"
+        src={headerFlower}
+        alt=""
+        width={45}
+        height={45}
+        data-reveal
+        style="--reveal-delay: 0.3s"
+      />
+      <span class="banner__rule banner__rule--right" data-reveal="line" style="--reveal-delay: 0.35s"></span>
     </div>
   </section>
 
@@ -48,7 +70,7 @@ const archiveRows = [archive.slice(0, 3), archive.slice(3, 6), archive.slice(6, 
     <div class="eras__inner container">
       {last && <EraCard {...last.data} variant="feature" badge="Last era" />}
 
-      <div class="eras__heading">
+      <div class="eras__heading" data-reveal="up">
         <span class="eras__jp">近年</span>
         <h2 class="eras__title">Recent eras</h2>
         <div class="eras__divider">
@@ -58,12 +80,12 @@ const archiveRows = [archive.slice(0, 3), archive.slice(3, 6), archive.slice(6, 
         </div>
       </div>
       <div class="eras__row">
-        {recent.map((era) => (
-          <EraCard {...era.data} variant="recent" />
+        {recent.map((era, i) => (
+          <EraCard {...era.data} variant="recent" delay={i * 0.12} />
         ))}
       </div>
 
-      <div class="eras__heading">
+      <div class="eras__heading" data-reveal="up">
         <span class="eras__jp">歴代</span>
         <h2 class="eras__title">Earlier eras</h2>
         <div class="eras__divider">
@@ -74,8 +96,8 @@ const archiveRows = [archive.slice(0, 3), archive.slice(3, 6), archive.slice(6, 
       </div>
       {archiveRows.map((row) => (
         <div class="eras__row">
-          {row.map((era) => (
-            <EraCard {...era.data} variant="small" />
+          {row.map((era, i) => (
+            <EraCard {...era.data} variant="small" delay={i * 0.1} />
           ))}
         </div>
       ))}
@@ -85,9 +107,13 @@ const archiveRows = [archive.slice(0, 3), archive.slice(3, 6), archive.slice(6, 
   <!-- Will Kriss's White Dream reflection -->
   <section class="reflection">
     <div class="stage reflection__stage">
-      <h2 class="reflection__name">WILL KRISS'S</h2>
-      <p class="reflection__label reflection__label--highlights">HIGHLIGHTS:</p>
-      <p class="reflection__text reflection__text--highlights">
+      <h2 class="reflection__name" data-reveal>
+        WILL KRISS'S
+      </h2>
+      <p class="reflection__label reflection__label--highlights" data-reveal>
+        HIGHLIGHTS:
+      </p>
+      <p class="reflection__text reflection__text--highlights" data-reveal>
         The general meetings were definitely my favorite part of the White Dream era. Going through a period of
         transition from small club to big club, the general meetings were the main time we got to interact and entertain
         the majority of JSA. I really like to think that we made our general meetings unique and exciting every week.
@@ -96,27 +122,33 @@ const archiveRows = [archive.slice(0, 3), archive.slice(3, 6), archive.slice(6, 
         energy at the meetings and I think that's where we as a board shined the brightest.
       </p>
 
-      <p class="reflection__label reflection__label--advice">ADVICE FOR FUTURE JSA:</p>
-      <p class="reflection__text reflection__text--advice">
+      <p class="reflection__label reflection__label--advice" data-reveal>
+        ADVICE FOR FUTURE JSA:
+      </p>
+      <p class="reflection__text reflection__text--advice" data-reveal>
         There are two main responsibilities or elements or whatever you want to call it for being on JSA board. The
         first is obviously making stuff happen. You can plan it all out beforehand or learn how to do it on the fly, but
         you have a responsibility to make things actually happen. The second element is creative direction. JSA is
         weird. Not in like a "society doesn't understand me" weird, but a fun, do things out of the box type of way. Be
         creative. Try to do things differently. The worst thing you can be is boring.
       </p>
-      <p class="reflection__text reflection__text--passion">
+      <p class="reflection__text reflection__text--passion" data-reveal>
         Now none of this is going to happen without your passion. Find what you're passionate about and find a way to
         bring it into JSA. Keep in mind that what you want to do needs to be for the best of the club, but the club
         won't strive unless you fully believe in what you're doing. If you're passionate about what you're doing for the
         club, it will show and you'll be able to go above and beyond.
       </p>
 
-      <h2 class="reflection__title">
+      <h2 class="reflection__title" data-reveal>
         <span class="reflection__title-line reflection__title-line--white-dream">WHITE DREAM</span>
         <span class="reflection__title-line reflection__title-line--reflection">REFLECTION</span>
       </h2>
-      <p class="reflection__love">AS ALWAYS love y'all &lt;3 &lt;3 &lt;3</p>
-      <p class="reflection__sign">- Will Kriss</p>
+      <p class="reflection__love" data-reveal>
+        AS ALWAYS love y'all &lt;3 &lt;3 &lt;3
+      </p>
+      <p class="reflection__sign" data-reveal>
+        - Will Kriss
+      </p>
     </div>
   </section>
 </BaseLayout>

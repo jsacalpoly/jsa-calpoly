@@ -23,9 +23,11 @@ interface Props {
   variant: "feature" | "recent" | "small";
   /** Text in the pill on the card's top edge. Defaults to the year. */
   badge?: string;
+  /** Seconds to wait before the entrance, so a row of cards appears one after another. */
+  delay?: number;
 }
 
-const { year, heading, president, vicePresident, roles, variant, badge } = Astro.props;
+const { year, heading, president, vicePresident, roles, variant, badge, delay = 0 } = Astro.props;
 
 const icons = {
   treasurer: iconTreasurer,
@@ -46,7 +48,7 @@ const yearText = year.replace("-", "–");
 const featured = variant === "feature";
 ---
 
-<article class:list={["era-card", `era-card--${variant}`]}>
+<article class:list={["era-card", `era-card--${variant}`]} data-reveal="up" style={`--reveal-delay: ${delay}s`}>
   <span class="era-card__pill">{badge ?? yearText}</span>
   {variant !== "small" && <Image class="era-card__blossom" src={blossom} alt="" width={184} height={186} />}
 
