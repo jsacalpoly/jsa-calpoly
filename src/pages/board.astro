@@ -33,17 +33,19 @@ const year = [
   <section class="hero">
     <div class="hero__row container">
       <div class="hero__copy">
-        <p class="eyebrow">
+        <p class="eyebrow" data-reveal="up">
           <span class="eyebrow__rule"></span>
           <span class="eyebrow__label">Who we are</span>
           <span class="eyebrow__jp">私たちについて</span>
         </p>
-        <h1 class="hero__title">About JSA</h1>
-        <p class="hero__intro">
+        <h1 class="hero__title" data-reveal="up" style="--reveal-delay: 0.1s">
+          About JSA
+        </h1>
+        <p class="hero__intro" data-reveal="up" style="--reveal-delay: 0.2s">
           JSA is Cal Poly SLO’s Japanese Student Association — a non-profit social and cultural club dedicated to
           sharing and celebrating Japanese culture, and to building a JSA “family” on campus. What more could you want?
         </p>
-        <div class="hero__actions">
+        <div class="hero__actions" data-reveal="up" style="--reveal-delay: 0.3s">
           <a class="button-outline" href="/contact">
             Contact us
           </a>
@@ -52,7 +54,7 @@ const year = [
           </a>
         </div>
       </div>
-      <div class="hero__photo">
+      <div class="hero__photo" data-reveal style="--reveal-delay: 0.2s">
         <Image
           src={aboutPhoto}
           alt="JSA table sign decorated with origami and stickers"
@@ -66,14 +68,14 @@ const year = [
 
   <!-- A year with JSA -->
   <section class="year">
-    <div class="year__heading">
+    <div class="year__heading" data-reveal="up">
       <span class="year__jp">一年</span>
       <h2 class="year__title">A year with JSA</h2>
       <p class="year__subtitle">Some of our biggest annual events</p>
     </div>
     <div class="year__cards container">
-      {year.map((item) => (
-        <article class="season-card">
+      {year.map((item, i) => (
+        <article class="season-card" data-reveal="up" style={`--reveal-delay: ${i * 0.12}s`}>
           <div class="season-card__top">
             <span class="season-card__season">{item.season}</span>
             <span class="season-card__kanji" aria-hidden="true">
@@ -90,8 +92,8 @@ const year = [
   <!-- Quick facts -->
   <section class="facts">
     <div class="facts__row container">
-      {facts.map((fact) => (
-        <div class="fact">
+      {facts.map((fact, i) => (
+        <div class="fact" data-reveal="up" style={`--reveal-delay: ${i * 0.08}s`}>
           <h3 class="fact__title">{fact.title}</h3>
           <p class="fact__text">{fact.text}</p>
         </div>
@@ -102,7 +104,7 @@ const year = [
   <!-- Senpai x Kouhai -->
   <section class="senpai">
     <div class="senpai__card container">
-      <div class="senpai__photo">
+      <div class="senpai__photo" data-reveal>
         <Image
           src={senpaiPhoto}
           alt="JSA members posing together in their senpai-kouhai cords"
@@ -111,7 +113,7 @@ const year = [
           quality={85}
         />
       </div>
-      <div class="senpai__copy">
+      <div class="senpai__copy" data-reveal="up" style="--reveal-delay: 0.15s">
         <p class="eyebrow">
           <span class="eyebrow__rule"></span>
           <span class="eyebrow__label">Big-little program</span>
