@@ -126,18 +126,21 @@ const projects = [
   /* ---------- Hero (79 to 689) ---------- */
   .hero {
     position: relative;
-    height: 610px;
+    /* Fills the screen under the header, like Wix; never shorter than the 610px design. */
+    height: max(610px, calc(100vh - var(--header-height)));
     background: var(--color-lavender);
     overflow: hidden;
   }
 
   /* Sits above the slideshow; only the button takes clicks so the slideshow arrows stay clickable. */
   .hero__stage {
-    position: relative;
+    position: absolute;
     z-index: 1;
+    left: 50%;
+    top: 50%;
+    translate: -50% -50%;
     width: var(--page-width);
-    height: 100%;
-    margin-inline: auto;
+    height: 610px;
     pointer-events: none;
   }
 

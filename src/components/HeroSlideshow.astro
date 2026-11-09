@@ -1,7 +1,5 @@
 ---
 import { Image } from "astro:assets";
-import arrowLeft from "../assets/home/hero-arrow-left.png";
-import arrowRight from "../assets/home/hero-arrow-right.png";
 import pier from "../assets/home/slides/pier.jpg";
 import stage from "../assets/home/slides/stage.jpg";
 import lawn from "../assets/home/slides/lawn.jpg";
@@ -33,10 +31,10 @@ const slides = [
 
   <div class="slideshow__stage">
     <button class="slideshow__arrow slideshow__arrow--prev" type="button" aria-label="Previous slide" data-prev>
-      <Image src={arrowLeft} alt="" width={30} height={59} />
+      <svg viewBox="0 0 30 59" width="30" height="59" aria-hidden="true"><path d="M28 2 3 29.5 28 57" /></svg>
     </button>
     <button class="slideshow__arrow slideshow__arrow--next" type="button" aria-label="Next slide" data-next>
-      <Image src={arrowRight} alt="" width={30} height={59} />
+      <svg viewBox="0 0 30 59" width="30" height="59" aria-hidden="true"><path d="M2 2 27 29.5 2 57" /></svg>
     </button>
   </div>
 </div>
@@ -66,10 +64,11 @@ const slides = [
   /* Arrows sit on the 1440px design grid, like the rest of the hero. */
   .slideshow__stage {
     position: absolute;
-    inset: 0 auto;
     left: 50%;
-    translate: -50% 0;
+    top: 50%;
+    translate: -50% -50%;
     width: var(--page-width);
+    height: 610px;
     pointer-events: none;
   }
 
@@ -85,6 +84,15 @@ const slides = [
     pointer-events: auto;
     z-index: 2;
     transition: opacity 0.3s ease;
+  }
+
+  .slideshow__arrow svg {
+    display: block;
+    fill: none;
+    stroke: #fff;
+    stroke-width: 2.5;
+    stroke-linecap: square;
+    filter: drop-shadow(0 0 4px rgb(0 0 0 / 0.25));
   }
 
   .slideshow__arrow:hover,
