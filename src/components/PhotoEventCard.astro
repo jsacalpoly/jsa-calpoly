@@ -10,32 +10,26 @@ interface Props {
 }
 
 const { title, cover, album } = Astro.props;
-const Tag = album ? "a" : "article";
 ---
 
-<Tag
-  class:list={["photo-event-card", { "photo-event-card--link": album }]}
-  {...(album
-    ? { href: album, target: "_blank", rel: "noopener noreferrer", "aria-label": `Open the ${title} photo album` }
-    : {})}
->
+<article class:list={["photo-event-card", { "photo-event-card--link": album }]}>
   <h3 class="photo-event-card__title">{title}</h3>
   <span class="photo-event-card__rule"></span>
   <div class="photo-event-card__text"><slot /></div>
   {
     album && (
-      <span class="photo-event-card__button" aria-hidden="true">
+      <a class="photo-event-card__button" href={album} target="_blank" rel="noopener noreferrer" aria-label={`Open the ${title} photo album`}>
         Open album
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <path d="M7 17L17 7M9 7h8v8" />
         </svg>
-      </span>
+      </a>
     )
   }
   <div class="photo-event-card__photo">
     <Image src={cover} alt={`Photos from ${title}`} width={400} height={242} />
   </div>
-</Tag>
+</article>
 
 <style>
   .photo-event-card {
@@ -50,14 +44,11 @@ const Tag = album ? "a" : "article";
   }
 
   .photo-event-card--link {
-    display: block;
-    cursor: pointer;
-    text-decoration: none;
     transition: transform 0.15s ease, box-shadow 0.15s ease;
   }
 
   .photo-event-card--link:hover,
-  .photo-event-card--link:focus-visible {
+  .photo-event-card--link:focus-within {
     transform: translateY(-4px);
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
   }
@@ -68,7 +59,7 @@ const Tag = album ? "a" : "article";
   }
 
   .photo-event-card--link:hover .photo-event-card__text,
-  .photo-event-card--link:focus-visible .photo-event-card__text {
+  .photo-event-card--link:focus-within .photo-event-card__text {
     opacity: 0;
   }
 
@@ -89,13 +80,19 @@ const Tag = album ? "a" : "article";
     font-weight: 600;
     line-height: normal;
     opacity: 0;
+    text-decoration: none;
+    cursor: pointer;
     transition: opacity 0.15s ease;
-    pointer-events: none;
   }
 
   .photo-event-card--link:hover .photo-event-card__button,
-  .photo-event-card--link:focus-visible .photo-event-card__button {
+  .photo-event-card__button:focus-visible {
     opacity: 1;
+  }
+
+  .photo-event-card__button:focus-visible {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 3px;
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -104,11 +101,6 @@ const Tag = album ? "a" : "article";
     .photo-event-card__button {
       transition: none;
     }
-  }
-
-  .photo-event-card--link:focus-visible {
-    outline: 2px solid var(--color-ink);
-    outline-offset: 3px;
   }
 
   .photo-event-card__title {
