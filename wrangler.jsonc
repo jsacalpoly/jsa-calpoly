@@ -2,6 +2,10 @@
   "name": "jsa-calpoly",
   // Set this to the date you first deploy
   "compatibility_date": "2026-11-08",
+  // Build the site first, so `wrangler deploy` works even when the host only runs the deploy command.
+  "build": {
+    "command": "npm run build"
+  },
   "assets": {
     "directory": "./dist"
   }
