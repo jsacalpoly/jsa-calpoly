@@ -23,7 +23,7 @@ const archiveRows = [archive.slice(0, 3), archive.slice(3, 6), archive.slice(6, 
   <section class="banner">
     <div class="stage banner__stage">
       <div class="banner__blossoms-right">
-        <Image src={blossomsRight} alt="" width={458} height={305} data-reveal style="--reveal-delay: 0.3s" />
+        <Image src={blossomsRight} alt="" width={458} height={305} />
       </div>
       <Image
         class="banner__blossoms-left"
@@ -35,17 +35,13 @@ const archiveRows = [archive.slice(0, 3), archive.slice(3, 6), archive.slice(6, 
         style="--reveal-delay: 0.3s"
       />
 
-      <p class="banner__kicker" data-reveal>
-        Our Legacy
-      </p>
-      <h1 class="banner__title" data-reveal style="--reveal-delay: 0.1s">
+      <p class="banner__kicker">Our Legacy</p>
+      <h1 class="banner__title" data-reveal>
         JSA Board Through the Eras
       </h1>
-      <p class="banner__subtitle" data-reveal style="--reveal-delay: 0.2s">
-        Honoring our founders
-      </p>
+      <p class="banner__subtitle">Honoring our founders</p>
 
-      <span class="banner__rule banner__rule--left" data-reveal="line" style="--reveal-delay: 0.35s"></span>
+      <span class="banner__rule banner__rule--left" data-reveal="line" style="--reveal-delay: 0.15s"></span>
       <Image
         class="banner__flower"
         src={headerFlower}
@@ -55,7 +51,7 @@ const archiveRows = [archive.slice(0, 3), archive.slice(3, 6), archive.slice(6, 
         data-reveal
         style="--reveal-delay: 0.3s"
       />
-      <span class="banner__rule banner__rule--right" data-reveal="line" style="--reveal-delay: 0.35s"></span>
+      <span class="banner__rule banner__rule--right" data-reveal="line" style="--reveal-delay: 0.15s"></span>
     </div>
   </section>
 
@@ -81,7 +77,7 @@ const archiveRows = [archive.slice(0, 3), archive.slice(3, 6), archive.slice(6, 
       </div>
       <div class="eras__row">
         {recent.map((era, i) => (
-          <EraCard {...era.data} variant="recent" delay={i * 0.12} />
+          <EraCard {...era.data} variant="recent" delay={i * 0.08} />
         ))}
       </div>
 
@@ -97,7 +93,7 @@ const archiveRows = [archive.slice(0, 3), archive.slice(3, 6), archive.slice(6, 
       {archiveRows.map((row) => (
         <div class="eras__row">
           {row.map((era, i) => (
-            <EraCard {...era.data} variant="small" delay={i * 0.1} />
+            <EraCard {...era.data} variant="small" delay={i * 0.06} />
           ))}
         </div>
       ))}
@@ -107,13 +103,9 @@ const archiveRows = [archive.slice(0, 3), archive.slice(3, 6), archive.slice(6, 
   <!-- Will Kriss's White Dream reflection -->
   <section class="reflection">
     <div class="stage reflection__stage">
-      <h2 class="reflection__name" data-reveal>
-        WILL KRISS'S
-      </h2>
-      <p class="reflection__label reflection__label--highlights" data-reveal>
-        HIGHLIGHTS:
-      </p>
-      <p class="reflection__text reflection__text--highlights" data-reveal>
+      <h2 class="reflection__name">WILL KRISS'S</h2>
+      <p class="reflection__label reflection__label--highlights">HIGHLIGHTS:</p>
+      <p class="reflection__text reflection__text--highlights">
         The general meetings were definitely my favorite part of the White Dream era. Going through a period of
         transition from small club to big club, the general meetings were the main time we got to interact and entertain
         the majority of JSA. I really like to think that we made our general meetings unique and exciting every week.
@@ -122,33 +114,27 @@ const archiveRows = [archive.slice(0, 3), archive.slice(3, 6), archive.slice(6, 
         energy at the meetings and I think that's where we as a board shined the brightest.
       </p>
 
-      <p class="reflection__label reflection__label--advice" data-reveal>
-        ADVICE FOR FUTURE JSA:
-      </p>
-      <p class="reflection__text reflection__text--advice" data-reveal>
+      <p class="reflection__label reflection__label--advice">ADVICE FOR FUTURE JSA:</p>
+      <p class="reflection__text reflection__text--advice">
         There are two main responsibilities or elements or whatever you want to call it for being on JSA board. The
         first is obviously making stuff happen. You can plan it all out beforehand or learn how to do it on the fly, but
         you have a responsibility to make things actually happen. The second element is creative direction. JSA is
         weird. Not in like a "society doesn't understand me" weird, but a fun, do things out of the box type of way. Be
         creative. Try to do things differently. The worst thing you can be is boring.
       </p>
-      <p class="reflection__text reflection__text--passion" data-reveal>
+      <p class="reflection__text reflection__text--passion">
         Now none of this is going to happen without your passion. Find what you're passionate about and find a way to
         bring it into JSA. Keep in mind that what you want to do needs to be for the best of the club, but the club
         won't strive unless you fully believe in what you're doing. If you're passionate about what you're doing for the
         club, it will show and you'll be able to go above and beyond.
       </p>
 
-      <h2 class="reflection__title" data-reveal>
+      <h2 class="reflection__title">
         <span class="reflection__title-line reflection__title-line--white-dream">WHITE DREAM</span>
         <span class="reflection__title-line reflection__title-line--reflection">REFLECTION</span>
       </h2>
-      <p class="reflection__love" data-reveal>
-        AS ALWAYS love y'all &lt;3 &lt;3 &lt;3
-      </p>
-      <p class="reflection__sign" data-reveal>
-        - Will Kriss
-      </p>
+      <p class="reflection__love">AS ALWAYS love y'all &lt;3 &lt;3 &lt;3</p>
+      <p class="reflection__sign">- Will Kriss</p>
     </div>
   </section>
 </BaseLayout>
