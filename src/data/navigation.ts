@@ -5,5 +5,4 @@ export const navLinks = [
   { name: "Eras", href: "/eras", gap: 29.55 },
   { name: "26-27", href: "/26-27", gap: 29.55 },
   { name: "Photos", href: "/photos", gap: 29.25 },
-  { name: "Senpai Kouhai", href: "/senpai-kouhai-mentorship", gap: 28.75 },
 ];
