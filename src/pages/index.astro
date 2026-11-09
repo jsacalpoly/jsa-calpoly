@@ -19,7 +19,6 @@ const projects = [
       "Recipes, cooking events, and more! Cookbook welcomes everyone who loves to cook (or eat)! Keep up with the GroupMe to see when we meet!",
     image: cookbook,
     color: "var(--color-coral)",
-    height: 584,
   },
   {
     title: "Torii",
@@ -48,77 +47,74 @@ const projects = [
         <span class="hero__title-line hero__title-line--white">WE ARE</span>
         <span class="hero__title-line hero__title-line--red">JSA</span>
       </h1>
-      <a class="hero__button" href="/board" data-reveal>ようこそ!</a>
+      <a class="hero__button" href="/board" data-reveal>ようこそ!</a>{" "}
     </div>
   </section>
 
   <!-- Welcome -->
-  <section class="welcome container">
-    <div class="photo-frame welcome__photo" data-reveal>
-      <Image src={welcome} alt="A large group of JSA members posing outdoors" width={1056} height={702} />
-    </div>
-    <div class="welcome__text" data-reveal>
-      <h2 class="welcome__heading">Welcome :D</h2>
-      <p class="welcome__lead">
-        We are Cal Poly's Japanese Student Association, dedicated to sharing and celebrating Japanese culture in
-        addition to fostering a JSA "family" on campus.
-      </p>
-      <p class="welcome__open">JSA is open to everyone at Cal Poly!</p>
+  <section class="split">
+    <div class="split__content">
+      <div class="photo-frame split__photo" data-reveal>
+        <Image src={welcome} alt="A large group of JSA members posing outdoors" width={1056} height={702} />
+      </div>
+      <div class="split__text" data-reveal>
+        <h2 class="split__heading split__heading--regular">Welcome :D</h2>
+        <p>
+          We are Cal Poly's Japanese Student Association, dedicated to sharing and celebrating Japanese culture in
+          addition to fostering a JSA "family" on campus.
+        </p>
+        <p class="split__gap">JSA is open to everyone at Cal Poly!</p>
+      </div>
     </div>
   </section>
 
   <!-- Join the family -->
-  <section class="band join">
-    <div class="container join__inner">
-      <div class="join__text">
-        <h2 class="join__heading">Join the family!!</h2>
+  <section class="split split--red">
+    <div class="split__content">
+      <div class="split__text split__text--white">
+        <h2 class="split__heading">Join the family!!</h2>
         <p>
           The easiest way to join JSA is to drop by our general meetings - in Baker 107, every Wednesday at 7pm. We
           hope to see you there!
         </p>
-        <p>
-          Follow the <a href="https://www.instagram.com/calpolyjsa" class="join__link">Cal Poly JSA Instagram</a>
+        <p class="split__gap">
+          Follow the <a href="https://www.instagram.com/calpolyjsa" class="split__link">Cal Poly JSA Instagram</a>{" "}
           (@calpolyjsa) where we post club updates and event/meeting reminders! You can also join the JSA GroupMe or dm
           the instagram for more info!
         </p>
       </div>
-      <div class="photo-frame photo-frame--crimson join__photo">
+      <div class="photo-frame photo-frame--crimson split__photo split__photo--short">
         <Image src={join} alt="JSA members smiling together in a park" width={956} height={666} />
       </div>
     </div>
   </section>
 
   <!-- Our events -->
-  <section class="events container">
-    <div class="photo-frame events__photo">
-      <Image src={events} alt="Smiling JSA members in front of blooming flowers" width={1030} height={770} />
-    </div>
-    <div class="events__text">
-      <h2 class="events__heading">Our Events</h2>
-      <p>
-        JSA hosts weekly general meetings and weekend events, as well as project teams, and SPOOOORTS to keep your
-        calendar packed with fun times.
-      </p>
-      <p>
-        Like most culture clubs on campus, JSA also has a “senpai-kouhai” (big-little) program that pairs older,
-        experienced members with new members.
-      </p>
+  <section class="split">
+    <div class="split__content">
+      <div class="photo-frame split__photo">
+        <Image src={events} alt="Smiling JSA members in front of blooming flowers" width={1030} height={770} />
+      </div>
+      <div class="split__text">
+        <h2 class="split__heading">Our Events</h2>
+        <p>
+          JSA hosts weekly general meetings and weekend events, as well as project teams, and SPOOOORTS to keep your
+          calendar packed with fun times.
+        </p>
+        <p class="split__gap">
+          Like most culture clubs on campus, JSA also has a “senpai-kouhai” (big-little) program that pairs older,
+          experienced members with new members.
+        </p>
+      </div>
     </div>
   </section>
 
   <!-- Projects -->
   <section class="projects">
-    <h2 class="band band-title">JSA Projects</h2>
-    <div class="container projects__cards">
+    <h2 class="projects__title">JSA Projects</h2>
+    <div class="projects__cards">
       {projects.map((project) => <ProjectCard {...project} />)}
     </div>
-  </section>
-
-  <!-- Instagram -->
-  <section class="instagram">
-    <h2 class="band band-title">Follow JSA on Insta!</h2>
-    <!-- TODO: Instagram embed. The Wix site shows an empty 980x304 widget here, so it stays blank for now. -->
-    <div class="container instagram__embed" aria-hidden="true"></div>
   </section>
 </BaseLayout>
 
@@ -221,120 +217,75 @@ const projects = [
     border-radius: 8px;
   }
 
-  /* ---------- Welcome (689 to 1153) ---------- */
-  .welcome {
-    height: 464px;
-    padding-top: 74px;
-    display: flex;
-    align-items: flex-start;
-    gap: 45px;
-  }
-
-  .welcome__photo {
-    width: 532px;
-    height: 355px;
-  }
-
-  .welcome__text {
-    margin-top: 31.9px;
-    width: 391px;
-    font-size: 17px;
-    line-height: 29.8px;
-  }
-
-  .welcome__heading {
-    color: var(--color-red);
-    font-size: 41px;
-    font-weight: var(--weight-regular);
-    line-height: 71.8px;
-  }
-
-  .welcome__open {
-    margin-top: 29.4px;
-  }
-
-  /* ---------- Join the family (1153 to 1594) ---------- */
-  .join {
-    height: 441px;
+  /* ---------- Text + photo sections: fluid, up to 1600px wide, like the Figma Home ---------- */
+  .split--red {
     background: var(--color-red);
   }
 
-  .join__inner {
+  .split__content {
     display: flex;
-    align-items: flex-start;
-    height: 100%;
+    align-items: center;
+    gap: 64px;
+    max-width: 1600px;
+    margin-inline: auto;
+    padding: 64px 80px;
   }
 
-  .join__text {
-    margin: 76px 0 0 35px;
-    width: 391px;
+  .split__photo,
+  .split__text {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  .split__photo {
+    height: 440px;
+  }
+
+  .split__photo--short {
+    height: 420px;
+  }
+
+  .split__text {
+    color: var(--color-ink);
+    font-size: 22px;
+    line-height: 33px;
+  }
+
+  .split__text--white {
     color: var(--color-white);
-    font-size: 17px;
-    line-height: 23.5px;
   }
 
-  .join__heading {
-    margin-bottom: 23.5px;
-    font-size: 41px;
+  .split__heading {
+    color: var(--color-red);
+    font-size: 56px;
     font-weight: var(--weight-bold);
-    line-height: 23.5px;
+    line-height: 64.4px;
+    margin-bottom: 28px;
   }
 
-  .join__text p + p {
-    margin-top: 23.5px;
+  .split__heading--regular {
+    font-weight: var(--weight-regular);
+    margin-bottom: 0;
   }
 
-  .join__link {
+  .split--red .split__heading {
+    color: var(--color-white);
+  }
+
+  .split__gap {
+    margin-top: 28px;
+  }
+
+  .split__link {
     text-decoration: underline;
   }
 
-  .join__photo {
-    margin: 53px 0 0 27px;
-    width: 482px;
-    height: 337px;
-  }
-
-  /* ---------- Our events (1594 to 2064) ---------- */
-  .events {
-    height: 470px;
-    padding-top: 28px;
-    display: flex;
-    align-items: flex-start;
-    gap: 23px;
-  }
-
-  .events__photo {
-    margin-left: 35px;
-    width: 519px;
-    height: 389px;
-  }
-
-  .events__text {
-    margin-top: 37px;
-    width: 391px;
-    color: var(--color-ink);
-    font-size: 17px;
-    line-height: 23.5px;
-  }
-
-  .events__heading {
-    margin-bottom: 23.5px;
-    color: var(--color-red);
-    font-size: 41px;
-    font-weight: var(--weight-bold);
-    line-height: 23.5px;
-  }
-
-  .events__text p + p {
-    margin-top: 23.5px;
-  }
-
-  /* ---------- Section title bands (JSA Projects / Follow JSA on Insta!) ---------- */
-  .band-title {
-    height: 178.4px;
+  /* ---------- Projects ---------- */
+  .projects__title {
     display: flex;
     align-items: center;
     justify-content: center;
+    height: 178.4px;
     background: var(--color-red);
     color: var(--color-white);
     font-size: 72px;
@@ -342,19 +293,12 @@ const projects = [
     line-height: 86.4px;
   }
 
-  /* ---------- Projects ---------- */
   .projects__cards {
-    margin-top: 15px;
-    margin-bottom: 29px;
-    padding-left: 4px;
     display: flex;
-    align-items: flex-start;
-    gap: 23px;
-  }
-
-  /* ---------- Instagram ---------- */
-  .instagram__embed {
-    height: 304px;
-    margin-top: 12px;
+    align-items: stretch;
+    gap: 24px;
+    max-width: 1600px;
+    margin-inline: auto;
+    padding: 15px 80px 0;
   }
 </style>

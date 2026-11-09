@@ -8,16 +8,14 @@ interface Props {
   image: ImageMetadata;
   /** Card background, a CSS color or token like var(--color-coral). */
   color: string;
-  /** Card height in px (Figma cards differ by a few pixels). */
-  height?: number;
   /** Use the Japanese font for the title (GenKey). */
   jpTitle?: boolean;
 }
 
-const { title, description, image, color, height = 579, jpTitle = false } = Astro.props;
+const { title, description, image, color, jpTitle = false } = Astro.props;
 ---
 
-<article class="project-card" style={`--card-color: ${color}; --card-height: ${height}px;`}>
+<article class="project-card" style={`--card-color: ${color};`}>
   <div class="project-card__photo">
     <Image src={image} alt="" width={574} height={574} />
   </div>
@@ -26,10 +24,14 @@ const { title, description, image, color, height = 579, jpTitle = false } = Astr
 </article>
 
 <style>
+  /* Fluid card: the row stretches every card to the tallest one. */
   .project-card {
-    width: 309px;
-    height: var(--card-height);
-    padding: 13px 0 0 10px;
+    flex: 1 1 0;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 13px 10px 28px;
     border-radius: 12px;
     background: var(--card-color);
     box-shadow: var(--shadow-card);
@@ -37,7 +39,6 @@ const { title, description, image, color, height = 579, jpTitle = false } = Astr
   }
 
   .project-card__photo {
-    width: 287px;
     height: 287px;
     border-radius: 12px;
     background: var(--color-white);
@@ -52,12 +53,9 @@ const { title, description, image, color, height = 579, jpTitle = false } = Astr
   }
 
   .project-card__title {
-    /* Card is 309px wide but the photo is inset 10px left, so re-center on the card. */
-    margin: 21px 0 0 -10px;
-    width: 309px;
-    font-size: 22px;
+    font-size: 26px;
     font-weight: var(--weight-semibold);
-    line-height: normal;
+    line-height: 33.8px;
     color: #000;
   }
 
@@ -67,12 +65,9 @@ const { title, description, image, color, height = 579, jpTitle = false } = Astr
   }
 
   .project-card__description {
-    margin: 14px 0 0 -10px;
-    width: 309px;
-    padding-inline: 39.5px;
-    font-size: 15px;
+    font-size: 18px;
     font-weight: var(--weight-extralight);
-    line-height: 24px;
+    line-height: 27px;
     color: #000;
   }
 </style>
