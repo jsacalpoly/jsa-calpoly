@@ -9,22 +9,56 @@ import { navLinks } from "../data/navigation";
 
 const email = "jsacalpoly@gmail.com";
 
+// Shown under the copyright. Set when the site is built, as MM-DD-YY.
+const now = new Date();
+const changelog = [now.getMonth() + 1, now.getDate(), now.getFullYear() % 100]
+  .map((n) => String(n).padStart(2, "0"))
+  .join("-");
+
 const socials = [
   { label: "Instagram", href: "https://www.instagram.com/calpolyjsa", icon: instagram },
   { label: "GroupMe", href: "https://groupme.com/join_group/110719786/Ws1imRVH", icon: groupme },
   { label: "TikTok", href: "https://www.tiktok.com/@jsa_officialaccount", icon: tiktok },
   { label: "LinkedIn", href: "https://www.linkedin.com/company/cpjsa/", icon: linkedin },
 ];
+
+const githubHref = "https://github.com/jsacalpoly";
 ---
 
 <footer class="site-footer">
-  <div class="site-footer__inner container">
+  <div class="site-footer__inner">
     <div class="site-footer__brand">
       <a class="site-footer__name" href="/">
-        <Image src={logo} alt="" width={45} height={42} densities={[1, 2, 3]} />
+        <Image src={logo} alt="" width={52} height={49} densities={[1, 2, 3]} />
         <span>JAPANESE STUDENT ASSOCIATION</span>
       </a>
-      <p class="site-footer__place">Cal Poly San Luis Obispo</p>
+      <p class="site-footer__time">
+        <span class="site-footer__time-icon" data-time-icon aria-hidden="true">
+          <svg
+            class="icon-sun"
+            viewBox="0 0 22 22"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+          >
+            <circle cx="11" cy="11" r="4" />
+            <path d="M11 3.5v-3M11 18.5v3M3.5 11h-3M18.5 11h3M5.7 5.7 3.6 3.6M16.3 16.3l2.1 2.1M5.7 16.3l-2.1 2.1M16.3 5.7l2.1-2.1" />
+          </svg>
+          <svg
+            class="icon-moon"
+            viewBox="0 0 22 22"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linejoin="round"
+          >
+            <path d="M17.5 14.2A7.5 7.5 0 0 1 8.8 4.5a7.5 7.5 0 1 0 8.7 9.7Z" />
+          </svg>
+        </span>
+        <span data-time-text>&nbsp;</span>
+        <span>San Luis Obispo, CA</span>
+      </p>
     </div>
 
     <nav class="site-footer__nav" aria-label="Footer">
@@ -46,10 +80,18 @@ const socials = [
             </a>
           </li>
         ))}
+        <li>
+          <a href={githubHref} aria-label="GitHub">
+            <svg viewBox="0 0 16 16" width="28" height="28" fill="currentColor" aria-hidden="true">
+              <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8Z" />
+            </svg>
+          </a>
+        </li>
       </ul>
     </div>
 
     <p class="site-footer__copy">© 2026 Japanese Student Association, Cal Poly SLO</p>
+    <p class="site-footer__changelog">Changelog: {changelog}</p>
   </div>
 </footer>
 
@@ -57,53 +99,73 @@ const socials = [
   .site-footer {
     background: var(--color-white);
     color: var(--color-muted);
-    /* The rule belongs to the footer itself so it looks the same on every page. */
-    border-top: 1px solid var(--color-divider);
   }
 
-  /* A 3-column grid aligned to the 980px content column. */
+  /* Spans the whole screen. The top rule is part of the footer, so it is the same on every page. */
   .site-footer__inner {
     display: grid;
-    grid-template-columns: 400px 290px 1fr;
+    grid-template-columns: 662fr 327fr 339fr;
     grid-template-areas:
       "brand nav contact"
-      "copy copy copy";
-    padding: 40px 0 28px;
-  }
-
-  .site-footer__brand {
-    grid-area: brand;
+      "copy copy copy"
+      "log log log";
+    margin-inline: 56px;
+    padding: 44px 0 22px;
+    border-top: 1px solid var(--color-divider);
   }
 
   .site-footer__name {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 14px;
     color: var(--color-maroon);
-    font-size: 19px;
+    font-size: 26px;
     font-weight: var(--weight-semibold);
-    line-height: 28px;
+    line-height: 1.2;
   }
 
-  .site-footer__place {
-    margin-top: 12px;
-    font-size: 15px;
+  .site-footer__time {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 14px;
+    font-size: 17px;
     font-weight: var(--weight-light);
-    line-height: 22px;
+    line-height: 26px;
+  }
+
+  .site-footer__time-icon {
+    display: block;
+    width: 22px;
+    height: 22px;
+    margin-right: -2px;
+  }
+
+  .site-footer__time-icon svg {
+    display: none;
+    width: 100%;
+    height: 100%;
+  }
+
+  .site-footer__time-icon[data-phase="day"] .icon-sun,
+  .site-footer__time-icon:not([data-phase]) .icon-sun,
+  .site-footer__time-icon[data-phase="night"] .icon-moon {
+    display: block;
   }
 
   .site-footer__nav {
     grid-area: nav;
     display: grid;
-    grid-template-columns: 130px 150px;
-    grid-template-rows: repeat(3, auto);
+    grid-template-columns: 132px auto;
+    grid-template-rows: repeat(2, auto);
     grid-auto-flow: column;
-    row-gap: 12px;
+    row-gap: 20px;
     align-content: start;
+    justify-content: start;
   }
 
   .site-footer__nav a {
-    font-size: 16px;
+    font-size: 18px;
     font-weight: var(--weight-light);
     line-height: 24px;
     white-space: nowrap;
@@ -120,30 +182,38 @@ const socials = [
   }
 
   .site-footer__prompt {
-    font-size: 16px;
+    font-size: 18px;
     font-weight: var(--weight-light);
     line-height: 24px;
   }
 
   .site-footer__email {
     display: block;
-    margin-top: 4px;
+    margin-top: 8px;
     color: var(--color-ink);
-    font-size: 16px;
+    font-size: 18px;
     font-weight: var(--weight-regular);
     line-height: 24px;
   }
 
   .site-footer__social {
     display: flex;
-    gap: 20px;
-    margin: 20px 0 0;
+    gap: 24px;
+    margin: 32px 0 0;
     padding: 0;
     list-style: none;
   }
 
-  .site-footer__social a,
-  .site-footer__social img {
+  .site-footer__social a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+  }
+
+  .site-footer__social img,
+  .site-footer__social svg {
     display: block;
   }
 
@@ -154,16 +224,57 @@ const socials = [
     transition: opacity 0.15s;
   }
 
-  .site-footer__social a:hover img {
+  .site-footer__social svg {
+    color: var(--color-muted);
+    opacity: 0.8;
+    transition: opacity 0.15s;
+  }
+
+  .site-footer__social a:hover img,
+  .site-footer__social a:hover svg {
     opacity: 1;
   }
 
   .site-footer__copy {
     grid-area: copy;
-    margin-top: 56px;
+    margin-top: 60px;
     font-size: 13px;
     font-weight: var(--weight-light);
     line-height: 20px;
     text-align: center;
   }
+
+  .site-footer__changelog {
+    grid-area: log;
+    margin-top: 6px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    line-height: 18px;
+    text-align: center;
+    text-transform: uppercase;
+  }
 </style>
+
+<script>
+  // Cal Poly's local time, with a sun by day and a moon at night.
+  const icon = document.querySelector<HTMLElement>("[data-time-icon]");
+  const text = document.querySelector<HTMLElement>("[data-time-text]");
+
+  function update() {
+    if (!icon || !text) return;
+    const now = new Date();
+    text.textContent = now.toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+      timeZone: "America/Los_Angeles",
+    });
+    const hour = Number(
+      new Intl.DateTimeFormat("en-US", { hour: "numeric", hour12: false, timeZone: "America/Los_Angeles" }).format(now),
+    );
+    icon.dataset.phase = hour >= 6 && hour < 19 ? "day" : "night";
+  }
+
+  update();
+  setInterval(update, 30_000);
+</script>
