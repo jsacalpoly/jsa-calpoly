@@ -16,6 +16,16 @@ const boards = defineCollection({
           // "executive" members get the large cards at the top of the page.
           tier: z.enum(["executive", "member"]).default("member"),
           photo: image(),
+          // Shown in the "About ..." panel when the card is hovered.
+          about: z
+            .object({
+              // Name used in the panel title, e.g. "Zach" for Zachariah.
+              nickname: z.string().optional(),
+              year: z.string(),
+              hometown: z.string(),
+              food: z.string(),
+            })
+            .optional(),
         }),
       ),
     }),

@@ -2,23 +2,173 @@
   "year": "2026-2027",
   "eraName": "",
   "members": [
-    { "name": "Karl Aannestad", "role": "Vice President", "tier": "executive", "photo": "../../assets/board/karl-aannestad.png" },
-    { "name": "Lorraina Uyeno", "role": "President", "tier": "executive", "photo": "../../assets/board/lorraina-uyeno.png" },
-    { "name": "Momo Dobashi", "role": "Treasurer", "tier": "executive", "photo": "../../assets/board/momo-dobashi.png" },
-
-    { "name": "Lindsay Wong", "role": "Secretary", "photo": "../../assets/board/lindsay-wong.png" },
-    { "name": "Zachariah Myers", "role": "Sports Coordinator", "photo": "../../assets/board/zachariah-myers.png" },
-    { "name": "Ethan Ikenaga", "role": "Historian", "photo": "../../assets/board/ethan-ikenaga.png" },
-    { "name": "Grace Shigeyama", "role": "Media Coordinator", "photo": "../../assets/board/grace-shigeyama.png" },
-
-    { "name": "Jenna Shahid", "role": "Media Coordinator", "photo": "../../assets/board/jenna-shahid.png" },
-    { "name": "Maileia Rivera", "role": "Media Coordinator", "photo": "../../assets/board/maileia-rivera.png" },
-    { "name": "Kim Vuong", "role": "Cultural Ambassador", "photo": "../../assets/board/kim-vuong.png" },
-    { "name": "Noah Kaku", "role": "Culture / Events", "photo": "../../assets/board/noah-kaku.png" },
-
-    { "name": "Natalie Warrens", "role": "Culture / Events", "photo": "../../assets/board/natalie-warrens.png" },
-    { "name": "Tom Duffy", "role": "Event Coordinator", "photo": "../../assets/board/tom-duffy.png" },
-    { "name": "Alex Otis", "role": "Event Coordinator", "photo": "../../assets/board/alex-otis.png" },
-    { "name": "Bryce Imai", "role": "Event Coordinator", "photo": "../../assets/board/bryce-imai.png" }
+    {
+      "name": "Karl Aannestad",
+      "role": "Vice President",
+      "tier": "executive",
+      "photo": "../../assets/board/karl-aannestad.png",
+      "about": {
+        "nickname": "Karl",
+        "year": "3rd year electrical engineer",
+        "hometown": "san diego, california",
+        "food": "hiyashi chuka or inari sushi"
+      }
+    },
+    {
+      "name": "Lorraina Uyeno",
+      "role": "President",
+      "tier": "executive",
+      "photo": "../../assets/board/lorraina-uyeno.png",
+      "about": {
+        "nickname": "Lorraina",
+        "year": "3rd year child development",
+        "hometown": "santa barbara, california",
+        "food": "imagawayaki"
+      }
+    },
+    {
+      "name": "Momo Dobashi",
+      "role": "Treasurer",
+      "tier": "executive",
+      "photo": "../../assets/board/momo-dobashi.png",
+      "about": {
+        "nickname": "Momo",
+        "year": "3rd year electrical engineer",
+        "hometown": "san diego, california",
+        "food": "ramen / ramune"
+      }
+    },
+    {
+      "name": "Lindsay Wong",
+      "role": "Secretary",
+      "photo": "../../assets/board/lindsay-wong.png",
+      "about": {
+        "nickname": "Lindsay",
+        "year": "2nd year child development",
+        "hometown": "redwood shores, ca",
+        "food": "hiyashi chuka or inari sushi"
+      }
+    },
+    {
+      "name": "Zachariah Myers",
+      "role": "Sports Coordinator",
+      "photo": "../../assets/board/zachariah-myers.png",
+      "about": {
+        "nickname": "Zach",
+        "year": "2nd year experience industry management",
+        "hometown": "sacramento, ca",
+        "food": "okonomiyaki"
+      }
+    },
+    {
+      "name": "Ethan Ikenaga",
+      "role": "Historian",
+      "photo": "../../assets/board/ethan-ikenaga.png",
+      "about": {
+        "nickname": "Ethan",
+        "year": "2nd year computer science",
+        "hometown": "pasadena, california",
+        "food": "amaebi (sweet shrimp)"
+      }
+    },
+    {
+      "name": "Grace Shigeyama",
+      "role": "Media Coordinator",
+      "photo": "../../assets/board/grace-shigeyama.png",
+      "about": {
+        "nickname": "Grace",
+        "year": "2nd year environmental management & protection",
+        "hometown": "bellevue, washington",
+        "food": "yakiimo or katsu"
+      }
+    },
+    {
+      "name": "Jenna Shahid",
+      "role": "Media Coordinator",
+      "photo": "../../assets/board/jenna-shahid.png",
+      "about": {
+        "nickname": "Jenna",
+        "year": "2nd year political science",
+        "hometown": "redondo beach, ca",
+        "food": "chashudon!"
+      }
+    },
+    {
+      "name": "Maileia Rivera",
+      "role": "Media Coordinator",
+      "photo": "../../assets/board/maileia-rivera.png",
+      "about": {
+        "nickname": "Maileia",
+        "year": "2nd year graphic comms",
+        "hometown": "san fernando valley, ca",
+        "food": "katsu"
+      }
+    },
+    {
+      "name": "Kim Vuong",
+      "role": "Cultural Ambassador",
+      "photo": "../../assets/board/kim-vuong.png",
+      "about": {
+        "nickname": "Kimberly",
+        "year": "2nd year forest and fire science",
+        "hometown": "los angeles, california",
+        "food": "onsen eggs"
+      }
+    },
+    {
+      "name": "Noah Kaku",
+      "role": "Culture / Events",
+      "photo": "../../assets/board/noah-kaku.png",
+      "about": {
+        "nickname": "Noah",
+        "year": "2nd year city & regional planning",
+        "hometown": "irvine, california",
+        "food": "cold soba"
+      }
+    },
+    {
+      "name": "Natalie Warrens",
+      "role": "Culture / Events",
+      "photo": "../../assets/board/natalie-warrens.png",
+      "about": {
+        "nickname": "Natalie",
+        "year": "2nd year psychology",
+        "hometown": "portland, oregon",
+        "food": "karaage"
+      }
+    },
+    {
+      "name": "Tom Duffy",
+      "role": "Event Coordinator",
+      "photo": "../../assets/board/tom-duffy.png",
+      "about": {
+        "nickname": "Tom",
+        "year": "2rd year electrical engineer",
+        "hometown": "clayton, ca",
+        "food": "katsu"
+      }
+    },
+    {
+      "name": "Alex Otis",
+      "role": "Event Coordinator",
+      "photo": "../../assets/board/alex-otis.png",
+      "about": {
+        "nickname": "Alex",
+        "year": "2nd year computer science",
+        "hometown": "kapolei, hi",
+        "food": "my mommys yakisoba"
+      }
+    },
+    {
+      "name": "Bryce Imai",
+      "role": "Event Coordinator",
+      "photo": "../../assets/board/bryce-imai.png",
+      "about": {
+        "nickname": "Bryce",
+        "year": "2nd year physics",
+        "hometown": "ranchos palos verdes, ca",
+        "food": "mizu shingen mochi (raindrop mochi)"
+      }
+    }
   ]
 }
