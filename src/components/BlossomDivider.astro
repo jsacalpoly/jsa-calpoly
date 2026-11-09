@@ -1,16 +1,12 @@
 ---
 import { Image } from "astro:assets";
 
-import blossomsLeft from "../assets/board/blossoms-left.png";
-import blossomsRight from "../assets/board/blossoms-right.png";
 import flower from "../assets/eras/header-flower.png";
 ---
 
-<!-- The bottom edge of the Eras banner: a flower between two lines, with blossom branches in the corners. -->
+<!-- A flower between two lines, like the one under the Eras banner. -->
 <div class="divider" aria-hidden="true">
   <div class="divider__stage">
-    <Image class="divider__branch divider__branch--left" src={blossomsLeft} alt="" width={238} height={212} />
-    <Image class="divider__branch divider__branch--right" src={blossomsRight} alt="" width={458} height={305} />
     <span class="divider__line divider__line--left"></span>
     <Image class="divider__flower" src={flower} alt="" width={45} height={45} />
     <span class="divider__line divider__line--right"></span>
@@ -19,7 +15,7 @@ import flower from "../assets/eras/header-flower.png";
 
 <style>
   .divider {
-    height: 112px;
+    height: 64px;
     background: var(--color-white);
     overflow: hidden;
   }
@@ -36,22 +32,8 @@ import flower from "../assets/eras/header-flower.png";
     position: absolute;
   }
 
-  .divider__branch--left {
-    left: 138px;
-    top: -66px;
-    width: 238px;
-    height: 212px;
-  }
-
-  .divider__branch--right {
-    left: 838px;
-    top: -103px;
-    width: 458px;
-    height: 305px;
-  }
-
   .divider__line {
-    top: 85px;
+    top: 32px;
     width: 405px;
     height: 1px;
     background: var(--color-line);
@@ -67,7 +49,7 @@ import flower from "../assets/eras/header-flower.png";
 
   .divider__flower {
     left: 698px;
-    top: 63px;
+    top: 10px;
     width: 45px;
     height: 45px;
   }
