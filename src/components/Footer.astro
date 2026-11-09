@@ -57,7 +57,11 @@ const changelogHref = "https://github.com/jsacalpoly/jsa-calpoly/commits/main";
             <path d="M17.5 14.2A7.5 7.5 0 0 1 8.8 4.5a7.5 7.5 0 1 0 8.7 9.7Z" />
           </svg>
         </span>
-        <span data-time-text>&nbsp;</span>
+        <span class="site-footer__clock" data-clock>
+          <span data-clock-hour>&nbsp;</span>
+          <span class="site-footer__colon">:</span>
+          <span data-clock-rest></span>
+        </span>
         <span>San Luis Obispo, CA</span>
       </p>
     </div>
@@ -93,7 +97,11 @@ const changelogHref = "https://github.com/jsacalpoly/jsa-calpoly/commits/main";
 
     <p class="site-footer__copy">© 2026 Japanese Student Association, Cal Poly SLO</p>
     <p class="site-footer__changelog">
-      <a href={changelogHref}>Changelog: {changelog}</a>
+      <a href={changelogHref} aria-label={`Changelog: ${changelog}`}>
+        <span data-scramble={`Changelog: ${changelog}`} aria-hidden="true">
+          Changelog: {changelog}
+        </span>
+      </a>
     </p>
   </div>
 </footer>
@@ -258,6 +266,37 @@ const changelogHref = "https://github.com/jsacalpoly/jsa-calpoly/commits/main";
     text-transform: uppercase;
   }
 
+  /* Hidden until the script has filled in the time, so it never flashes empty. */
+  .site-footer__clock {
+    visibility: hidden;
+    white-space: nowrap;
+  }
+
+  .site-footer__clock[data-ready] {
+    visibility: visible;
+  }
+
+  /* The colon fades out and back in, slowly. */
+  @media (prefers-reduced-motion: no-preference) {
+    .site-footer__colon {
+      animation: colon-blink 2s ease-in-out infinite;
+    }
+  }
+
+  @keyframes colon-blink {
+    0%,
+    45% {
+      opacity: 1;
+    }
+    70%,
+    85% {
+      opacity: 0.1;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+
   .site-footer__changelog a {
     transition: color 0.15s;
   }
@@ -272,22 +311,71 @@ const changelogHref = "https://github.com/jsacalpoly/jsa-calpoly/commits/main";
 <script>
   // Cal Poly's local time, with a sun by day and a moon at night.
   const icon = document.querySelector<HTMLElement>("[data-time-icon]");
-  const text = document.querySelector<HTMLElement>("[data-time-text]");
+  const clock = document.querySelector<HTMLElement>("[data-clock]");
+  const hourEl = document.querySelector<HTMLElement>("[data-clock-hour]");
+  const restEl = document.querySelector<HTMLElement>("[data-clock-rest]");
+  const zone = "America/Los_Angeles";
 
-  function update() {
-    if (!icon || !text) return;
+  function updateTime() {
+    if (!icon || !clock || !hourEl || !restEl) return;
     const now = new Date();
-    text.textContent = now.toLocaleTimeString("en-US", {
+    const parts = new Intl.DateTimeFormat("en-US", {
       hour: "numeric",
       minute: "2-digit",
-      timeZone: "America/Los_Angeles",
-    });
-    const hour = Number(
-      new Intl.DateTimeFormat("en-US", { hour: "numeric", hour12: false, timeZone: "America/Los_Angeles" }).format(now),
+      timeZone: zone,
+    }).formatToParts(now);
+    const get = (type: string) => parts.find((part) => part.type === type)?.value ?? "";
+    hourEl.textContent = get("hour");
+    restEl.textContent = `${get("minute")} ${get("dayPeriod")}`;
+    clock.dataset.ready = "";
+    const hour24 = Number(
+      new Intl.DateTimeFormat("en-US", { hour: "numeric", hour12: false, timeZone: zone }).format(now),
     );
-    icon.dataset.phase = hour >= 6 && hour < 19 ? "day" : "night";
+    icon.dataset.phase = hour24 >= 6 && hour24 < 19 ? "day" : "night";
   }
 
-  update();
-  setInterval(update, 30_000);
+  updateTime();
+  setInterval(updateTime, 30_000);
+
+  // The changelog scrambles into place the first time it scrolls into view, and again on hover.
+  const scrambleEl = document.querySelector<HTMLElement>("[data-scramble]");
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const pool = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  let frame = 0;
+
+  function scramble(el: HTMLElement) {
+    const finalText = el.dataset.scramble ?? "";
+    const start = performance.now();
+    cancelAnimationFrame(frame);
+    const step = (time: number) => {
+      const elapsed = time - start;
+      let out = "";
+      let done = true;
+      for (let i = 0; i < finalText.length; i++) {
+        const char = finalText[i];
+        // Letters settle one by one from the left; spaces and punctuation stay put.
+        if (!/[A-Za-z0-9]/.test(char) || elapsed > 350 + i * 45) out += char;
+        else {
+          out += pool[Math.floor(Math.random() * pool.length)];
+          done = false;
+        }
+      }
+      el.textContent = out;
+      if (!done) frame = requestAnimationFrame(step);
+    };
+    frame = requestAnimationFrame(step);
+  }
+
+  if (scrambleEl && !reduceMotion) {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        scramble(scrambleEl);
+        observer.disconnect();
+      },
+      { threshold: 1 },
+    );
+    observer.observe(scrambleEl);
+    scrambleEl.closest("a")?.addEventListener("mouseenter", () => scramble(scrambleEl));
+  }
 </script>
