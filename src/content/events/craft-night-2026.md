@@ -1,6 +1,6 @@
 ---
-title: "Craft Night 8.27.29"
-order: 13
+title: "Craft Night"
+date: 2026-08-27
 cover: ../../assets/events/craft-night-2026.jpg
 album: https://photos.app.goo.gl/QsfwRjBHxGHgSwag8
 ---

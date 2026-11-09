@@ -1,6 +1,6 @@
 ---
-title: "Bowling 9.12.26"
-order: 10
+title: "Bowling"
+date: 2026-09-12
 cover: ../../assets/events/bowling-2026.jpg
 album: https://photos.app.goo.gl/1hgeUHye5zpG4pJs5
 ---

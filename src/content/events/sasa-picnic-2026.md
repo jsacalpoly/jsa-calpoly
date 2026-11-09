@@ -1,6 +1,6 @@
 ---
-title: "JSA x SASA picnic! 9.26.26"
-order: 7
+title: "JSA x SASA picnic!"
+date: 2026-09-26
 cover: ../../assets/events/sasa-picnic-2026.jpg
 album: https://photos.app.goo.gl/mxiQuQpnR5yX2g3XA
 ---

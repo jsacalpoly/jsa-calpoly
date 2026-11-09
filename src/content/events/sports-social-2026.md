@@ -1,6 +1,6 @@
 ---
-title: "Sports Social 8.28.29"
-order: 12
+title: "Sports Social"
+date: 2026-08-28
 cover: ../../assets/events/sports-social-2026.jpg
 album: https://photos.app.goo.gl/zSnULo3p7KT98wA28
 ---

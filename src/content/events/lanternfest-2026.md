@@ -1,6 +1,6 @@
 ---
-title: "Lanternfest 4.25.26"
-order: 22
+title: "Lanternfest"
+date: 2026-04-25
 cover: ../../assets/events/lanternfest-2026.jpg
 album: https://photos.app.goo.gl/9STZXW3QtFma5ccw8
 ---

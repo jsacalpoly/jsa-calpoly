@@ -1,6 +1,7 @@
 ---
 title: "Fall Bonfire JSA 2026!!!"
-order: 11
+date: 2026-09-05
+showDate: false
 cover: ../../assets/events/fall-bonfire-2026.jpg
 album: https://photos.app.goo.gl/DnCsqHPJSjLHM5sK8
 ---

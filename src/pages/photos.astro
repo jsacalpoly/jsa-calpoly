@@ -2,105 +2,171 @@
 import { Image } from "astro:assets";
 import { getCollection, render } from "astro:content";
 import BaseLayout from "../layouts/BaseLayout.astro";
-import PhotoEventCard from "../components/PhotoEventCard.astro";
+import Polaroid from "../components/Polaroid.astro";
 
-import featuredPhoto from "../assets/photos/featured-pismo.jpg";
 import bannerBlossoms from "../assets/photos/banner-blossoms.png";
-import galleryLogo from "../assets/photos/gallery-logo.png";
-import cameraIcon from "../assets/photos/camera-icon.png";
+import ornament from "../assets/eras/ornament-flower.png";
 
-const events = (await getCollection("events")).sort((a, b) => a.data.order - b.data.order);
-const featured = events[0];
+// Newest first. The date field is the only thing that decides the order, so a new album needs no renumbering.
+const events = (await getCollection("events")).sort(
+  (a, b) => b.data.date.getTime() - a.data.date.getTime() || a.data.title.localeCompare(b.data.title),
+);
+const [featured] = events;
 const { Content: FeaturedBody } = await render(featured);
 
-// Newest first, alternating between the two columns like the Wix gallery.
-const columns = [events.filter((_, i) => i % 2 === 0), events.filter((_, i) => i % 2 === 1)];
-const renderedColumns = await Promise.all(
-  columns.map((column) =>
-    Promise.all(
-      column.map(async (event) => {
-        const { Content } = await render(event);
-        return { event, Content };
-      }),
-    ),
-  ),
+// "11.7.26", written after the title. Dates are stored as UTC midnight, so read them back in UTC.
+const dateLabel = (event: (typeof events)[number]) => {
+  if (!event.data.showDate) return undefined;
+  const d = event.data.date;
+  return `${d.getUTCMonth() + 1}.${d.getUTCDate()}.${String(d.getUTCFullYear()).slice(-2)}`;
+};
+
+// Polaroids are not all the same: photo shape, tilt and tape come from the album's own id, so an album looks the
+// same on every build and adding a new one never reshuffles the others.
+const heights = [200, 262, 320, 220, 280, 240, 300, 210];
+const tilts = [-3, 2.2, -1.4, 3.4, -2.6, 1.2, -3.6, 2.6, -0.8, 1.8];
+const hash = (text: string) => [...text].reduce((total, char) => (total * 31 + char.charCodeAt(0)) >>> 0, 7);
+
+const polaroids = await Promise.all(
+  events.map(async (event) => {
+    const h = hash(event.id);
+    const { Content } = await render(event);
+    return {
+      event,
+      Content,
+      photoHeight: heights[h % heights.length],
+      tilt: tilts[(h >> 3) % tilts.length],
+      tape: (h >> 6) % 3 === 0,
+    };
+  }),
 );
+
+// Three staggered columns, filled left to right in date order.
+const columns = [0, 1, 2].map((col) => polaroids.filter((_, i) => i % 3 === col));
 ---
 
-<BaseLayout title="Photos | Cal Poly JSA" description="Photo gallery of Cal Poly JSA events.">
+<BaseLayout title="Photos | Cal Poly JSA" description="Photo gallery of Cal Poly JSA events." flushFooter>
   <div class="gallery container">
-    <!-- Gray backdrops behind the featured event and card columns (Figma stops them at y=2720). -->
-    <span class="gallery__backdrop gallery__backdrop--left"></span>
-    <span class="gallery__backdrop gallery__backdrop--right"></span>
+    <!-- Banner + latest album -->
+    <section class="top">
+      <span class="top__backdrop"></span>
 
-    <!-- Banner -->
-    <header class="gallery__banner">
-      <Image class="gallery__banner-art" src={bannerBlossoms} alt="" width={616} height={164} />
-      <Image class="gallery__logo" src={galleryLogo} alt="JSA logo" width={101} height={95} />
-      <h1 class="gallery__title">Photo Gallery</h1>
-      <p class="gallery__subtitle">Capturing those precious memories</p>
-      <span class="gallery__title-rule"></span>
-    </header>
+      <header class="top__banner">
+        <Image class="top__banner-art" src={bannerBlossoms} alt="" width={616} height={164} />
+        <h1 class="top__title">Photo Gallery</h1>
+        <p class="top__subtitle">Capturing those precious memories</p>
+        <span class="top__title-rule"></span>
+      </header>
 
-    <!-- Featured event -->
-    <section class="featured">
-      <div class="featured__photo">
-        <Image src={featuredPhoto} alt="Three JSA members on the beach at Pismo" width={1098} height={668} />
+      <div class="latest">
+        <span class="latest__tape"></span>
+        <div class="latest__photo">
+          <Image
+            src={featured.data.cover}
+            alt={`Photos from ${featured.data.title}`}
+            width={860}
+            height={600}
+            quality={85}
+          />
+        </div>
+        <p class="latest__caption">
+          {featured.data.title}
+          {dateLabel(featured) && <span>{dateLabel(featured)}</span>}
+        </p>
       </div>
-      <span class="featured__divider"></span>
-      <h2 class="featured__title">{featured.data.title}</h2>
-      <div class="featured__text">
-        <FeaturedBody />
+
+      <div class="top__copy">
+        <h2 class="top__album-title">
+          {featured.data.title}
+          {dateLabel(featured) && <span>{dateLabel(featured)}</span>}
+        </h2>
+        <div class="top__album-text">
+          <FeaturedBody />
+        </div>
+        <p class="note">Please add any photos you took!!</p>
+        {featured.data.album && (
+          <a class="top__button" href={featured.data.album} target="_blank" rel="noopener noreferrer">
+            Open album
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M7 17L17 7M9 7h8v8" />
+            </svg>
+          </a>
+        )}
       </div>
-      <p class="featured__prompt">Please add any photos you took!!</p>
-      <a class="featured__button" href={featured.data.album ?? "#"} target="_blank" rel="noopener noreferrer">
-        <span>Photos!!</span>
-        <Image src={cameraIcon} alt="" width={37} height={37} />
-      </a>
     </section>
-    <span class="gallery__rule"></span>
 
-    <!-- Event cards -->
-    {renderedColumns.map((column, index) => (
-      <div class:list={["cards", index === 0 ? "cards--left" : "cards--right"]}>
-        {column.map(({ event, Content }) => (
-          <PhotoEventCard title={event.data.title} cover={event.data.cover} album={event.data.album}>
-            <Content />
-          </PhotoEventCard>
+    <!-- All albums -->
+    <section class="panel">
+      <div class="panel__heading">
+        <span class="panel__jp">写真</span>
+        <h2 class="panel__title">All albums</h2>
+        <p class="panel__count">{events.length} albums, newest first</p>
+        <div class="panel__divider">
+          <span></span>
+          <Image src={ornament} alt="" width={34} height={40} />
+          <span></span>
+        </div>
+      </div>
+
+      <div class="polaroids">
+        {columns.map((column) => (
+          <div class="polaroids__column">
+            {column.map(({ event, Content, photoHeight, tilt, tape }) => (
+              <Polaroid
+                title={event.data.title}
+                dateLabel={dateLabel(event)}
+                cover={event.data.cover}
+                album={event.data.album}
+                tilt={tilt}
+                photoHeight={photoHeight}
+                tape={tape}
+              >
+                <Content />
+              </Polaroid>
+            ))}
+          </div>
         ))}
       </div>
-    ))}
+    </section>
   </div>
 </BaseLayout>
 
 <style>
-  /* 79 to 3252 (the footer gap follows). Every position below is relative to the 980px column that starts at x=230. */
   .gallery {
-    height: 3173px;
-  }
-
-  .gallery > * {
-    position: absolute;
-  }
-
-  .gallery__backdrop {
-    top: 148px;
-    height: 2493px;
+    /* 980px column; the gray panel runs from the top block down through all the polaroids. */
     background: var(--color-gray-bg);
   }
 
-  .gallery__backdrop--left {
+  /* ---------- Banner + latest album ---------- */
+  .top {
+    position: relative;
+    height: 580px;
+  }
+
+  .top > * {
+    position: absolute;
+  }
+
+  /* The gray starts 16px under the top of the featured photo, behind the banner's lower edge. */
+  .top__backdrop {
     left: 0;
-    width: 588px;
+    right: 0;
+    top: 148px;
+    bottom: 0;
+    background: var(--color-gray-bg);
   }
 
-  .gallery__backdrop--right {
-    left: 588px;
-    width: 392px;
-  }
-
-  /* ---------- Banner ---------- */
-  .gallery__banner {
+  .top__banner {
     left: 0;
     top: 0;
     width: 980px;
@@ -108,37 +174,30 @@ const renderedColumns = await Promise.all(
     background: var(--color-cream-photos);
   }
 
-  .gallery__banner > * {
+  .top__banner > * {
     position: absolute;
   }
 
-  .gallery__banner-art {
+  .top__banner-art {
     left: 376px;
     top: 0;
     width: 616px;
     height: 164px;
   }
 
-  .gallery__logo {
-    left: 22px;
-    top: 24px;
-    width: 101px;
-    height: 95px;
-  }
-
-  .gallery__title {
-    left: 145px;
+  .top__title {
+    left: 40px;
     top: 23.9px;
+    color: var(--color-ink);
     font-family: var(--font-title);
     font-size: 54px;
     font-weight: var(--weight-regular);
     line-height: 64.8px;
-    color: var(--color-ink);
     white-space: nowrap;
   }
 
-  .gallery__subtitle {
-    left: 150px;
+  .top__subtitle {
+    left: 45px;
     top: 97.8px;
     font-size: 15px;
     font-weight: var(--weight-extralight);
@@ -146,133 +205,197 @@ const renderedColumns = await Promise.all(
     white-space: nowrap;
   }
 
-  .gallery__title-rule {
-    left: 150px;
+  .top__title-rule {
+    left: 45px;
     top: 134px;
     width: 139px;
     height: 1px;
     background: var(--color-line);
   }
 
-  /* ---------- Featured event ---------- */
-  .featured {
-    left: 0;
-    top: 148px;
-    width: 980px;
-  }
-
-  .featured > * {
-    position: absolute;
-  }
-
-  .featured__photo {
-    left: 22px;
-    top: 0;
-    width: 553px;
-    height: 338px;
-    border: 2px solid var(--color-white);
-    border-radius: 20px;
+  /* The latest album as a big taped polaroid. */
+  .latest {
+    left: 52px;
+    top: 150px;
+    width: 462px;
+    padding: 16px 16px 46px;
     background: var(--color-white);
-    box-shadow: var(--shadow-frame);
-    overflow: hidden;
+    border-radius: 3px;
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.32);
+    rotate: -2.5deg;
   }
 
-  .featured__photo :global(img) {
+  .latest__tape {
+    position: absolute;
+    top: -15px;
+    left: 50%;
+    width: 92px;
+    height: 28px;
+    translate: -50% 0;
+    rotate: -4deg;
+    background: rgba(239, 224, 160, 0.8);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+  }
+
+  .latest__photo {
+    height: 300px;
+    overflow: hidden;
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08);
+  }
+
+  .latest__photo :global(img) {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    border-radius: 18px;
   }
 
-  .featured__divider {
-    left: 591.5px;
-    top: 7.5px;
-    width: 1px;
-    height: 216px;
-    background: var(--color-line);
+  .latest__caption {
+    margin-top: 12px;
+    font-family: var(--font-mono);
+    font-size: 20px;
+    line-height: 1.25;
   }
 
-  .featured__title {
-    left: 616px;
-    top: 12.5px;
+  .latest__caption span,
+  .top__album-title span {
+    margin-left: 0.4em;
+  }
+
+  .top__copy {
+    left: 560px;
+    top: 176px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 380px;
+  }
+
+  .top__album-title {
     font-family: var(--font-mono);
     font-size: 30px;
     font-weight: var(--weight-regular);
-    line-height: 36px;
-    color: var(--color-ink);
-    white-space: nowrap;
+    line-height: 1.33;
   }
 
-  .featured__text,
-  .featured__prompt {
-    left: 616px;
-    font-size: 15px;
-    font-weight: var(--weight-extralight);
-    line-height: 21px;
-  }
-
-  .featured__text {
-    top: 60px;
-    width: 311px;
-  }
-
-  .featured__prompt {
-    top: 259px;
-    white-space: nowrap;
-  }
-
-  .featured__button {
-    left: 607px;
-    top: 293px;
-    width: 353px;
-    height: 45px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 22.5px;
-    background: var(--color-green);
-    color: var(--color-white);
-    font-family: var(--font-ui);
+  .top__album-text {
+    margin-top: 14px;
+    color: var(--color-text-soft);
     font-size: 15px;
     font-weight: var(--weight-light);
-    letter-spacing: 3.8px;
+    line-height: 1.55;
   }
 
-  .featured__button span {
-    /* Figma centers the label on the full button, ignoring the camera icon. */
-    flex: 1;
-    text-align: center;
+  /* Sticky note */
+  .note {
+    margin: 26px 0 0 6px;
+    width: 250px;
+    min-height: 104px;
+    padding: 20px;
+    background: #fff3a6;
+    border-radius: 2px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.22);
+    color: #4a3f1a;
+    font-family: var(--font-mono);
+    font-size: 16px;
+    font-weight: var(--weight-bold);
+    line-height: 1.4;
+    rotate: 2.5deg;
   }
 
-  .featured__button :global(img) {
-    position: absolute;
-    left: 205.6px;
-    top: 4px;
-    width: 37px;
-    height: 37px;
+  .top__button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 34px;
+    padding: 13px 26px;
+    border-radius: 999px;
+    background: var(--color-green);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
+    color: var(--color-white);
+    font-size: 15px;
+    font-weight: var(--weight-semibold);
+    transition: background-color 0.2s ease;
   }
 
-  .gallery__rule {
-    left: 136px;
-    top: 513px;
-    width: 315px;
-    height: 1px;
-    background: var(--color-line);
+  .top__button:hover,
+  .top__button:focus-visible {
+    background: #346344;
   }
 
-  /* ---------- Event cards ---------- */
-  .cards {
-    top: 548px;
+  /* ---------- All albums ---------- */
+  .panel {
+    padding: 36px 22px 64px;
+  }
+
+  .panel__heading {
     display: flex;
     flex-direction: column;
-    gap: 21px;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 32px;
   }
 
-  .cards--left {
-    left: 11px;
+  .panel__jp {
+    color: var(--color-red);
+    font-family: var(--font-serif-jp);
+    font-size: 15px;
+    font-weight: var(--weight-medium);
   }
 
-  .cards--right {
-    left: 495px;
+  .panel__title {
+    color: var(--color-ink);
+    font-size: 32px;
+    font-weight: var(--weight-semibold);
+    letter-spacing: -0.01em;
+  }
+
+  .panel__count {
+    color: var(--color-muted);
+    font-size: 14px;
+    font-weight: var(--weight-light);
+  }
+
+  .panel__divider {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 300px;
+  }
+
+  .panel__divider span {
+    flex: 1;
+    height: 1px;
+    background: #fbd0cc;
+  }
+
+  .panel__divider :global(img) {
+    width: 17px;
+    height: auto;
+  }
+
+  /* Three columns, each starting at a different height so the prints do not line up in rows. */
+  .polaroids {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+
+  .polaroids__column {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 34px;
+  }
+
+  .polaroids__column:nth-child(1) {
+    padding-top: 8px;
+  }
+
+  .polaroids__column:nth-child(2) {
+    padding-top: 64px;
+  }
+
+  .polaroids__column:nth-child(3) {
+    padding-top: 30px;
   }
 </style>

@@ -1,6 +1,7 @@
 ---
 title: "Revealing 2026!"
-order: 5
+date: 2026-10-10
+showDate: false
 cover: ../../assets/events/revealing-2026.jpg
 album: https://photos.app.goo.gl/LRLjN7rKGW4F7fi58
 ---

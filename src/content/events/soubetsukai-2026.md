@@ -1,6 +1,7 @@
 ---
 title: "Soubetsukai 2026!!!"
-order: 18
+date: 2026-05-30
+showDate: false
 cover: ../../assets/events/soubetsukai-2026.jpg
 album: https://photos.app.goo.gl/ReKXqEqav5hnWQ7s7
 ---

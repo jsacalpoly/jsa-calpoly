@@ -1,6 +1,6 @@
 ---
-title: "JSA Camping - Lopez Lake 5.10.26"
-order: 21
+title: "JSA Camping - Lopez Lake"
+date: 2026-05-10
 cover: ../../assets/events/camping-lopez-lake-2026.jpg
 album: https://photos.app.goo.gl/E1extM26MbnRemi96
 ---

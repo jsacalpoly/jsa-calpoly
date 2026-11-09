@@ -1,6 +1,6 @@
 ---
-title: "JSA Open House 4.11.26"
-order: 25
+title: "JSA Open House"
+date: 2026-04-11
 cover: ../../assets/events/open-house-2026.jpg
 album: https://photos.app.goo.gl/g3WnpUKrSD3nUG4Z6
 ---

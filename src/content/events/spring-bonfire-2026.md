@@ -1,6 +1,7 @@
 ---
 title: "Spring Bonfire JSA 2026 :]"
-order: 26
+date: 2026-04-04
+showDate: false
 cover: ../../assets/events/spring-bonfire-2026.jpg
 album: https://photos.app.goo.gl/G7gbKVToRr8gsZ8h8
 ---
