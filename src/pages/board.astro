@@ -3,7 +3,6 @@ import { Image } from "astro:assets";
 import BaseLayout from "../layouts/BaseLayout.astro";
 
 import aboutPhoto from "../assets/about/about-photo.jpg";
-import envelope from "../assets/about/suggestion-envelope.png";
 ---
 
 <BaseLayout title="About | Cal Poly JSA" description="About the Japanese Student Association at Cal Poly SLO.">
@@ -32,15 +31,6 @@ import envelope from "../assets/about/suggestion-envelope.png";
         </div>
         <a class="about-card__button" href="/contact">CONTACT US!</a>
       </div>
-    </div>
-
-    <!-- Not a link: the suggestion form's destination is unknown. -->
-    <div class="suggestion">
-      <span class="suggestion__label">SUGGESTION BOX</span>
-      <span class="suggestion__text">
-        Got any comments, questions, concerns, or suggestions? Drop them in our suggestion box!
-      </span>
-      <Image class="suggestion__icon" src={envelope} alt="" width={54} height={46} />
     </div>
   </section>
 </BaseLayout>
@@ -112,38 +102,5 @@ import envelope from "../assets/about/suggestion-envelope.png";
     color: var(--color-white);
     font-family: var(--font-display);
     font-size: 14px;
-  }
-
-  .suggestion {
-    margin-top: 33px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-  }
-
-  .suggestion__label {
-    width: 190px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--color-pink);
-    color: var(--color-white);
-    font-size: 18px;
-    font-weight: var(--weight-semibold);
-  }
-
-  .suggestion__text {
-    margin-top: 8px;
-    width: 447px;
-    font-size: 15px;
-    font-weight: var(--weight-extralight);
-    line-height: 22.5px;
-    color: #000;
-  }
-
-  .suggestion__icon {
-    margin-top: 11px;
   }
 </style>
