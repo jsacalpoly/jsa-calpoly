@@ -1,0 +1,207 @@
+---
+import { Image } from "astro:assets";
+import { getEntry } from "astro:content";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import BoardCard from "../components/BoardCard.astro";
+
+import banner from "../assets/board/banner-meet-jsa.jpg";
+import blossomsLeft from "../assets/board/blossoms-left.png";
+import blossomsRight from "../assets/board/blossoms-right.png";
+import flowerDivider from "../assets/board/flower-divider.png";
+
+const board = await getEntry("boards", "2026-2027");
+if (!board) throw new Error("Missing board data: src/content/boards/2026-2027.json");
+
+const executives = board.data.members.filter((member) => member.tier === "executive");
+const members = board.data.members.filter((member) => member.tier === "member");
+
+// Board member rows of four, as laid out on the Wix site.
+const memberRows = [];
+for (let i = 0; i < members.length; i += 4) memberRows.push(members.slice(i, i + 4));
+---
+
+<BaseLayout title="26-27 | Cal Poly JSA" description="Meet the 2026-2027 Cal Poly JSA board.">
+  <div class="board container">
+    <div class="board__banner">
+      <Image src={banner} alt="Meet JSA: the 2026-27 board posing together" width={1882} height={1048} />
+    </div>
+
+    <Image class="board__blossoms board__blossoms--left" src={blossomsLeft} alt="" width={238} height={212} />
+    <Image class="board__blossoms board__blossoms--right" src={blossomsRight} alt="" width={458} height={305} />
+
+    <h1 class="board__title">OUR BOARD</h1>
+    <Image class="board__flower" src={flowerDivider} alt="" width={34} height={34} />
+    <p class="board__subtitle">Meet the leaders behind JSA</p>
+
+    <div class="divider divider--executive">
+      <span class="divider__line"></span>
+      <h2 class="divider__text">EXECUTIVE</h2>
+      <span class="divider__line"></span>
+    </div>
+
+    <div class="board__executives">
+      {executives.map((member) => <BoardCard variant="executive" {...member} />)}
+    </div>
+
+    <div class="divider divider--members">
+      <span class="divider__line"></span>
+      <h2 class="divider__text">Board Members</h2>
+      <span class="divider__line"></span>
+    </div>
+
+    {
+      memberRows.map((row, index) => (
+        <div class:list={["board__members", `board__members--row${index + 1}`]}>
+          {row.map((member) => (
+            <BoardCard {...member} />
+          ))}
+        </div>
+      ))
+    }
+  </div>
+</BaseLayout>
+
+<style>
+  /* Backdrop is 1659.3px tall (79 to 1738.3) and leaves a 20px gap above the footer. */
+  .board {
+    height: 1659.3px;
+    padding-top: 10px;
+    background: var(--color-cream);
+  }
+
+  .board__banner {
+    margin-left: 17px;
+    width: 945px;
+    height: 528px;
+    border: 2px solid var(--color-white);
+    border-radius: 15px;
+    background: var(--color-white);
+    box-shadow: var(--shadow-frame);
+    overflow: hidden;
+  }
+
+  .board__banner :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 13px;
+  }
+
+  .board__blossoms {
+    position: absolute;
+    pointer-events: none;
+  }
+
+  .board__blossoms--left {
+    left: 0;
+    top: 519px;
+    width: 238px;
+    height: 212px;
+  }
+
+  .board__blossoms--right {
+    left: 522px;
+    top: 482px;
+    width: 458px;
+    height: 305px;
+  }
+
+  .board__title {
+    position: relative;
+    margin-top: 0.8px;
+    color: var(--color-red);
+    font-size: 60px;
+    font-weight: var(--weight-semibold);
+    line-height: 84.6px;
+    text-align: center;
+  }
+
+  .board__flower {
+    position: relative;
+    margin: -5.8px auto 0;
+    left: -1px;
+    width: 34px;
+    height: 34px;
+  }
+
+  .board__subtitle {
+    position: relative;
+    margin-top: 7.6px;
+    font-size: 13px;
+    font-weight: var(--weight-extralight);
+    line-height: 18.2px;
+    text-align: center;
+    color: #000;
+  }
+
+  /* Heading flanked by thin rules. Widths and gaps come straight from Figma. */
+  .divider {
+    position: relative;
+    display: grid;
+    align-items: start;
+    margin-top: 5.9px;
+    height: 25.4px;
+  }
+
+  .divider--executive {
+    grid-template-columns: 312px 1fr 319px;
+    margin-left: 111px;
+    width: 760px;
+  }
+
+  .divider--members {
+    margin-top: 28px;
+    grid-template-columns: 279px 1fr 279px;
+    margin-left: 111px;
+    width: 760px;
+  }
+
+  .divider__line {
+    height: 1px;
+    margin-top: 12.3px;
+    background: var(--color-line);
+  }
+
+  .divider--members .divider__line {
+    margin-top: 17.7px;
+  }
+
+  .divider__text {
+    padding-left: 19px;
+    font-size: 18px;
+    font-weight: var(--weight-semibold);
+    line-height: 25.4px;
+    color: var(--color-ink);
+    white-space: nowrap;
+  }
+
+  .divider--members .divider__text {
+    padding-left: 27px;
+  }
+
+  .board__executives {
+    position: relative;
+    margin: 9.3px 0 0 109px;
+    display: flex;
+    gap: 14px;
+  }
+
+  .board__members {
+    position: relative;
+    display: flex;
+    gap: 23px;
+    margin-left: 51px;
+  }
+
+  .board__members--row1 {
+    margin-top: 8.3px;
+  }
+
+  .board__members--row2 {
+    margin-top: 32px;
+  }
+
+  .board__members--row3 {
+    margin-top: 45.4px;
+  }
+</style>

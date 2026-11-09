@@ -1,0 +1,73 @@
+---
+import "../styles/tokens.css";
+import "../styles/global.css";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+
+interface Props {
+  title?: string;
+  description?: string;
+  /** Skip the gap above the footer, for pages that end in a full-width colored band. */
+  flushFooter?: boolean;
+}
+
+const {
+  title = "Cal Poly Japanese Student Association",
+  description = "The Japanese Student Association at Cal Poly San Luis Obispo: culture, community, and chaos.",
+  flushFooter = false,
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <title>{title}</title>
+    <script is:inline>
+      document.documentElement.classList.add("js");
+    </script>
+
+    <!-- Fonts: change these families together with the variables in src/styles/tokens.css -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Aboreto&family=Courier+Prime&family=Inknut+Antiqua&family=Jost:ital,wght@0,300;1,300&family=Krona+One&family=Montserrat:wght@800&family=Noto+Sans+JP:wght@400;700&family=Nunito+Sans:wght@300&family=Poppins:wght@200;300;400;600;700&display=swap"
+    />
+  </head>
+  <body>
+    <Header />
+    <main class:list={{ "flush-footer": flushFooter }}>
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>
+
+<script>
+  // Fade elements marked with data-reveal in the first time they scroll into view.
+  const targets = document.querySelectorAll<HTMLElement>("[data-reveal]");
+  const observer = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue;
+        entry.target.classList.add("is-visible");
+        observer.unobserve(entry.target);
+      }
+    },
+    { threshold: 0.15 },
+  );
+  targets.forEach((target) => observer.observe(target));
+</script>
+
+<style>
+  main {
+    padding-bottom: var(--footer-gap);
+  }
+
+  main.flush-footer {
+    padding-bottom: 0;
+  }
+</style>

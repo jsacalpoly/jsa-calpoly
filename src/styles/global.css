@@ -1,0 +1,76 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--color-white);
+  color: #000;
+  font-family: var(--font-body);
+  font-weight: var(--weight-regular);
+  /* Phase 1 is desktop only: keep the 1440px design from collapsing. */
+  min-width: var(--page-width);
+}
+
+img {
+  display: block;
+  max-width: none;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Centered 980px column used by every page section. */
+.container {
+  width: var(--content-width);
+  margin-inline: auto;
+  position: relative;
+}
+
+/* Full-width colored band. */
+.band {
+  width: 100%;
+}
+
+/* Entrance fade, like the Wix site: 1.1s ease-in-out when an element scrolls into view.
+   Elements stay visible if JavaScript is off or the visitor prefers reduced motion. */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .js [data-reveal] {
+    opacity: 0;
+  }
+
+  .js [data-reveal].is-visible {
+    animation: fade-in 1.1s ease-in-out forwards;
+  }
+}
+
+/* Anchor links (like the hero button) glide instead of jumping. */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}

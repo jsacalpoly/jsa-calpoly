@@ -1,0 +1,35 @@
+{
+  "year": "2017-2018",
+  "heading": "2017-2018",
+  "size": "small",
+  "order": 9,
+  "president": "Mark Loera",
+  "vicePresident": "Kailen Mark",
+  "roles": [
+    {
+      "title": "Treasurer",
+      "icon": "treasurer",
+      "names": "Ryo Takatori"
+    },
+    {
+      "title": "Secretary",
+      "icon": "secretary",
+      "names": "Ryo Takatori"
+    },
+    {
+      "title": "Events coordinator",
+      "icon": "events",
+      "names": "Hajime Yamanaka"
+    },
+    {
+      "title": "Social Chair",
+      "icon": "media",
+      "names": "David Le"
+    },
+    {
+      "title": "Cultural Ambassador",
+      "icon": "cultural",
+      "names": "Kana Suzuki"
+    }
+  ]
+}

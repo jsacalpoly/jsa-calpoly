@@ -1,0 +1,349 @@
+---
+import { Image } from "astro:assets";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import ProjectCard from "../components/ProjectCard.astro";
+import HeroSlideshow from "../components/HeroSlideshow.astro";
+
+import welcome from "../assets/home/welcome.jpg";
+import join from "../assets/home/join.jpg";
+import events from "../assets/home/events.jpg";
+import cookbook from "../assets/projects/cookbook.png";
+import torii from "../assets/projects/torii.jpg";
+import genkey from "../assets/projects/genkey.jpg";
+
+// Column photos are at most 720px wide; ask for 2x and 3x versions for sharp screens.
+const photoWidths = [640, 960, 1440, 2160];
+
+// TODO: move into src/content/projects once the Projects page is built.
+const projects = [
+  {
+    title: "Cookbook",
+    description:
+      "Recipes, cooking events, and more! Cookbook welcomes everyone who loves to cook (or eat)! Keep up with the GroupMe to see when we meet!",
+    image: cookbook,
+    color: "var(--color-coral)",
+  },
+  {
+    title: "Torii",
+    description:
+      "We're building a life size torii gate at the Cal Poly Arboretum this fall! Learn by doing - Armstrong would be proud.",
+    image: torii,
+    color: "var(--color-orange)",
+  },
+  {
+    title: "ゲンKEY",
+    description:
+      "JSA's very own band performing at JSA events, PCW, and more! GenKey is the place for creating, sharing, or enjoying music!",
+    image: genkey,
+    color: "var(--color-pink)",
+    jpTitle: true,
+  },
+];
+---
+
+<BaseLayout title="Cal Poly JSA | Japanese Student Association">
+  <!-- Hero -->
+  <section class="hero">
+    <HeroSlideshow />
+    <div class="hero__stage">
+      <h1 class="hero__title" data-reveal>
+        <span class="hero__title-line hero__title-line--white">WE ARE</span>
+        <span class="hero__title-line hero__title-line--red">JSA</span>
+      </h1>
+      <a class="hero__button" href="#welcome" data-reveal>ようこそ!</a>
+    </div>
+  </section>
+
+  <!-- Welcome -->
+  <section class="split" id="welcome">
+    <div class="split__content">
+      <div class="photo-frame split__photo" data-reveal>
+        <Image src={welcome} alt="A large group of JSA members posing outdoors" widths={photoWidths} sizes="(min-width: 1760px) 720px, calc(50vw - 100px)" quality={85} />
+      </div>
+      <div class="split__text" data-reveal>
+        <h2 class="split__heading split__heading--regular">Welcome :D</h2>
+        <p>
+          We are Cal Poly's Japanese Student Association, dedicated to sharing and celebrating Japanese culture in
+          addition to fostering a JSA "family" on campus.
+        </p>
+        <p class="split__gap">JSA is open to everyone at Cal Poly!</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Join the family -->
+  <section class="split split--red">
+    <div class="split__content">
+      <div class="split__text split__text--white">
+        <h2 class="split__heading">Join the family!!</h2>
+        <p>
+          The easiest way to join JSA is to drop by our general meetings - in Baker 107, every Wednesday at 7pm. We
+          hope to see you there!
+        </p>
+        <p class="split__gap">
+          Follow the <a href="https://www.instagram.com/calpolyjsa" class="split__link">Cal Poly JSA Instagram</a>{" "}
+          (@calpolyjsa) where we post club updates and event/meeting reminders! You can also join the JSA GroupMe or dm
+          the instagram for more info!
+        </p>
+      </div>
+      <div class="photo-frame photo-frame--crimson split__photo split__photo--short">
+        <Image src={join} alt="JSA members smiling together in a park" widths={photoWidths} sizes="(min-width: 1760px) 720px, calc(50vw - 100px)" quality={85} />
+      </div>
+    </div>
+  </section>
+
+  <!-- Our events -->
+  <section class="split">
+    <div class="split__content">
+      <div class="photo-frame split__photo">
+        <Image src={events} alt="Smiling JSA members in front of blooming flowers" widths={photoWidths} sizes="(min-width: 1760px) 720px, calc(50vw - 100px)" quality={85} />
+      </div>
+      <div class="split__text">
+        <h2 class="split__heading">Our Events</h2>
+        <p>
+          JSA hosts weekly general meetings and weekend events, as well as project teams, and SPOOOORTS to keep your
+          calendar packed with fun times.
+        </p>
+        <p class="split__gap">
+          Like most culture clubs on campus, JSA also has a “senpai-kouhai” (big-little) program that pairs older,
+          experienced members with new members.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Projects -->
+  <section class="projects">
+    <h2 class="projects__title">JSA Projects</h2>
+    <div class="projects__cards">
+      {projects.map((project) => <ProjectCard {...project} />)}
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  // The title and button move with every slide: they leave with the old photo and arrive with the new one.
+  const heroText = document.querySelectorAll<HTMLElement>(".hero__title, .hero__button");
+  document.addEventListener("hero:slide", (event) => {
+    const direction = (event as CustomEvent<{ direction: 1 | -1 }>).detail.direction;
+    heroText.forEach((element) => element.animate(
+      [
+        { transform: "translateX(0)", opacity: 1, offset: 0 },
+        { transform: `translateX(${-60 * direction}vw)`, opacity: 0, offset: 0.5 },
+        { transform: `translateX(${60 * direction}vw)`, opacity: 0, offset: 0.5001 },
+        { transform: "translateX(0)", opacity: 1, offset: 1 },
+      ],
+      { duration: 900, easing: "cubic-bezier(0.65, 0, 0.35, 1)" },
+    ));
+  });
+</script>
+
+<script>
+  // Slow, eased glide from the hero button to the Welcome section (the browser's own smooth scroll is too quick).
+  const button = document.querySelector<HTMLAnchorElement>(".hero__button");
+  const welcome = document.querySelector<HTMLElement>("#welcome");
+  const calm = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+  button?.addEventListener("click", (event) => {
+    if (!welcome || calm.matches) return;
+    event.preventDefault();
+    const from = window.scrollY;
+    const distance = welcome.getBoundingClientRect().top;
+    const duration = 1600;
+    const start = performance.now();
+    const ease = (t: number) => -(Math.cos(Math.PI * t) - 1) / 2; // gentle sine ease-in-out
+
+    function step(now: number) {
+      const t = Math.min((now - start) / duration, 1);
+      // "instant" matters: the page has CSS smooth scrolling, which would otherwise re-animate every frame and cause the lag.
+      window.scrollTo({ top: from + distance * ease(t), behavior: "instant" });
+      if (t < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  });
+</script>
+
+<style>
+  /* ---------- Hero (79 to 689) ---------- */
+  .hero {
+    position: relative;
+    /* Fills the screen under the header, like Wix; never shorter than the 610px design. */
+    height: max(610px, calc(100vh - var(--header-height)));
+    background: var(--color-lavender);
+    overflow: hidden;
+  }
+
+  /* Sits above the slideshow; only the button takes clicks so the slideshow arrows stay clickable. */
+  .hero__stage {
+    position: absolute;
+    z-index: 1;
+    left: 50%;
+    top: 50%;
+    translate: -50% -50%;
+    width: var(--page-width);
+    height: 610px;
+    pointer-events: none;
+  }
+
+  .hero__title {
+    position: absolute;
+    top: 196px;
+    left: 0;
+    right: 0.5px;
+    font-family: var(--font-hero);
+    font-size: 128px;
+    font-weight: 800;
+    line-height: 104px;
+    text-align: center;
+  }
+
+  .hero__title-line {
+    display: block;
+  }
+
+  .hero__title-line--white {
+    color: var(--color-white);
+    letter-spacing: -2px;
+  }
+
+  .hero__title-line--red {
+    color: var(--color-red);
+    letter-spacing: 2px;
+  }
+
+  .hero__button {
+    position: absolute;
+    top: 444px;
+    left: 634px;
+    width: 166px;
+    height: 47px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--color-coral);
+    border-radius: 23.5px;
+    background: var(--color-coral);
+    color: var(--color-white);
+    pointer-events: auto;
+    transition:
+      background-color 0.4s ease,
+      border-color 0.4s ease;
+    font-family: var(--font-jp);
+    font-size: 14px;
+    font-weight: var(--weight-bold);
+  }
+
+  /* Wix: coral fills to red and the border fades out over 0.4s. */
+  .hero__button:hover,
+  .hero__button:focus-visible {
+    background: var(--color-red);
+    border-color: transparent;
+  }
+
+  /* ---------- Shared photo frame: white border + shadow, rounded photo ---------- */
+  .photo-frame {
+    border: 2px solid var(--color-white);
+    border-radius: 10px;
+    background: var(--color-white);
+    box-shadow: var(--shadow-frame);
+    overflow: hidden;
+    flex: none;
+  }
+
+  .photo-frame--crimson {
+    border-color: var(--color-crimson);
+    background: var(--color-crimson);
+  }
+
+  .photo-frame :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+
+  /* ---------- Text + photo sections: fluid, up to 1600px wide, like the Figma Home ---------- */
+  .split--red {
+    background: var(--color-red);
+  }
+
+  .split__content {
+    display: flex;
+    align-items: center;
+    gap: 64px;
+    max-width: 1600px;
+    margin-inline: auto;
+    padding: 64px 80px;
+  }
+
+  .split__photo,
+  .split__text {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  .split__photo {
+    height: 440px;
+  }
+
+  .split__photo--short {
+    height: 420px;
+  }
+
+  .split__text {
+    color: var(--color-ink);
+    font-size: 22px;
+    line-height: 33px;
+  }
+
+  .split__text--white {
+    color: var(--color-white);
+  }
+
+  .split__heading {
+    color: var(--color-red);
+    font-size: 56px;
+    font-weight: var(--weight-bold);
+    line-height: 64.4px;
+    margin-bottom: 28px;
+  }
+
+  .split__heading--regular {
+    font-weight: var(--weight-regular);
+    margin-bottom: 0;
+  }
+
+  .split--red .split__heading {
+    color: var(--color-white);
+  }
+
+  .split__gap {
+    margin-top: 28px;
+  }
+
+  .split__link {
+    text-decoration: underline;
+  }
+
+  /* ---------- Projects ---------- */
+  .projects__title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 178.4px;
+    background: var(--color-red);
+    color: var(--color-white);
+    font-size: 72px;
+    font-weight: var(--weight-semibold);
+    line-height: 86.4px;
+  }
+
+  .projects__cards {
+    display: flex;
+    align-items: stretch;
+    gap: 24px;
+    max-width: 1600px;
+    margin-inline: auto;
+    padding: 15px 80px 0;
+  }
+</style>

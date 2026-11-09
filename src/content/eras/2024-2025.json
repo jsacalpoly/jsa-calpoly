@@ -1,0 +1,35 @@
+{
+  "year": "2024-2025",
+  "heading": "Negi Jidai",
+  "size": "large",
+  "order": 2,
+  "president": "Takanori Nonomura",
+  "vicePresident": "Alex Nishida",
+  "roles": [
+    {
+      "title": "Treasurer",
+      "icon": "treasurer",
+      "names": "Jessica Mason, Chase Bradley"
+    },
+    {
+      "title": "Event Coordinators",
+      "icon": "events",
+      "names": "Matt Manzanares, Helena Huang, Sam Sakaguchi, Cooper Hayashi"
+    },
+    {
+      "title": "Sports Coordinators",
+      "icon": "sports",
+      "names": "Ian Milby, Nathan Alegre"
+    },
+    {
+      "title": "Media Coordinators",
+      "icon": "media",
+      "names": "Ashley Kang, Hingsun Luu, Michiru Warren, Maya Shinden, Jonathan Yu, Kira Sugihara"
+    },
+    {
+      "title": "Cultural Ambassadors",
+      "icon": "cultural",
+      "names": "Lynne Chirillo, Hana Pezzagila"
+    }
+  ]
+}

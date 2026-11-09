@@ -1,0 +1,278 @@
+---
+import { Image } from "astro:assets";
+import type { ImageMetadata } from "astro";
+import badge from "../assets/board/badge-sakura.png";
+
+interface Props {
+  name: string;
+  role: string;
+  photo: ImageMetadata;
+  /** Executive cards are larger than board member cards. */
+  variant?: "executive" | "member";
+  /** Details revealed with a fade when the card is hovered (or focused with the keyboard). */
+  about?: { nickname?: string; year: string; hometown: string; food: string };
+}
+
+const { name, role, photo, variant = "member", about } = Astro.props;
+const firstName = about?.nickname ?? name.split(" ")[0];
+---
+
+<article class:list={["board-card", `board-card--${variant}`]} tabindex={about ? 0 : undefined}>
+  <div class="board-card__photo">
+    <Image src={photo} alt={`Photo of ${name}`} width={258} height={252} />
+    <Image class="board-card__badge" src={badge} alt="" width={45} height={45} />
+  </div>
+  <h3 class="board-card__name">{name}</h3>
+  <p class="board-card__role">{role}</p>
+
+  {
+    about && (
+      <div class="board-card__about" aria-label={`About ${firstName}`}>
+        <h4 class="about__title">About {firstName}</h4>
+        <div class="about__flourish" aria-hidden="true">
+          <span />
+          <svg viewBox="0 0 24 24" width="16" height="16">
+            <g fill="#f1c4cc" stroke="#d98a98" stroke-width="0.8">
+              <ellipse cx="12" cy="6" rx="3.2" ry="4.6" />
+              <ellipse cx="12" cy="6" rx="3.2" ry="4.6" transform="rotate(72 12 12)" />
+              <ellipse cx="12" cy="6" rx="3.2" ry="4.6" transform="rotate(144 12 12)" />
+              <ellipse cx="12" cy="6" rx="3.2" ry="4.6" transform="rotate(216 12 12)" />
+              <ellipse cx="12" cy="6" rx="3.2" ry="4.6" transform="rotate(288 12 12)" />
+            </g>
+            <circle cx="12" cy="12" r="2" fill="#d98a98" />
+          </svg>
+          <span />
+        </div>
+
+        <ul class="about__list">
+          <li>
+            <svg class="about__icon" viewBox="0 0 48 34" aria-hidden="true">
+              <g fill="none" stroke="#181818" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round">
+                <path d="M3 13 24 4l21 9-21 9Z" />
+                <path d="M12 17v9c7 5 17 5 24 0v-9" />
+                <path d="M42 15v13" />
+              </g>
+            </svg>
+            <span>{about.year}</span>
+          </li>
+          <li>
+            <svg class="about__icon" viewBox="0 0 48 44" aria-hidden="true">
+              <g fill="none" stroke="#f0b429" stroke-width="1.8" stroke-linecap="round">
+                <path d="M24 41S10 26 10 16a14 14 0 0 1 28 0c0 10-14 25-14 25Z" />
+                <circle cx="24" cy="16" r="5" />
+                <path d="M4 38c6-4 12-2 16 0M44 38c-6-4-12-2-16 0" />
+              </g>
+            </svg>
+            <span>{about.hometown}</span>
+          </li>
+          <li>
+            <svg class="about__icon" viewBox="0 0 48 44" aria-hidden="true">
+              <path d="M5 20h38c0 11-8 18-19 18S5 31 5 20Z" fill="#852024" />
+              <path d="M14 41h20" stroke="#852024" stroke-width="2" stroke-linecap="round" />
+              <path d="M12 15c-2-3 2-5 0-8M20 15c-2-3 2-5 0-8M28 15c-2-3 2-5 0-8M36 15c-2-3 2-5 0-8" fill="none" stroke="#852024" stroke-width="1.6" stroke-linecap="round" />
+            </svg>
+            <span>{about.food}</span>
+          </li>
+        </ul>
+      </div>
+    )
+  }
+</article>
+
+<style>
+  .board-card {
+    position: relative;
+    border-radius: 10px;
+    background: var(--color-white);
+    text-align: center;
+    color: var(--color-ink);
+  }
+
+  .board-card__photo {
+    position: absolute;
+    left: 50%;
+    translate: -50% 0;
+  }
+
+  .board-card__photo :global(img:first-child) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .board-card__badge {
+    position: absolute;
+    left: 50%;
+    translate: -50% 0;
+    width: 45px;
+    height: 45px;
+  }
+
+  .board-card__name,
+  .board-card__role {
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin-inline: auto;
+    width: 195px;
+  }
+
+  .board-card__name {
+    font-weight: var(--weight-semibold);
+  }
+
+  .board-card__role {
+    font-weight: var(--weight-extralight);
+    color: #000;
+  }
+
+  /* ---------- Hover panel: replaces the card contents with a fade, like Wix ---------- */
+  .board-card {
+    --scale: 1;
+    outline: none;
+  }
+
+  .board-card--member {
+    --scale: 0.83;
+  }
+
+  .board-card__about {
+    position: absolute;
+    inset: 0;
+    border-radius: 10px;
+    background: var(--color-white);
+    color: var(--color-ink);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.35s ease;
+  }
+
+  .board-card:hover .board-card__about,
+  .board-card:focus-visible .board-card__about {
+    opacity: 1;
+  }
+
+  .about__title {
+    margin: calc(13px * var(--scale)) 0 0;
+    font-family: var(--font-title);
+    font-size: calc(22px * var(--scale));
+    font-weight: 400;
+    line-height: 1.3;
+    text-align: center;
+    text-transform: uppercase;
+  }
+
+  .about__flourish {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: calc(8px * var(--scale));
+    margin-top: calc(-2px * var(--scale));
+  }
+
+  .about__flourish span {
+    width: calc(62px * var(--scale));
+    height: 1px;
+    background: var(--color-ink);
+  }
+
+  .about__list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-family: var(--font-mono);
+    font-size: calc(9.5px * var(--scale));
+    text-align: left;
+    line-height: 1.4;
+  }
+
+  .about__list li {
+    display: flex;
+    align-items: center;
+    gap: calc(16px * var(--scale));
+    height: calc(46px * var(--scale));
+    padding-left: calc(21px * var(--scale));
+    position: relative;
+  }
+
+  .about__list li + li::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: calc(81px * var(--scale));
+    width: calc(77px * var(--scale));
+    height: 1px;
+    background: var(--color-ink);
+  }
+
+  .about__icon {
+    flex: none;
+    width: calc(44px * var(--scale));
+    height: calc(36px * var(--scale));
+  }
+
+  .about__list span {
+    width: calc(160px * var(--scale));
+  }
+
+  /* ---------- Executive: 244 x 216.4 ---------- */
+  .board-card--executive {
+    width: 244px;
+    height: 216.4px;
+  }
+
+  .board-card--executive .board-card__photo {
+    top: 8px;
+    width: 129px;
+    height: 126px;
+    /* Figma centers the photo 0.5px left of the card center. */
+    margin-left: -0.5px;
+  }
+
+  .board-card--executive .board-card__badge {
+    top: 92px;
+  }
+
+  .board-card--executive .board-card__name {
+    top: 144.7px;
+    width: 236px;
+    font-size: 18px;
+    line-height: 25.4px;
+  }
+
+  .board-card--executive .board-card__role {
+    top: 169.9px;
+    width: 236px;
+    font-size: 13px;
+    line-height: 18.2px;
+  }
+
+  /* ---------- Member: 203 x 187.6 ---------- */
+  .board-card--member {
+    width: 203px;
+    height: 187.6px;
+  }
+
+  .board-card--member .board-card__photo {
+    top: 11px;
+    width: 95px;
+    height: 92px;
+    margin-left: 0;
+  }
+
+  .board-card--member .board-card__badge {
+    top: 73px;
+  }
+
+  .board-card--member .board-card__name {
+    top: 128.85px;
+    font-size: 14px;
+    line-height: 19.7px;
+  }
+
+  .board-card--member .board-card__role {
+    top: 149.4px;
+    font-size: 11px;
+    line-height: 15.4px;
+  }
+</style>

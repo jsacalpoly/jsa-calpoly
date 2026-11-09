@@ -1,0 +1,46 @@
+{
+  "year": "2019-2020",
+  "heading": "19-20: White Dream",
+  "size": "small",
+  "order": 7,
+  "president": "Will Kriss",
+  "vicePresident": "PJ Yebisu",
+  "roles": [
+    {
+      "title": "Treasurer",
+      "icon": "treasurer",
+      "names": "Justin Rodriguez"
+    },
+    {
+      "title": "Secretary",
+      "icon": "secretary",
+      "names": "Thucmy Dang"
+    },
+    {
+      "title": "Event Coordinators",
+      "icon": "events",
+      "names": "Shawn von Chance-Stutler, Eric Chang, Joann Moon",
+      "compact": true
+    },
+    {
+      "title": "Sports Coordinator",
+      "icon": "sports",
+      "names": "Andrew Lai"
+    },
+    {
+      "title": "Communications / PR Coord",
+      "icon": "media",
+      "names": "Lauryn Sugai, Marisa Schatz"
+    },
+    {
+      "title": "Historian",
+      "icon": "historian",
+      "names": "Laura Kuffner"
+    },
+    {
+      "title": "Cultural Ambassador",
+      "icon": "cultural",
+      "names": "Kana Suzuki"
+    }
+  ]
+}

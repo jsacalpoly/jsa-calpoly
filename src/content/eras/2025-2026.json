@@ -1,0 +1,40 @@
+{
+  "year": "2025-2026",
+  "heading": "Tako Jidai",
+  "size": "large",
+  "order": 1,
+  "president": "Nathan Alegre",
+  "vicePresident": "Maya Shinden",
+  "roles": [
+    {
+      "title": "Treasurer",
+      "icon": "treasurer",
+      "names": "Bennett Klusman"
+    },
+    {
+      "title": "Secretary",
+      "icon": "secretary",
+      "names": "Ana Hernandez"
+    },
+    {
+      "title": "Event Coordinators",
+      "icon": "events",
+      "names": "Siena Vu, Kayla Vu, Karl Aannestad, Jonny Fitzgerald"
+    },
+    {
+      "title": "Sports Coordinators",
+      "icon": "sports",
+      "names": "Cameron Hafer, Jonny Fitzgerald"
+    },
+    {
+      "title": "Media Coordinators",
+      "icon": "media",
+      "names": "Kotone Takada, Kira Stringer, Lorraina Uyeno"
+    },
+    {
+      "title": "Cultural Ambassadors",
+      "icon": "cultural",
+      "names": "Momoka Dobashi, Anna Schoeller"
+    }
+  ]
+}

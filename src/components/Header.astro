@@ -1,0 +1,121 @@
+---
+import { Image } from "astro:assets";
+import logo from "../assets/shared/jsa-logo.png";
+import chevron from "../assets/shared/select-chevron.png";
+import { navLinks } from "../data/navigation";
+---
+
+<header class="site-header">
+  <div class="site-header__inner">
+    <a class="site-header__logo" href="/" aria-label="JSA home">
+      <Image src={logo} alt="" width={78} height={73} />
+    </a>
+
+    <a class="site-header__title" href="/">
+      <span class="site-header__name">JAPANESE STUDENT ASSOCIATION</span>
+      <span class="site-header__school">CAL POLY SAN LUIS OBISPO</span>
+    </a>
+
+    <nav class="site-header__nav" aria-label="Main">
+      {
+        navLinks.map((link) => (
+          <a class="site-header__link" href={link.href} style={`margin-left: ${Math.round(link.gap * 1.17)}px`}>
+            {link.name}
+          </a>
+        ))
+      }
+    </nav>
+
+    <div class="site-header__language">
+      <select aria-label="Language">
+        <option>English</option>
+      </select>
+      <Image class="site-header__chevron" src={chevron} alt="" width={12} height={6} />
+    </div>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    background: var(--color-white);
+    height: var(--header-height);
+  }
+
+  .site-header__inner {
+    width: var(--page-width);
+    height: 100%;
+    margin-inline: auto;
+    display: flex;
+    align-items: flex-start;
+    padding-left: 53px; /* logo left edge, same as Figma */
+  }
+
+  .site-header__logo {
+    margin-top: 9.5px;
+    flex: none;
+  }
+
+  .site-header__title {
+    margin: 13px 0 0 14px;
+    width: 470px;
+    color: var(--color-maroon);
+    font-weight: var(--weight-semibold);
+    line-height: 28px;
+  }
+
+  .site-header__name,
+  .site-header__school {
+    display: block;
+  }
+
+  .site-header__name {
+    font-size: 23px;
+  }
+
+  .site-header__school {
+    font-size: 17px;
+  }
+
+  .site-header__nav {
+    display: flex;
+    margin: 20px 0 0 auto;
+  }
+
+  .site-header__link {
+    font-size: 16px;
+    font-weight: var(--weight-extralight);
+    line-height: 52px;
+    text-transform: uppercase;
+    color: var(--color-ink);
+    white-space: nowrap;
+  }
+
+  .site-header__language {
+    position: relative;
+    margin: 20px 136.4px 0 15px;
+    width: 132px;
+    height: 52px;
+  }
+
+  .site-header__language select {
+    appearance: none;
+    width: 100%;
+    height: 100%;
+    padding: 0 0 0 12px;
+    border: 1px solid var(--color-border);
+    border-radius: 0;
+    background: var(--color-white);
+    color: #000;
+    font-family: var(--font-ui);
+    font-size: 18px;
+    font-weight: var(--weight-light);
+    cursor: pointer;
+  }
+
+  .site-header__chevron {
+    position: absolute;
+    right: 16px;
+    top: 23px;
+    pointer-events: none;
+  }
+</style>

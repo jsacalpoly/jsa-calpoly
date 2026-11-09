@@ -1,0 +1,166 @@
+---
+import { Image } from "astro:assets";
+import logo from "../assets/shared/jsa-logo.png";
+import instagram from "../assets/shared/social-instagram.png";
+import groupme from "../assets/shared/social-groupme.png";
+import tiktok from "../assets/shared/social-tiktok.png";
+import linkedin from "../assets/shared/social-linkedin.png";
+import { navLinks } from "../data/navigation";
+
+const email = "jsacalpoly@gmail.com";
+
+const socials = [
+  { label: "Instagram", href: "https://www.instagram.com/calpolyjsa", icon: instagram },
+  { label: "GroupMe", href: "https://groupme.com/join_group/110719786/Ws1imRVH", icon: groupme },
+  { label: "TikTok", href: "https://www.tiktok.com/@jsa_officialaccount", icon: tiktok },
+  { label: "LinkedIn", href: "https://www.linkedin.com/company/cpjsa/", icon: linkedin },
+];
+---
+
+<footer class="site-footer">
+  <div class="site-footer__inner container">
+    <div class="site-footer__brand">
+      <a class="site-footer__name" href="/">
+        <Image src={logo} alt="" width={45} height={42} />
+        <span>JAPANESE STUDENT ASSOCIATION</span>
+      </a>
+      <p class="site-footer__place">Cal Poly San Luis Obispo</p>
+    </div>
+
+    <nav class="site-footer__nav" aria-label="Footer">
+      {navLinks.map((link) => <a href={link.href}>{link.name}</a>)}
+    </nav>
+
+    <div class="site-footer__contact">
+      <p class="site-footer__prompt">Join the family!</p>
+      <a class="site-footer__email" href={`mailto:${email}`}>{email}</a>
+      <ul class="site-footer__social">
+        {
+          socials.map((social) => (
+            <li>
+              <a href={social.href} aria-label={social.label}>
+                <Image src={social.icon} alt="" width={28} height={28} />
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
+    <p class="site-footer__copy">© 2026 Japanese Student Association, Cal Poly SLO</p>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    background: var(--color-white);
+    color: var(--color-muted);
+  }
+
+  /* Thin divider and a 3-column grid aligned to the 980px content column. */
+  .site-footer__inner {
+    display: grid;
+    grid-template-columns: 400px 290px 1fr;
+    grid-template-areas:
+      "brand nav contact"
+      "copy copy copy";
+    padding: 40px 0 28px;
+    border-top: 1px solid var(--color-divider);
+  }
+
+  .site-footer__brand {
+    grid-area: brand;
+  }
+
+  .site-footer__name {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--color-maroon);
+    font-size: 19px;
+    font-weight: var(--weight-semibold);
+    line-height: 28px;
+  }
+
+  .site-footer__place {
+    margin-top: 12px;
+    font-size: 15px;
+    font-weight: var(--weight-light);
+    line-height: 22px;
+  }
+
+  .site-footer__nav {
+    grid-area: nav;
+    display: grid;
+    grid-template-columns: 130px 150px;
+    grid-template-rows: repeat(3, auto);
+    grid-auto-flow: column;
+    row-gap: 12px;
+    align-content: start;
+  }
+
+  .site-footer__nav a {
+    font-size: 16px;
+    font-weight: var(--weight-light);
+    line-height: 24px;
+    white-space: nowrap;
+    transition: color 0.15s;
+  }
+
+  .site-footer__nav a:hover,
+  .site-footer__email:hover {
+    color: var(--color-ink);
+  }
+
+  .site-footer__contact {
+    grid-area: contact;
+  }
+
+  .site-footer__prompt {
+    font-size: 16px;
+    font-weight: var(--weight-light);
+    line-height: 24px;
+  }
+
+  .site-footer__email {
+    display: block;
+    margin-top: 4px;
+    color: var(--color-ink);
+    font-size: 16px;
+    font-weight: var(--weight-regular);
+    line-height: 24px;
+  }
+
+  .site-footer__social {
+    display: flex;
+    gap: 20px;
+    margin: 20px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .site-footer__social a,
+  .site-footer__social img {
+    display: block;
+  }
+
+  /* Muted until hovered, like the reference. */
+  .site-footer__social img {
+    filter: grayscale(1);
+    opacity: 0.45;
+    transition: opacity 0.15s;
+  }
+
+  .site-footer__social a:hover img {
+    opacity: 1;
+  }
+
+  .site-footer__copy {
+    grid-area: copy;
+    margin-top: 56px;
+    font-size: 13px;
+    font-weight: var(--weight-light);
+    line-height: 20px;
+    text-align: center;
+  }
+</style>

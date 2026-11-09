@@ -1,0 +1,56 @@
+:root {
+  /* Brand palette (from README) */
+  --color-red: #ed4545;
+  --color-coral: #fe6161;
+  --color-orange: #f5ae5d;
+  --color-pink: #e6999b;
+  --color-mint: #abd9d6;
+  --color-ink: #181818;
+  --color-white: #ffffff;
+
+  /* Extra colors used by the Wix design (sampled from Figma) */
+  --color-maroon: #852024; /* header wordmark */
+  --color-crimson: #c93136; /* photo frames, board-card badge */
+  --color-lavender: #ccc8f1; /* hero fallback */
+  --color-cream: #f6f2ef; /* 26-27 page backdrop */
+  --color-cream-photos: #f7f3ef; /* photo gallery banner */
+  --color-gray-bg: #f3f3f3; /* photo gallery columns */
+  --color-blush: #ffdcdc; /* photo event cards */
+  --color-green: #3f7652; /* "Photos!!" button */
+  --color-line: #282626;
+  --color-line-soft: #525252; /* era card dividers */
+  --color-rose: #dd7376; /* eras reflection band */
+  --color-salmon: #ff6161; /* era names */
+  --color-off-white: #fafafa; /* eras banner */
+  --color-border: #959595; /* language select border */
+  --color-muted: #8c8c8c; /* footer text */
+  --color-divider: #e6e6e6; /* footer top rule */
+
+  /* Fonts. Swap the families here (and the <link> in BaseLayout) in one place. */
+  --font-body: "Poppins", system-ui, sans-serif;
+  --font-display: "Krona One", "Poppins", system-ui, sans-serif; /* hero + contact button */
+  --font-hero: "Montserrat", "Poppins", system-ui, sans-serif; /* home hero title */
+  --font-ui: "Nunito Sans", "Poppins", system-ui, sans-serif; /* language select, buttons */
+  --font-jp: "Noto Sans JP", "Poppins", system-ui, sans-serif;
+  --font-mono: "Courier Prime", "Courier New", monospace; /* photo event titles */
+  --font-title: "Aboreto", "Poppins", system-ui, sans-serif; /* Photo Gallery heading */
+  --font-serif: "Inknut Antiqua", Georgia, serif; /* Eras page title */
+  --font-accent: "Jost", "Poppins", system-ui, sans-serif; /* Eras reflection sign-off */
+
+  /* Font weights */
+  --weight-extralight: 200;
+  --weight-light: 300;
+  --weight-regular: 400;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+
+  /* Layout */
+  --page-width: 1440px; /* Figma desktop frame */
+  --content-width: 980px; /* centered content column (x 230 to 1210) */
+  --header-height: 92px;
+  --footer-gap: 33px; /* space between a page's last content and the footer */
+
+  /* Shadows used on cards and photo frames */
+  --shadow-frame: 0 1px 3px rgba(0, 0, 0, 0.5);
+  --shadow-card: 0 1px 4px #000;
+}

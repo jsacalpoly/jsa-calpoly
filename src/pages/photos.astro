@@ -1,0 +1,278 @@
+---
+import { Image } from "astro:assets";
+import { getCollection, render } from "astro:content";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import PhotoEventCard from "../components/PhotoEventCard.astro";
+
+import featuredPhoto from "../assets/photos/featured-pismo.jpg";
+import bannerBlossoms from "../assets/photos/banner-blossoms.png";
+import galleryLogo from "../assets/photos/gallery-logo.png";
+import cameraIcon from "../assets/photos/camera-icon.png";
+
+const events = (await getCollection("events")).sort((a, b) => a.data.order - b.data.order);
+const featured = events[0];
+const { Content: FeaturedBody } = await render(featured);
+
+// Newest first, alternating between the two columns like the Wix gallery.
+const columns = [events.filter((_, i) => i % 2 === 0), events.filter((_, i) => i % 2 === 1)];
+const renderedColumns = await Promise.all(
+  columns.map((column) =>
+    Promise.all(
+      column.map(async (event) => {
+        const { Content } = await render(event);
+        return { event, Content };
+      }),
+    ),
+  ),
+);
+---
+
+<BaseLayout title="Photos | Cal Poly JSA" description="Photo gallery of Cal Poly JSA events.">
+  <div class="gallery container">
+    <!-- Gray backdrops behind the featured event and card columns (Figma stops them at y=2720). -->
+    <span class="gallery__backdrop gallery__backdrop--left"></span>
+    <span class="gallery__backdrop gallery__backdrop--right"></span>
+
+    <!-- Banner -->
+    <header class="gallery__banner">
+      <Image class="gallery__banner-art" src={bannerBlossoms} alt="" width={616} height={164} />
+      <Image class="gallery__logo" src={galleryLogo} alt="JSA logo" width={101} height={95} />
+      <h1 class="gallery__title">Photo Gallery</h1>
+      <p class="gallery__subtitle">Capturing those precious memories</p>
+      <span class="gallery__title-rule"></span>
+    </header>
+
+    <!-- Featured event -->
+    <section class="featured">
+      <div class="featured__photo">
+        <Image src={featuredPhoto} alt="Three JSA members on the beach at Pismo" width={1098} height={668} />
+      </div>
+      <span class="featured__divider"></span>
+      <h2 class="featured__title">{featured.data.title}</h2>
+      <div class="featured__text"><FeaturedBody /></div>
+      <p class="featured__prompt">Please add any photos you took!!</p>
+      <a class="featured__button" href={featured.data.album ?? "#"} target="_blank" rel="noopener noreferrer">
+        <span>Photos!!</span>
+        <Image src={cameraIcon} alt="" width={37} height={37} />
+      </a>
+    </section>
+    <span class="gallery__rule"></span>
+
+    <!-- Event cards -->
+    {
+      renderedColumns.map((column, index) => (
+        <div class:list={["cards", index === 0 ? "cards--left" : "cards--right"]}>
+          {column.map(({ event, Content }) => (
+            <PhotoEventCard title={event.data.title} cover={event.data.cover} album={event.data.album}>
+              <Content />
+            </PhotoEventCard>
+          ))}
+        </div>
+      ))
+    }
+  </div>
+</BaseLayout>
+
+<style>
+  /* 79 to 3252 (the footer gap follows). Every position below is relative to the 980px column that starts at x=230. */
+  .gallery {
+    height: 3173px;
+  }
+
+  .gallery > * {
+    position: absolute;
+  }
+
+  .gallery__backdrop {
+    top: 148px;
+    height: 2493px;
+    background: var(--color-gray-bg);
+  }
+
+  .gallery__backdrop--left {
+    left: 0;
+    width: 588px;
+  }
+
+  .gallery__backdrop--right {
+    left: 588px;
+    width: 392px;
+  }
+
+  /* ---------- Banner ---------- */
+  .gallery__banner {
+    left: 0;
+    top: 0;
+    width: 980px;
+    height: 164px;
+    background: var(--color-cream-photos);
+  }
+
+  .gallery__banner > * {
+    position: absolute;
+  }
+
+  .gallery__banner-art {
+    left: 376px;
+    top: 0;
+    width: 616px;
+    height: 164px;
+  }
+
+  .gallery__logo {
+    left: 22px;
+    top: 24px;
+    width: 101px;
+    height: 95px;
+  }
+
+  .gallery__title {
+    left: 145px;
+    top: 23.9px;
+    font-family: var(--font-title);
+    font-size: 54px;
+    font-weight: var(--weight-regular);
+    line-height: 64.8px;
+    color: var(--color-ink);
+    white-space: nowrap;
+  }
+
+  .gallery__subtitle {
+    left: 150px;
+    top: 97.8px;
+    font-size: 15px;
+    font-weight: var(--weight-extralight);
+    line-height: 21px;
+    white-space: nowrap;
+  }
+
+  .gallery__title-rule {
+    left: 150px;
+    top: 134px;
+    width: 139px;
+    height: 1px;
+    background: var(--color-line);
+  }
+
+  /* ---------- Featured event ---------- */
+  .featured {
+    left: 0;
+    top: 148px;
+    width: 980px;
+  }
+
+  .featured > * {
+    position: absolute;
+  }
+
+  .featured__photo {
+    left: 22px;
+    top: 0;
+    width: 553px;
+    height: 338px;
+    border: 2px solid var(--color-white);
+    border-radius: 20px;
+    background: var(--color-white);
+    box-shadow: var(--shadow-frame);
+    overflow: hidden;
+  }
+
+  .featured__photo :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 18px;
+  }
+
+  .featured__divider {
+    left: 591.5px;
+    top: 7.5px;
+    width: 1px;
+    height: 216px;
+    background: var(--color-line);
+  }
+
+  .featured__title {
+    left: 616px;
+    top: 12.5px;
+    font-family: var(--font-mono);
+    font-size: 30px;
+    font-weight: var(--weight-regular);
+    line-height: 36px;
+    color: var(--color-ink);
+    white-space: nowrap;
+  }
+
+  .featured__text,
+  .featured__prompt {
+    left: 616px;
+    font-size: 15px;
+    font-weight: var(--weight-extralight);
+    line-height: 21px;
+  }
+
+  .featured__text {
+    top: 60px;
+    width: 311px;
+  }
+
+  .featured__prompt {
+    top: 259px;
+    white-space: nowrap;
+  }
+
+  .featured__button {
+    left: 607px;
+    top: 293px;
+    width: 353px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 22.5px;
+    background: var(--color-green);
+    color: var(--color-white);
+    font-family: var(--font-ui);
+    font-size: 15px;
+    font-weight: var(--weight-light);
+    letter-spacing: 3.8px;
+  }
+
+  .featured__button span {
+    /* Figma centers the label on the full button, ignoring the camera icon. */
+    flex: 1;
+    text-align: center;
+  }
+
+  .featured__button :global(img) {
+    position: absolute;
+    left: 205.6px;
+    top: 4px;
+    width: 37px;
+    height: 37px;
+  }
+
+  .gallery__rule {
+    left: 136px;
+    top: 513px;
+    width: 315px;
+    height: 1px;
+    background: var(--color-line);
+  }
+
+  /* ---------- Event cards ---------- */
+  .cards {
+    top: 548px;
+    display: flex;
+    flex-direction: column;
+    gap: 21px;
+  }
+
+  .cards--left {
+    left: 11px;
+  }
+
+  .cards--right {
+    left: 495px;
+  }
+</style>
