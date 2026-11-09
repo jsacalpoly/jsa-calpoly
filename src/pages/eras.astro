@@ -43,28 +43,24 @@ const archiveColumns = [0, 1, 2].map((col) => archive.filter((_, i) => i % 3 ===
       <Image class="panel__blossom panel__blossom--left" src={blossom} alt="" width={152} height={154} />
       <Image class="panel__blossom panel__blossom--right" src={blossom} alt="" width={152} height={154} />
 
-      {
-        recentColumns.map((column, index) => (
-          <div class:list={["recent-column", index === 0 ? "recent-column--left" : "recent-column--right"]}>
-            {column.map((era) => (
-              <EraCard {...era.data} />
-            ))}
-          </div>
-        ))
-      }
+      {recentColumns.map((column, index) => (
+        <div class:list={["recent-column", index === 0 ? "recent-column--left" : "recent-column--right"]}>
+          {column.map((era) => (
+            <EraCard {...era.data} />
+          ))}
+        </div>
+      ))}
     </section>
 
     <!-- Archive: small cards -->
     <section class="panel panel--archive">
-      {
-        archiveColumns.map((column, index) => (
-          <div class:list={["archive-column", `archive-column--${index + 1}`]}>
-            {column.map((era) => (
-              <EraCard {...era.data} />
-            ))}
-          </div>
-        ))
-      }
+      {archiveColumns.map((column, index) => (
+        <div class:list={["archive-column", `archive-column--${index + 1}`]}>
+          {column.map((era) => (
+            <EraCard {...era.data} />
+          ))}
+        </div>
+      ))}
     </section>
   </div>
 
@@ -92,9 +88,9 @@ const archiveColumns = [0, 1, 2].map((col) => archive.filter((_, i) => i % 3 ===
       </p>
       <p class="reflection__text reflection__text--passion">
         Now none of this is going to happen without your passion. Find what you're passionate about and find a way to
-        bring it into JSA. Keep in mind that what you want to do needs to be for the best of the club, but the club won't
-        strive unless you fully believe in what you're doing. If you're passionate about what you're doing for the club,
-        it will show and you'll be able to go above and beyond.
+        bring it into JSA. Keep in mind that what you want to do needs to be for the best of the club, but the club
+        won't strive unless you fully believe in what you're doing. If you're passionate about what you're doing for the
+        club, it will show and you'll be able to go above and beyond.
       </p>
 
       <h2 class="reflection__title">

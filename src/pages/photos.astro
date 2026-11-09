@@ -49,7 +49,9 @@ const renderedColumns = await Promise.all(
       </div>
       <span class="featured__divider"></span>
       <h2 class="featured__title">{featured.data.title}</h2>
-      <div class="featured__text"><FeaturedBody /></div>
+      <div class="featured__text">
+        <FeaturedBody />
+      </div>
       <p class="featured__prompt">Please add any photos you took!!</p>
       <a class="featured__button" href={featured.data.album ?? "#"} target="_blank" rel="noopener noreferrer">
         <span>Photos!!</span>
@@ -59,17 +61,15 @@ const renderedColumns = await Promise.all(
     <span class="gallery__rule"></span>
 
     <!-- Event cards -->
-    {
-      renderedColumns.map((column, index) => (
-        <div class:list={["cards", index === 0 ? "cards--left" : "cards--right"]}>
-          {column.map(({ event, Content }) => (
-            <PhotoEventCard title={event.data.title} cover={event.data.cover} album={event.data.album}>
-              <Content />
-            </PhotoEventCard>
-          ))}
-        </div>
-      ))
-    }
+    {renderedColumns.map((column, index) => (
+      <div class:list={["cards", index === 0 ? "cards--left" : "cards--right"]}>
+        {column.map(({ event, Content }) => (
+          <PhotoEventCard title={event.data.title} cover={event.data.cover} album={event.data.album}>
+            <Content />
+          </PhotoEventCard>
+        ))}
+      </div>
+    ))}
   </div>
 </BaseLayout>
 

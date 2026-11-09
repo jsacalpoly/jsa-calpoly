@@ -17,13 +17,11 @@ import { navLinks } from "../data/navigation";
     </a>
 
     <nav class="site-header__nav" aria-label="Main">
-      {
-        navLinks.map((link) => (
-          <a class="site-header__link" href={link.href} style={`margin-left: ${Math.round(link.gap * 1.17)}px`}>
-            {link.name}
-          </a>
-        ))
-      }
+      {navLinks.map((link) => (
+        <a class="site-header__link" href={link.href} style={`margin-left: ${Math.round(link.gap * 1.17)}px`}>
+          {link.name}
+        </a>
+      ))}
     </nav>
 
     <div class="site-header__language">

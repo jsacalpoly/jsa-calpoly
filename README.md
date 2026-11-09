@@ -8,17 +8,17 @@ The official website of the Japanese Student Association at Cal Poly San Luis Ob
 
 ## Tech stack
 
-| Layer | Choice | Purpose |
-|---|---|---|
-| Framework | [Astro](https://astro.build) | Builds static HTML from reusable components |
-| Styling | Plain CSS | Design tokens as CSS custom properties; flexbox and grid for layout; component-scoped styles |
-| Fonts | Google Fonts | Loaded through font variables so they can be swapped in one place |
-| Content | Astro content collections (Markdown/JSON) | Board members, eras, photo events and projects stored as data |
-| Images | `astro:assets` | Resizes and compresses images at build time |
-| Contact form | Cloudflare Worker (or Formspree) | Sends submissions to jsacalpoly@gmail.com |
-| Embeds | Google Calendar, Instagram | Calendar and social content |
-| Version control | GitHub (`jsacalpoly` organization) | Pull-request workflow |
-| Hosting | Cloudflare Workers (static assets) | Builds on every push via Workers Builds; production deploys on merge to `main` |
+| Layer           | Choice                                    | Purpose                                                                                      |
+| --------------- | ----------------------------------------- | -------------------------------------------------------------------------------------------- |
+| Framework       | [Astro](https://astro.build)              | Builds static HTML from reusable components                                                  |
+| Styling         | Plain CSS                                 | Design tokens as CSS custom properties; flexbox and grid for layout; component-scoped styles |
+| Fonts           | Google Fonts                              | Loaded through font variables so they can be swapped in one place                            |
+| Content         | Astro content collections (Markdown/JSON) | Board members, eras, photo events and projects stored as data                                |
+| Images          | `astro:assets`                            | Resizes and compresses images at build time                                                  |
+| Contact form    | Cloudflare Worker (or Formspree)          | Sends submissions to jsacalpoly@gmail.com                                                    |
+| Embeds          | Google Calendar, Instagram                | Calendar and social content                                                                  |
+| Version control | GitHub (`jsacalpoly` organization)        | Pull-request workflow                                                                        |
+| Hosting         | Cloudflare Workers (static assets)        | Builds on every push via Workers Builds; production deploys on merge to `main`               |
 
 ---
 
@@ -43,12 +43,12 @@ The site runs at `http://localhost:4321` and reloads as you edit.
 
 ### Commands
 
-| Command | What it does |
-|---|---|
-| `npm run dev` | Start the local dev server |
-| `npm run build` | Build the production site into `dist/` |
-| `npm run preview` | Serve the built site locally to check it before deploying |
-| `npx wrangler dev` | Preview the built site in Cloudflare's local runtime |
+| Command            | What it does                                              |
+| ------------------ | --------------------------------------------------------- |
+| `npm run dev`      | Start the local dev server                                |
+| `npm run build`    | Build the production site into `dist/`                    |
+| `npm run preview`  | Serve the built site locally to check it before deploying |
+| `npx wrangler dev` | Preview the built site in Cloudflare's local runtime      |
 
 ---
 
@@ -167,8 +167,8 @@ The site deploys to Cloudflare Workers as static assets, connected to this GitHu
   // Set this to the date you first deploy
   "compatibility_date": "YYYY-MM-DD",
   "assets": {
-    "directory": "./dist"
-  }
+    "directory": "./dist",
+  },
 }
 ```
 
@@ -178,11 +178,11 @@ The site deploys to Cloudflare Workers as static assets, connected to this GitHu
 2. Under **Import a repository**, connect the `jsacalpoly` GitHub organization and select this repo.
 3. Use these settings:
 
-| Setting | Value |
-|---|---|
-| Build command | `npx astro build` |
-| Deploy command | `npx wrangler deploy` |
-| Production branch | `main` |
+| Setting           | Value                 |
+| ----------------- | --------------------- |
+| Build command     | `npx astro build`     |
+| Deploy command    | `npx wrangler deploy` |
+| Production branch | `main`                |
 
 The site goes live at a `*.workers.dev` address. A custom domain can be attached later under the Worker's **Settings → Domains & Routes**.
 
