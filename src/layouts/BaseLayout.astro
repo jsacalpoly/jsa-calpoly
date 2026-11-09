@@ -25,6 +25,9 @@ const {
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
     <title>{title}</title>
+    <script is:inline>
+      document.documentElement.classList.add("js");
+    </script>
 
     <!-- Fonts: change these families together with the variables in src/styles/tokens.css -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -42,6 +45,22 @@ const {
     <Footer />
   </body>
 </html>
+
+<script>
+  // Fade elements marked with data-reveal in the first time they scroll into view.
+  const targets = document.querySelectorAll<HTMLElement>("[data-reveal]");
+  const observer = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue;
+        entry.target.classList.add("is-visible");
+        observer.unobserve(entry.target);
+      }
+    },
+    { threshold: 0.15 },
+  );
+  targets.forEach((target) => observer.observe(target));
+</script>
 
 <style>
   main {

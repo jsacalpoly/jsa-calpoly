@@ -2,10 +2,8 @@
 import { Image } from "astro:assets";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import ProjectCard from "../components/ProjectCard.astro";
+import HeroSlideshow from "../components/HeroSlideshow.astro";
 
-import hero from "../assets/home/hero.jpg";
-import heroArrowLeft from "../assets/home/hero-arrow-left.png";
-import heroArrowRight from "../assets/home/hero-arrow-right.png";
 import welcome from "../assets/home/welcome.jpg";
 import join from "../assets/home/join.jpg";
 import events from "../assets/home/events.jpg";
@@ -44,31 +42,22 @@ const projects = [
 <BaseLayout title="Cal Poly JSA | Japanese Student Association">
   <!-- Hero -->
   <section class="hero">
-    <Image
-      class="hero__image"
-      src={hero}
-      alt="JSA members posing in front of a pier at the beach"
-      width={1920}
-      height={813}
-      loading="eager"
-    />
+    <HeroSlideshow />
     <div class="hero__stage">
-      <Image class="hero__arrow hero__arrow--left" src={heroArrowLeft} alt="" width={30} height={59} />
-      <Image class="hero__arrow hero__arrow--right" src={heroArrowRight} alt="" width={30} height={59} />
-      <h1 class="hero__title">
+      <h1 class="hero__title" data-reveal>
         <span class="hero__title-line hero__title-line--white">WE ARE</span>
         <span class="hero__title-line hero__title-line--red">JSA</span>
       </h1>
-      <a class="hero__button" href="/board">ようこそ!</a>
+      <a class="hero__button" href="/board" data-reveal>ようこそ!</a>
     </div>
   </section>
 
   <!-- Welcome -->
   <section class="welcome container">
-    <div class="photo-frame welcome__photo">
+    <div class="photo-frame welcome__photo" data-reveal>
       <Image src={welcome} alt="A large group of JSA members posing outdoors" width={1056} height={702} />
     </div>
-    <div class="welcome__text">
+    <div class="welcome__text" data-reveal>
       <h2 class="welcome__heading">Welcome :D</h2>
       <p class="welcome__lead">
         We are Cal Poly's Japanese Student Association, dedicated to sharing and celebrating Japanese culture in
@@ -142,34 +131,14 @@ const projects = [
     overflow: hidden;
   }
 
-  .hero__image {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
+  /* Sits above the slideshow; only the button takes clicks so the slideshow arrows stay clickable. */
   .hero__stage {
     position: relative;
+    z-index: 1;
     width: var(--page-width);
     height: 100%;
     margin-inline: auto;
-  }
-
-  .hero__arrow {
-    position: absolute;
-    top: 274.2px;
-    width: 30px;
-    height: 58.6px;
-  }
-
-  .hero__arrow--left {
-    left: 100px;
-  }
-
-  .hero__arrow--right {
-    left: 1310px;
+    pointer-events: none;
   }
 
   .hero__title {
@@ -207,12 +176,24 @@ const projects = [
     display: flex;
     align-items: center;
     justify-content: center;
+    border: 1px solid var(--color-coral);
     border-radius: 23.5px;
     background: var(--color-coral);
     color: var(--color-white);
+    pointer-events: auto;
+    transition:
+      background-color 0.4s ease,
+      border-color 0.4s ease;
     font-family: var(--font-jp);
     font-size: 14px;
     font-weight: var(--weight-bold);
+  }
+
+  /* Wix: coral fills to red and the border fades out over 0.4s. */
+  .hero__button:hover,
+  .hero__button:focus-visible {
+    background: var(--color-red);
+    border-color: transparent;
   }
 
   /* ---------- Shared photo frame: white border + shadow, rounded photo ---------- */
