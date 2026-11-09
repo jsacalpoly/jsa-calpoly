@@ -23,6 +23,7 @@ const socials = [
 ];
 
 const githubHref = "https://github.com/jsacalpoly";
+const changelogHref = "https://github.com/jsacalpoly/jsa-calpoly/commits/main";
 ---
 
 <footer class="site-footer">
@@ -91,7 +92,9 @@ const githubHref = "https://github.com/jsacalpoly";
     </div>
 
     <p class="site-footer__copy">© 2026 Japanese Student Association, Cal Poly SLO</p>
-    <p class="site-footer__changelog">Changelog: {changelog}</p>
+    <p class="site-footer__changelog">
+      <a href={changelogHref}>Changelog: {changelog}</a>
+    </p>
   </div>
 </footer>
 
@@ -253,6 +256,16 @@ const githubHref = "https://github.com/jsacalpoly";
     line-height: 18px;
     text-align: center;
     text-transform: uppercase;
+  }
+
+  .site-footer__changelog a {
+    transition: color 0.15s;
+  }
+
+  .site-footer__changelog a:hover,
+  .site-footer__changelog a:focus-visible {
+    color: var(--color-ink);
+    text-decoration: underline;
   }
 </style>
 
