@@ -27,6 +27,21 @@ const {
     <title>{title}</title>
     <script is:inline>
       document.documentElement.classList.add("js");
+
+      // The layout is built for a 1440px-wide window. On narrower screens (laptops, Windows display
+      // scaling) shrink the whole page to fit instead of making visitors zoom out or scroll sideways.
+      (function () {
+        var root = document.documentElement;
+        function fit() {
+          root.style.zoom = "";
+          var scale = Math.min(1, root.clientWidth / 1440);
+          if (scale < 1) root.style.zoom = String(scale);
+          // Window height in the zoomed page's pixels, so the hero can still fill the screen.
+          root.style.setProperty("--viewport-h", window.innerHeight / scale + "px");
+        }
+        fit();
+        window.addEventListener("resize", fit);
+      })();
     </script>
 
     <!-- Fonts: change these families together with the variables in src/styles/tokens.css -->

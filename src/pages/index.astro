@@ -168,7 +168,7 @@ const projects = [
   .hero {
     position: relative;
     /* Fills the screen under the header, like Wix; never shorter than the 610px design. */
-    height: max(610px, calc(100vh - var(--header-height)));
+    height: max(610px, calc(var(--viewport-h, 100vh) - var(--header-height)));
     background: var(--color-lavender);
     overflow: hidden;
   }
