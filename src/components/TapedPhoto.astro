@@ -1,0 +1,75 @@
+---
+import { Image } from "astro:assets";
+import type { ImageMetadata } from "astro";
+
+interface Props {
+  src: ImageMetadata;
+  alt: string;
+  /** Photo width and height in px. The white frame is added around it. */
+  width: number;
+  height: number;
+  /** Rotation in degrees. */
+  tilt?: number;
+  /** Which part of the photo stays in view when it is cropped, e.g. "50% 0%" to keep the top. */
+  focus?: string;
+  /** Hints for the browser about how wide the photo is shown, so it picks a sharp but small file. */
+  sizes?: string;
+}
+
+const { src, alt, width, height, tilt = 0, focus = "50% 50%", sizes } = Astro.props;
+---
+
+<figure class="taped" style={`--tilt: ${tilt}deg; --photo-w: ${width}px; --photo-h: ${height}px;`}>
+  <span class="taped__tape"></span>
+  <div class="taped__photo">
+    <Image
+      src={src}
+      alt={alt}
+      width={width * 2}
+      height={height * 2}
+      widths={[width, width * 2]}
+      sizes={sizes ?? `${width}px`}
+      quality={85}
+      style={`object-position: ${focus};`}
+    />
+  </div>
+</figure>
+
+<style>
+  /* A print with a thick bottom edge, a strip of tape on top and a slight tilt. */
+  .taped {
+    position: relative;
+    flex: none;
+    margin: 0;
+    padding: 16px 16px 56px;
+    background: var(--color-white);
+    border-radius: 3px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.32);
+    rotate: var(--tilt);
+  }
+
+  .taped__tape {
+    position: absolute;
+    top: -14px;
+    left: 50%;
+    width: 96px;
+    height: 28px;
+    translate: -50% 0;
+    rotate: -4deg;
+    background: rgba(239, 224, 160, 0.8);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+  }
+
+  .taped__photo {
+    width: var(--photo-w);
+    height: var(--photo-h);
+    overflow: hidden;
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08);
+  }
+
+  .taped__photo :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+</style>
