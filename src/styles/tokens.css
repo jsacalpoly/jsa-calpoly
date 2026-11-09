@@ -45,6 +45,7 @@
   --page-width: 1440px; /* Figma desktop frame */
   --content-width: 980px; /* centered content column (x 230 to 1210) */
   --header-height: 79px;
+  --footer-gap: 33px; /* space between a page's last content and the footer */
 
   /* Shadows used on cards and photo frames */
   --shadow-frame: 0 1px 3px rgba(0, 0, 0, 0.5);

@@ -7,11 +7,14 @@ import Footer from "../components/Footer.astro";
 interface Props {
   title?: string;
   description?: string;
+  /** Skip the gap above the footer, for pages that end in a full-width colored band. */
+  flushFooter?: boolean;
 }
 
 const {
   title = "Cal Poly Japanese Student Association",
   description = "The Japanese Student Association at Cal Poly San Luis Obispo: culture, community, and chaos.",
+  flushFooter = false,
 } = Astro.props;
 ---
 
@@ -33,9 +36,19 @@ const {
   </head>
   <body>
     <Header />
-    <main>
+    <main class:list={{ "flush-footer": flushFooter }}>
       <slot />
     </main>
     <Footer />
   </body>
 </html>
+
+<style>
+  main {
+    padding-bottom: var(--footer-gap);
+  }
+
+  main.flush-footer {
+    padding-bottom: 0;
+  }
+</style>
