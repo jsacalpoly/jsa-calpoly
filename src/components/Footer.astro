@@ -28,22 +28,24 @@ const socials = [
     </div>
 
     <nav class="site-footer__nav" aria-label="Footer">
-      {navLinks.map((link) => <a href={link.href}>{link.name}</a>)}
+      {navLinks.map((link) => (
+        <a href={link.href}>{link.name}</a>
+      ))}
     </nav>
 
     <div class="site-footer__contact">
       <p class="site-footer__prompt">Join the family!</p>
-      <a class="site-footer__email" href={`mailto:${email}`}>{email}</a>
+      <a class="site-footer__email" href={`mailto:${email}`}>
+        {email}
+      </a>
       <ul class="site-footer__social">
-        {
-          socials.map((social) => (
-            <li>
-              <a href={social.href} aria-label={social.label}>
-                <Image src={social.icon} alt="" width={28} height={28} />
-              </a>
-            </li>
-          ))
-        }
+        {socials.map((social) => (
+          <li>
+            <a href={social.href} aria-label={social.label}>
+              <Image src={social.icon} alt="" width={28} height={28} />
+            </a>
+          </li>
+        ))}
       </ul>
     </div>
 

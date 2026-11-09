@@ -50,7 +50,9 @@ const projects = [
         <span class="hero__title-line hero__title-line--white">WE ARE</span>
         <span class="hero__title-line hero__title-line--red">JSA</span>
       </h1>
-      <a class="hero__button" href="#welcome" data-reveal>ようこそ!</a>
+      <a class="hero__button" href="#welcome" data-reveal>
+        ようこそ!
+      </a>
     </div>
   </section>
 
@@ -58,7 +60,13 @@ const projects = [
   <section class="split" id="welcome">
     <div class="split__content">
       <div class="photo-frame split__photo" data-reveal>
-        <Image src={welcome} alt="A large group of JSA members posing outdoors" widths={photoWidths} sizes="(min-width: 1760px) 720px, calc(50vw - 100px)" quality={85} />
+        <Image
+          src={welcome}
+          alt="A large group of JSA members posing outdoors"
+          widths={photoWidths}
+          sizes="(min-width: 1760px) 720px, calc(50vw - 100px)"
+          quality={85}
+        />
       </div>
       <div class="split__text" data-reveal>
         <h2 class="split__heading split__heading--regular">Welcome :D</h2>
@@ -77,17 +85,26 @@ const projects = [
       <div class="split__text split__text--white">
         <h2 class="split__heading">Join the family!!</h2>
         <p>
-          The easiest way to join JSA is to drop by our general meetings - in Baker 107, every Wednesday at 7pm. We
-          hope to see you there!
+          The easiest way to join JSA is to drop by our general meetings - in Baker 107, every Wednesday at 7pm. We hope
+          to see you there!
         </p>
         <p class="split__gap">
-          Follow the <a href="https://www.instagram.com/calpolyjsa" class="split__link">Cal Poly JSA Instagram</a>{" "}
+          Follow the{" "}
+          <a href="https://www.instagram.com/calpolyjsa" class="split__link">
+            Cal Poly JSA Instagram
+          </a>{" "}
           (@calpolyjsa) where we post club updates and event/meeting reminders! You can also join the JSA GroupMe or dm
           the instagram for more info!
         </p>
       </div>
       <div class="photo-frame photo-frame--crimson split__photo split__photo--short">
-        <Image src={join} alt="JSA members smiling together in a park" widths={photoWidths} sizes="(min-width: 1760px) 720px, calc(50vw - 100px)" quality={85} />
+        <Image
+          src={join}
+          alt="JSA members smiling together in a park"
+          widths={photoWidths}
+          sizes="(min-width: 1760px) 720px, calc(50vw - 100px)"
+          quality={85}
+        />
       </div>
     </div>
   </section>
@@ -96,7 +113,13 @@ const projects = [
   <section class="split">
     <div class="split__content">
       <div class="photo-frame split__photo">
-        <Image src={events} alt="Smiling JSA members in front of blooming flowers" widths={photoWidths} sizes="(min-width: 1760px) 720px, calc(50vw - 100px)" quality={85} />
+        <Image
+          src={events}
+          alt="Smiling JSA members in front of blooming flowers"
+          widths={photoWidths}
+          sizes="(min-width: 1760px) 720px, calc(50vw - 100px)"
+          quality={85}
+        />
       </div>
       <div class="split__text">
         <h2 class="split__heading">Our Events</h2>
@@ -116,7 +139,9 @@ const projects = [
   <section class="projects">
     <h2 class="projects__title">JSA Projects</h2>
     <div class="projects__cards">
-      {projects.map((project) => <ProjectCard {...project} />)}
+      {projects.map((project) => (
+        <ProjectCard {...project} />
+      ))}
     </div>
   </section>
 </BaseLayout>
@@ -126,15 +151,17 @@ const projects = [
   const heroText = document.querySelectorAll<HTMLElement>(".hero__title, .hero__button");
   document.addEventListener("hero:slide", (event) => {
     const direction = (event as CustomEvent<{ direction: 1 | -1 }>).detail.direction;
-    heroText.forEach((element) => element.animate(
-      [
-        { transform: "translateX(0)", opacity: 1, offset: 0 },
-        { transform: `translateX(${-60 * direction}vw)`, opacity: 0, offset: 0.5 },
-        { transform: `translateX(${60 * direction}vw)`, opacity: 0, offset: 0.5001 },
-        { transform: "translateX(0)", opacity: 1, offset: 1 },
-      ],
-      { duration: 900, easing: "cubic-bezier(0.65, 0, 0.35, 1)" },
-    ));
+    heroText.forEach((element) =>
+      element.animate(
+        [
+          { transform: "translateX(0)", opacity: 1, offset: 0 },
+          { transform: `translateX(${-60 * direction}vw)`, opacity: 0, offset: 0.5 },
+          { transform: `translateX(${60 * direction}vw)`, opacity: 0, offset: 0.5001 },
+          { transform: "translateX(0)", opacity: 1, offset: 1 },
+        ],
+        { duration: 900, easing: "cubic-bezier(0.65, 0, 0.35, 1)" },
+      ),
+    );
   });
 </script>
 

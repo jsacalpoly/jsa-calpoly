@@ -56,14 +56,12 @@ const wrapped = size === "large" && president.length > 16;
 ---
 
 <article class:list={["era-card", `era-card--${size}`, { "era-card--wrapped": wrapped }]}>
-  {
-    size === "large" && (
-      <div class="era-card__pill">
-        <Image src={pill} alt="" width={408} height={272} />
-        <span class="era-card__year">{year}</span>
-      </div>
-    )
-  }
+  {size === "large" && (
+    <div class="era-card__pill">
+      <Image src={pill} alt="" width={408} height={272} />
+      <span class="era-card__year">{year}</span>
+    </div>
+  )}
 
   <Image class="era-card__flower era-card__flower--top" src={ornament} alt="" width={25} height={29} />
   <span class="era-card__rule era-card__rule--top-left"></span>
@@ -82,18 +80,16 @@ const wrapped = size === "large" && president.length > 16;
   <h3 class="era-card__heading">{heading}</h3>
 
   <ul class="era-card__roles">
-    {
-      roles.map((role) => (
-        <li class="era-role">
-          <span class="era-role__badge">
-            <Image class="era-role__tile" src={tiles[role.icon]} alt="" width={44} height={44} />
-            <Image class={`era-role__icon era-role__icon--${role.icon}`} src={icons[role.icon]} alt="" />
-          </span>
-          <p class="era-role__title">{role.title}</p>
-          <p class:list={["era-role__names", { "era-role__names--compact": role.compact }]}>{role.names}</p>
-        </li>
-      ))
-    }
+    {roles.map((role) => (
+      <li class="era-role">
+        <span class="era-role__badge">
+          <Image class="era-role__tile" src={tiles[role.icon]} alt="" width={44} height={44} />
+          <Image class={`era-role__icon era-role__icon--${role.icon}`} src={icons[role.icon]} alt="" />
+        </span>
+        <p class="era-role__title">{role.title}</p>
+        <p class:list={["era-role__names", { "era-role__names--compact": role.compact }]}>{role.names}</p>
+      </li>
+    ))}
   </ul>
 </article>
 

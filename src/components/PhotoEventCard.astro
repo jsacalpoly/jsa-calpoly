@@ -15,17 +15,33 @@ const { title, cover, album } = Astro.props;
 <article class:list={["photo-event-card", { "photo-event-card--link": album }]}>
   <h3 class="photo-event-card__title">{title}</h3>
   <span class="photo-event-card__rule"></span>
-  <div class="photo-event-card__text"><slot /></div>
-  {
-    album && (
-      <a class="photo-event-card__button" href={album} target="_blank" rel="noopener noreferrer" aria-label={`Open the ${title} photo album`}>
-        Open album
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <path d="M7 17L17 7M9 7h8v8" />
-        </svg>
-      </a>
-    )
-  }
+  <div class="photo-event-card__text">
+    <slot />
+  </div>
+  {album && (
+    <a
+      class="photo-event-card__button"
+      href={album}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label={`Open the ${title} photo album`}
+    >
+      Open album
+      <svg
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <path d="M7 17L17 7M9 7h8v8" />
+      </svg>
+    </a>
+  )}
   <div class="photo-event-card__photo">
     <Image src={cover} alt={`Photos from ${title}`} width={400} height={242} />
   </div>
@@ -44,7 +60,9 @@ const { title, cover, album } = Astro.props;
   }
 
   .photo-event-card--link {
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    transition:
+      transform 0.15s ease,
+      box-shadow 0.15s ease;
   }
 
   .photo-event-card--link:hover,

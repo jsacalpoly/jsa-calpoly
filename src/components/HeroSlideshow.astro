@@ -21,28 +21,37 @@ const slides = [
   Slides glide in from the right over 0.9s with an ease-in-out curve, a new one every 5s, looping.
   The arrows fade to 60% on hover. (Wix itself is faster, 0.45s every 3.5s; this is deliberately calmer.)
 -->
-<div class="slideshow" data-slideshow data-interval="5000" role="region" aria-roledescription="carousel" aria-label="JSA photos">
-  {
-    slides.map((slide, index) => (
-      <div class="slideshow__slide" data-slide hidden={index !== 0}>
-        <Image
-          src={slide.src}
-          alt={slide.alt}
-          widths={heroWidths}
-          sizes="100vw"
-          quality={85}
-          loading={index === 0 ? "eager" : "lazy"}
-        />
-      </div>
-    ))
-  }
+<div
+  class="slideshow"
+  data-slideshow
+  data-interval="5000"
+  role="region"
+  aria-roledescription="carousel"
+  aria-label="JSA photos"
+>
+  {slides.map((slide, index) => (
+    <div class="slideshow__slide" data-slide hidden={index !== 0}>
+      <Image
+        src={slide.src}
+        alt={slide.alt}
+        widths={heroWidths}
+        sizes="100vw"
+        quality={85}
+        loading={index === 0 ? "eager" : "lazy"}
+      />
+    </div>
+  ))}
 
   <div class="slideshow__stage">
     <button class="slideshow__arrow slideshow__arrow--prev" type="button" aria-label="Previous slide" data-prev>
-      <svg viewBox="0 0 30 59" width="30" height="59" aria-hidden="true"><path d="M28 2 3 29.5 28 57" /></svg>
+      <svg viewBox="0 0 30 59" width="30" height="59" aria-hidden="true">
+        <path d="M28 2 3 29.5 28 57" />
+      </svg>
     </button>
     <button class="slideshow__arrow slideshow__arrow--next" type="button" aria-label="Next slide" data-next>
-      <svg viewBox="0 0 30 59" width="30" height="59" aria-hidden="true"><path d="M2 2 27 29.5 2 57" /></svg>
+      <svg viewBox="0 0 30 59" width="30" height="59" aria-hidden="true">
+        <path d="M2 2 27 29.5 2 57" />
+      </svg>
     </button>
   </div>
 </div>
@@ -145,11 +154,12 @@ const slides = [
       // Tell the page a slide change started so the hero title can travel with it.
       document.dispatchEvent(new CustomEvent("hero:slide", { detail: { direction } }));
 
-      const options: KeyframeAnimationOptions = { duration: 900, easing: "cubic-bezier(0.65, 0, 0.35, 1)", fill: "forwards" };
-      current.animate(
-        [{ transform: "translateX(0)" }, { transform: `translateX(${-100 * direction}%)` }],
-        options,
-      );
+      const options: KeyframeAnimationOptions = {
+        duration: 900,
+        easing: "cubic-bezier(0.65, 0, 0.35, 1)",
+        fill: "forwards",
+      };
+      current.animate([{ transform: "translateX(0)" }, { transform: `translateX(${-100 * direction}%)` }], options);
       incoming
         .animate([{ transform: `translateX(${100 * direction}%)` }, { transform: "translateX(0)" }], options)
         .finished.then(() => {
