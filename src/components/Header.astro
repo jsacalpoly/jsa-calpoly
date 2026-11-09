@@ -134,11 +134,13 @@ import { navLinks } from "../data/navigation";
 </style>
 
 <script>
-  // The subtitle starts as "CHAPTER", then the letters shuffle and settle into the full name.
+  // Only on the home page. The subtitle starts as "CHAPTER", then the letters shuffle and settle into the full name.
   const live = document.querySelector<HTMLElement>("[data-school-live]");
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  if (live && !reduceMotion) {
+  const onHome = location.pathname === "/" || location.pathname === "/index.html";
+
+  if (live && !reduceMotion && onHome) {
     const finalText = live.textContent ?? "";
     const startText = "CHAPTER";
     const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
