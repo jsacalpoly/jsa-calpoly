@@ -11,13 +11,20 @@ interface Props {
   variant?: "executive" | "member";
   /** Details revealed with a fade when the card is hovered (or focused with the keyboard). */
   about?: { nickname?: string; year: string; hometown: string; food: string };
+  /** Seconds to wait before the entrance, so a row of cards appears one after another. */
+  delay?: number;
 }
 
-const { name, role, photo, variant = "member", about } = Astro.props;
+const { name, role, photo, variant = "member", about, delay = 0 } = Astro.props;
 const firstName = about?.nickname ?? name.split(" ")[0];
 ---
 
-<article class:list={["board-card", `board-card--${variant}`]} tabindex={about ? 0 : undefined}>
+<article
+  class:list={["board-card", `board-card--${variant}`]}
+  tabindex={about ? 0 : undefined}
+  data-reveal="up"
+  style={`--reveal-delay: ${delay}s`}
+>
   <div class="board-card__photo">
     <Image src={photo} alt={`Photo of ${name}`} width={258} height={252} />
     <Image class="board-card__badge" src={badge} alt="" width={45} height={45} />

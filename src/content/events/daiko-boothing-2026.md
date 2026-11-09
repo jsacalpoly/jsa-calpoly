@@ -1,6 +1,6 @@
 ---
-title: "8.25.26 - JSA Daiko boothing!"
-order: 15
+title: "JSA Daiko boothing!"
+date: 2026-08-25
 cover: ../../assets/events/daiko-boothing-2026.jpg
 album: https://photos.app.goo.gl/tkGgN9ydA2zZUQs59
 ---

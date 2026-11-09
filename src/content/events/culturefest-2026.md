@@ -1,6 +1,6 @@
 ---
 title: "Culturefest! 2026"
-order: 6
+date: 2026-10-03
 cover: ../../assets/events/culturefest-2026.jpg
 album: https://photos.app.goo.gl/FxBJcc2rNQTZuNNN7
 ---

@@ -1,0 +1,56 @@
+---
+import { Image } from "astro:assets";
+
+import flower from "../assets/eras/header-flower.png";
+---
+
+<!-- A flower between two lines, like the one under the Eras banner. -->
+<div class="divider" aria-hidden="true">
+  <div class="divider__stage">
+    <span class="divider__line divider__line--left"></span>
+    <Image class="divider__flower" src={flower} alt="" width={45} height={45} />
+    <span class="divider__line divider__line--right"></span>
+  </div>
+</div>
+
+<style>
+  .divider {
+    height: 64px;
+    background: var(--color-white);
+    overflow: hidden;
+  }
+
+  /* Positions are against the 1440px design width. */
+  .divider__stage {
+    position: relative;
+    width: var(--page-width);
+    height: 100%;
+    margin-inline: auto;
+  }
+
+  .divider__stage > * {
+    position: absolute;
+  }
+
+  .divider__line {
+    top: 32px;
+    width: 405px;
+    height: 1px;
+    background: var(--color-line);
+  }
+
+  .divider__line--left {
+    left: 230px;
+  }
+
+  .divider__line--right {
+    left: 790px;
+  }
+
+  .divider__flower {
+    left: 698px;
+    top: 10px;
+    width: 45px;
+    height: 45px;
+  }
+</style>

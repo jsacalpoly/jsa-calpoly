@@ -1,6 +1,6 @@
 ---
-title: "Undoukai 9.19.26"
-order: 8
+title: "Undoukai"
+date: 2026-09-19
 cover: ../../assets/events/undoukai-2026.jpg
 album: https://photos.app.goo.gl/GhnMSMce49M6ms196
 ---

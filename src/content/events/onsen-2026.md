@@ -1,6 +1,6 @@
 ---
-title: "Onsen 5.23.26"
-order: 19
+title: "Onsen"
+date: 2026-05-23
 cover: ../../assets/events/onsen-2026.jpg
 album: https://photos.app.goo.gl/h2pfY5TNkTo4TEpV8
 ---

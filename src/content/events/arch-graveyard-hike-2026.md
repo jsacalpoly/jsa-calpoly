@@ -1,6 +1,6 @@
 ---
-title: "Arch Graveyard Hike! 10.30.26"
-order: 2
+title: "Arch Graveyard Hike!"
+date: 2026-10-30
 cover: ../../assets/events/arch-graveyard-hike-2026.jpg
 album: https://photos.app.goo.gl/d2noc3GdHbGDTo7Y8
 ---

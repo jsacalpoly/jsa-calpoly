@@ -31,14 +31,17 @@ const boards = defineCollection({
     }),
 });
 
-// One Markdown file per photo gallery event. `order` runs newest first; odd orders fill the left column
-// of the Photos page and even orders the right column, matching the Wix layout.
+// One Markdown file per photo gallery event. The Photos page sorts by date, newest first, so adding an album is
+// one image plus one file here. The body of the file is the description shown on the back of the polaroid.
 const events = defineCollection({
   loader: glob({ pattern: "**/*.md", base: "./src/content/events" }),
   schema: ({ image }) =>
     z.object({
       title: z.string(),
-      order: z.number(),
+      /** When the event happened (YYYY-MM-DD). Used to sort the page. */
+      date: z.coerce.date(),
+      /** Set to false when the real date is not known; the date is then only used for sorting. */
+      showDate: z.boolean().default(true),
       cover: image(),
       /** Google Photos album for this event. */
       album: z.string().url().optional(),

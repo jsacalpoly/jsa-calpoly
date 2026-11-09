@@ -1,6 +1,6 @@
 ---
-title: "Pismo! 11.7.26"
-order: 1
+title: "Pismo!"
+date: 2026-11-07
 cover: ../../assets/events/pismo-2026.jpg
 album: https://photos.app.goo.gl/JeKWkxqGPSBRFiBp6
 ---

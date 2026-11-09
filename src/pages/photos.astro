@@ -2,143 +2,445 @@
 import { Image } from "astro:assets";
 import { getCollection, render } from "astro:content";
 import BaseLayout from "../layouts/BaseLayout.astro";
-import PhotoEventCard from "../components/PhotoEventCard.astro";
+import Polaroid from "../components/Polaroid.astro";
 
-import featuredPhoto from "../assets/photos/featured-pismo.jpg";
 import bannerBlossoms from "../assets/photos/banner-blossoms.png";
-import galleryLogo from "../assets/photos/gallery-logo.png";
-import cameraIcon from "../assets/photos/camera-icon.png";
+import ornament from "../assets/eras/ornament-flower.png";
+import blossom from "../assets/eras/blossom.png";
 
-const events = (await getCollection("events")).sort((a, b) => a.data.order - b.data.order);
-const featured = events[0];
+// Newest first. The date field is the only thing that decides the order, so a new album needs no renumbering.
+const events = (await getCollection("events")).sort(
+  (a, b) => b.data.date.getTime() - a.data.date.getTime() || a.data.title.localeCompare(b.data.title),
+);
+const [featured] = events;
 const { Content: FeaturedBody } = await render(featured);
 
-// Newest first, alternating between the two columns like the Wix gallery.
-const columns = [events.filter((_, i) => i % 2 === 0), events.filter((_, i) => i % 2 === 1)];
-const renderedColumns = await Promise.all(
-  columns.map((column) =>
-    Promise.all(
-      column.map(async (event) => {
-        const { Content } = await render(event);
-        return { event, Content };
-      }),
-    ),
-  ),
+// "11.7.26", written after the title. Dates are stored as UTC midnight, so read them back in UTC.
+const dateLabel = (event: (typeof events)[number]) => {
+  if (!event.data.showDate) return undefined;
+  const d = event.data.date;
+  return `${d.getUTCMonth() + 1}.${d.getUTCDate()}.${String(d.getUTCFullYear()).slice(-2)}`;
+};
+
+// Polaroids are not all the same: photo shape, tilt and tape come from the album's own id, so an album looks the
+// same on every build and adding a new one never reshuffles the others.
+const heights = [200, 262, 320, 220, 280, 240, 300, 210];
+const tilts = [-3, 2.2, -1.4, 3.4, -2.6, 1.2, -3.6, 2.6, -0.8, 1.8];
+const hash = (text: string) => [...text].reduce((total, char) => (total * 31 + char.charCodeAt(0)) >>> 0, 7);
+
+const polaroids = await Promise.all(
+  events.map(async (event) => {
+    const h = hash(event.id);
+    const { Content } = await render(event);
+    return {
+      event,
+      Content,
+      photoHeight: heights[h % heights.length],
+      tilt: tilts[(h >> 3) % tilts.length],
+      tape: (h >> 6) % 3 === 0,
+    };
+  }),
 );
+
+// Four staggered columns, filled left to right in date order. Each column starts a little later than the last.
+const COLUMNS = 4;
+const columns = Array.from({ length: COLUMNS }, (_, col) => polaroids.filter((_, i) => i % COLUMNS === col));
+
+// Blossoms drifting in the margins: [left, top, rotation, opacity, size], placed against the 1440px design width.
+const topBlossoms = [
+  [40, 330, 24, 0.75, 132],
+  [1290, 470, -18, 0.7, 120],
+];
+const galleryBlossoms = [
+  [18, 560, 28, 0.7, 128],
+  [1296, 1180, -22, 0.65, 128],
+  [24, 1700, 12, 0.6, 116],
+];
 ---
 
-<BaseLayout title="Photos | Cal Poly JSA" description="Photo gallery of Cal Poly JSA events.">
-  <div class="gallery container">
-    <!-- Gray backdrops behind the featured event and card columns (Figma stops them at y=2720). -->
-    <span class="gallery__backdrop gallery__backdrop--left"></span>
-    <span class="gallery__backdrop gallery__backdrop--right"></span>
+<BaseLayout title="Photos | Cal Poly JSA" description="Photo gallery of Cal Poly JSA events." flushFooter>
+  <!-- Banner + latest album: cream and gray run edge to edge, the content sits in the 1440px stage -->
+  <section class="top">
+    <div class="top__stage">
+      <Image class="top__branch" src={bannerBlossoms} alt="" width={616} height={164} />
 
-    <!-- Banner -->
-    <header class="gallery__banner">
-      <Image class="gallery__banner-art" src={bannerBlossoms} alt="" width={616} height={164} />
-      <Image class="gallery__logo" src={galleryLogo} alt="JSA logo" width={101} height={95} />
-      <h1 class="gallery__title">Photo Gallery</h1>
-      <p class="gallery__subtitle">Capturing those precious memories</p>
-      <span class="gallery__title-rule"></span>
-    </header>
+      <h1 class="top__title">Photo Gallery</h1>
+      <p class="top__subtitle">
+        <span class="sr-only">Capturing those precious memories</span>
+        <span class="top__scramble" aria-hidden="true">
+          Capturing those precious memories
+        </span>
+      </p>
+      <span class="top__title-rule"></span>
 
-    <!-- Featured event -->
-    <section class="featured">
-      <div class="featured__photo">
-        <Image src={featuredPhoto} alt="Three JSA members on the beach at Pismo" width={1098} height={668} />
+      <!-- The latest album as a big taped polaroid -->
+      <div class="latest">
+        <span class="latest__tape"></span>
+        <div class="latest__photo">
+          <Image
+            src={featured.data.cover}
+            alt={`Photos from ${featured.data.title}`}
+            width={1016}
+            height={680}
+            quality={85}
+          />
+        </div>
+        <p class="latest__caption">
+          {featured.data.title}
+          {dateLabel(featured) && <span>{dateLabel(featured)}</span>}
+        </p>
       </div>
-      <span class="featured__divider"></span>
-      <h2 class="featured__title">{featured.data.title}</h2>
-      <div class="featured__text">
-        <FeaturedBody />
-      </div>
-      <p class="featured__prompt">Please add any photos you took!!</p>
-      <a class="featured__button" href={featured.data.album ?? "#"} target="_blank" rel="noopener noreferrer">
-        <span>Photos!!</span>
-        <Image src={cameraIcon} alt="" width={37} height={37} />
-      </a>
-    </section>
-    <span class="gallery__rule"></span>
 
-    <!-- Event cards -->
-    {renderedColumns.map((column, index) => (
-      <div class:list={["cards", index === 0 ? "cards--left" : "cards--right"]}>
-        {column.map(({ event, Content }) => (
-          <PhotoEventCard title={event.data.title} cover={event.data.cover} album={event.data.album}>
-            <Content />
-          </PhotoEventCard>
+      <div class="top__copy">
+        <h2 class="top__album-title">
+          {featured.data.title}
+          {dateLabel(featured) && <span>{dateLabel(featured)}</span>}
+        </h2>
+        <div class="top__album-text">
+          <FeaturedBody />
+        </div>
+        <p class="note">Please add any photos you took!!</p>
+        {featured.data.album && (
+          <a class="top__button" href={featured.data.album} target="_blank" rel="noopener noreferrer">
+            Open album
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M7 17L17 7M9 7h8v8" />
+            </svg>
+          </a>
+        )}
+      </div>
+
+      <div class="drift" data-drift aria-hidden="true">
+        {topBlossoms.map(([left, top, rot, opacity, size]) => (
+          <Image
+            class="drift__blossom"
+            style={`left:${left}px; top:${top}px; width:${size}px; --rot:${rot}deg; opacity:${opacity};`}
+            src={blossom}
+            alt=""
+            width={size * 2}
+            height={Math.round(size * 2 * (154 / 152))}
+          />
         ))}
       </div>
-    ))}
-  </div>
+    </div>
+  </section>
+
+  <!-- All albums -->
+  <section class="gallery">
+    <div class="gallery__stage">
+      <div class="drift" data-drift aria-hidden="true">
+        {galleryBlossoms.map(([left, top, rot, opacity, size]) => (
+          <Image
+            class="drift__blossom"
+            style={`left:${left}px; top:${top}px; width:${size}px; --rot:${rot}deg; opacity:${opacity};`}
+            src={blossom}
+            alt=""
+            width={size * 2}
+            height={Math.round(size * 2 * (154 / 152))}
+          />
+        ))}
+      </div>
+
+      <div class="gallery__inner">
+        <div class="panel__heading">
+          <span class="panel__jp" data-rise style="--delay: 0ms">
+            写真
+          </span>
+          <h2 class="panel__title" data-rise style="--delay: 90ms">
+            All albums
+          </h2>
+          <p class="panel__count" data-rise style="--delay: 180ms">
+            {events.length} albums, newest first
+          </p>
+          <div class="panel__divider" data-rise style="--delay: 270ms">
+            <span class="panel__line panel__line--left"></span>
+            <Image src={ornament} alt="" width={34} height={40} />
+            <span class="panel__line panel__line--right"></span>
+          </div>
+        </div>
+
+        <div class="polaroids">
+          {columns.map((column, col) => (
+            <div class="polaroids__column">
+              {column.map(({ event, Content, photoHeight, tilt, tape }) => (
+                <Polaroid
+                  title={event.data.title}
+                  dateLabel={dateLabel(event)}
+                  cover={event.data.cover}
+                  album={event.data.album}
+                  tilt={tilt}
+                  photoHeight={photoHeight}
+                  tape={tape}
+                  delay={col * 80}
+                >
+                  <Content />
+                </Polaroid>
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
 </BaseLayout>
 
+<script>
+  // Elements marked data-rise start hidden and play their entrance the first time they scroll into view.
+  const calm = window.matchMedia("(prefers-reduced-motion: reduce)");
+  const targets = document.querySelectorAll<HTMLElement>("[data-rise]");
+  const subtitle = document.querySelector<HTMLElement>(".top__subtitle");
+  const scramble = document.querySelector<HTMLElement>(".top__scramble");
+  if (calm.matches) {
+    targets.forEach((target) => target.classList.add("is-in"));
+  } else {
+    // Text scramble: every letter flickers through random characters, then locks onto the right one, left to right.
+    if (subtitle && scramble) {
+      const final = scramble.textContent ?? "";
+      const pool = "abcdefghijklmnopqrstuvwxyz";
+      const delay = 300;
+      const duration = 900;
+
+      // One cell per letter, each locked to the width its real letter has, so the line can never get longer or
+      // shorter while the letters change.
+      // The page is scaled down with CSS zoom on narrow windows, so measured sizes need converting back.
+      const zoom = scramble.getBoundingClientRect().width / scramble.offsetWidth || 1;
+      scramble.textContent = "";
+      const cells = [...final].map((char) => {
+        const cell = document.createElement("span");
+        cell.textContent = char;
+        scramble.append(cell);
+        return cell;
+      });
+      const measure = (char: string) => {
+        const probe = document.createElement("span");
+        probe.textContent = char;
+        scramble.append(probe);
+        const width = probe.getBoundingClientRect().width / zoom;
+        probe.remove();
+        return width;
+      };
+      const widths = cells.map((cell) => cell.getBoundingClientRect().width / zoom);
+      cells.forEach((cell, i) => {
+        cell.style.display = "inline-block";
+        cell.style.width = `${widths[i]}px`;
+        cell.style.whiteSpace = "pre";
+      });
+
+      // Each cell only flickers through letters about as wide as its real letter, so they never pile on top of
+      // their neighbours.
+      const poolWidths = [...pool].map((char) => ({ char, width: measure(char) }));
+      const options = widths.map((width) => {
+        const close = poolWidths.filter((entry) => Math.abs(entry.width - width) <= Math.max(1.5, width * 0.22));
+        const nearest = [...poolWidths].sort((a, b) => Math.abs(a.width - width) - Math.abs(b.width - width))[0];
+        return (close.length > 0 ? close : [nearest]).map((entry) => entry.char);
+      });
+
+      const letters = [...final];
+      const start = performance.now() + delay;
+      let lastFlicker = 0;
+      const frame = (now: number) => {
+        if (now < start) {
+          requestAnimationFrame(frame);
+          return;
+        }
+        subtitle.classList.add("is-on");
+        const progress = Math.min((now - start) / duration, 1);
+        if (progress < 1) {
+          // Re-roll the unsettled letters about every 45 ms instead of every frame.
+          if (now - lastFlicker > 45) {
+            lastFlicker = now;
+            const settled = Math.floor(progress * letters.length);
+            cells.forEach((cell, i) => {
+              const char = letters[i];
+              const choices = options[i];
+              cell.textContent =
+                i < settled || char === " " ? char : choices[Math.floor(Math.random() * choices.length)];
+            });
+          }
+          requestAnimationFrame(frame);
+        } else {
+          scramble.textContent = final;
+        }
+      };
+      requestAnimationFrame(frame);
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          entry.target.classList.add("is-in");
+          observer.unobserve(entry.target);
+        }
+      },
+      { threshold: 0.12 },
+    );
+    targets.forEach((target) => observer.observe(target));
+
+    // Blossoms lag slightly behind the scroll, so the margins feel like they are floating.
+    const drifts = document.querySelectorAll<HTMLElement>("[data-drift]");
+    let waiting = false;
+    const update = () => {
+      waiting = false;
+      for (const drift of drifts) {
+        const parent = drift.parentElement;
+        if (!parent) continue;
+        const offset = (window.scrollY - (parent.getBoundingClientRect().top + window.scrollY)) * 0.08;
+        drift.style.setProperty("--drift", `${offset}px`);
+      }
+    };
+    window.addEventListener(
+      "scroll",
+      () => {
+        if (!waiting) {
+          waiting = true;
+          requestAnimationFrame(update);
+        }
+      },
+      { passive: true },
+    );
+    update();
+  }
+</script>
+
 <style>
-  /* 79 to 3252 (the footer gap follows). Every position below is relative to the 980px column that starts at x=230. */
-  .gallery {
-    height: 3173px;
+  /* ---------- Shared motion ---------- */
+  @keyframes rise {
+    from {
+      opacity: 0;
+      translate: 0 24px;
+    }
+    to {
+      opacity: 1;
+      translate: 0 0;
+    }
   }
 
-  .gallery > * {
+  @keyframes fade {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes draw {
+    from {
+      scale: 0 1;
+    }
+    to {
+      scale: 1 1;
+    }
+  }
+
+  /* An instant photo developing: washed-out and soft at first, then it gains colour and sharpens. */
+  @keyframes develop {
+    from {
+      filter: brightness(1.8) saturate(0) contrast(0.55) blur(8px);
+    }
+    to {
+      filter: none;
+    }
+  }
+
+  @keyframes clear {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
+  }
+
+  @keyframes tape {
+    from {
+      clip-path: inset(0 100% 0 0);
+    }
+    to {
+      clip-path: inset(0 0 0 0);
+    }
+  }
+
+  @keyframes sway {
+    from {
+      rotate: calc(var(--rot) - 6deg);
+    }
+    to {
+      rotate: calc(var(--rot) + 6deg);
+    }
+  }
+
+  /* ---------- Banner + latest album ---------- */
+  /* Cream runs 164px across the whole width; the gray starts 16px higher, behind the cream's lower edge. */
+  .top {
+    position: relative;
+    background: linear-gradient(to bottom, transparent 148px, var(--color-gray-bg) 148px);
+  }
+
+  .top::before {
+    content: "";
     position: absolute;
-  }
-
-  .gallery__backdrop {
-    top: 148px;
-    height: 2493px;
-    background: var(--color-gray-bg);
-  }
-
-  .gallery__backdrop--left {
-    left: 0;
-    width: 588px;
-  }
-
-  .gallery__backdrop--right {
-    left: 588px;
-    width: 392px;
-  }
-
-  /* ---------- Banner ---------- */
-  .gallery__banner {
-    left: 0;
-    top: 0;
-    width: 980px;
+    inset: 0 0 auto;
     height: 164px;
     background: var(--color-cream-photos);
   }
 
-  .gallery__banner > * {
+  .top__stage {
+    position: relative;
+    width: var(--page-width);
+    height: 640px;
+    margin-inline: auto;
+  }
+
+  .top__stage > :not(.drift) {
     position: absolute;
   }
 
-  .gallery__banner-art {
-    left: 376px;
+  .top__branch {
+    left: 824px;
     top: 0;
     width: 616px;
     height: 164px;
   }
 
-  .gallery__logo {
-    left: 22px;
-    top: 24px;
-    width: 101px;
-    height: 95px;
-  }
-
-  .gallery__title {
-    left: 145px;
+  .top__title {
+    left: 170px;
     top: 23.9px;
+    color: var(--color-ink);
     font-family: var(--font-title);
     font-size: 54px;
     font-weight: var(--weight-regular);
     line-height: 64.8px;
-    color: var(--color-ink);
     white-space: nowrap;
   }
 
-  .gallery__subtitle {
-    left: 150px;
+  /* Hidden from sight but still read aloud; the scrambling copy next to it is aria-hidden. */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .top__scramble {
+    display: inline-block;
+  }
+
+  .top__subtitle {
+    left: 175px;
     top: 97.8px;
     font-size: 15px;
     font-weight: var(--weight-extralight);
@@ -146,133 +448,305 @@ const renderedColumns = await Promise.all(
     white-space: nowrap;
   }
 
-  .gallery__title-rule {
-    left: 150px;
+  .top__title-rule {
+    left: 175px;
     top: 134px;
     width: 139px;
     height: 1px;
     background: var(--color-line);
+    transform-origin: left;
   }
 
-  /* ---------- Featured event ---------- */
-  .featured {
-    left: 0;
-    top: 148px;
-    width: 980px;
-  }
-
-  .featured > * {
-    position: absolute;
-  }
-
-  .featured__photo {
-    left: 22px;
-    top: 0;
-    width: 553px;
-    height: 338px;
-    border: 2px solid var(--color-white);
-    border-radius: 20px;
+  .latest {
+    left: 170px;
+    top: 150px;
+    width: 540px;
+    padding: 18px 16px 50px;
     background: var(--color-white);
-    box-shadow: var(--shadow-frame);
-    overflow: hidden;
+    border-radius: 3px;
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.32);
+    rotate: -2.5deg;
   }
 
-  .featured__photo :global(img) {
+  .latest__tape {
+    position: absolute;
+    top: -16px;
+    left: 50%;
+    width: 100px;
+    height: 30px;
+    translate: -50% 0;
+    rotate: -4deg;
+    background: rgba(239, 224, 160, 0.8);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+  }
+
+  .latest__photo {
+    position: relative;
+    height: 340px;
+    overflow: hidden;
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08);
+  }
+
+  /* The undeveloped film: invisible normally, only used by the entrance animation below. */
+  .latest__photo::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: #ddd8cc;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .latest__photo :global(img) {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    border-radius: 18px;
   }
 
-  .featured__divider {
-    left: 591.5px;
-    top: 7.5px;
-    width: 1px;
-    height: 216px;
-    background: var(--color-line);
-  }
-
-  .featured__title {
-    left: 616px;
-    top: 12.5px;
+  .latest__caption {
+    margin-top: 14px;
     font-family: var(--font-mono);
-    font-size: 30px;
-    font-weight: var(--weight-regular);
-    line-height: 36px;
-    color: var(--color-ink);
-    white-space: nowrap;
+    font-size: 22px;
+    line-height: 1.25;
   }
 
-  .featured__text,
-  .featured__prompt {
-    left: 616px;
-    font-size: 15px;
-    font-weight: var(--weight-extralight);
-    line-height: 21px;
+  .latest__caption span,
+  .top__album-title span {
+    margin-left: 0.4em;
   }
 
-  .featured__text {
-    top: 60px;
-    width: 311px;
-  }
-
-  .featured__prompt {
-    top: 259px;
-    white-space: nowrap;
-  }
-
-  .featured__button {
-    left: 607px;
-    top: 293px;
-    width: 353px;
-    height: 45px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 22.5px;
-    background: var(--color-green);
-    color: var(--color-white);
-    font-family: var(--font-ui);
-    font-size: 15px;
-    font-weight: var(--weight-light);
-    letter-spacing: 3.8px;
-  }
-
-  .featured__button span {
-    /* Figma centers the label on the full button, ignoring the camera icon. */
-    flex: 1;
-    text-align: center;
-  }
-
-  .featured__button :global(img) {
-    position: absolute;
-    left: 205.6px;
-    top: 4px;
-    width: 37px;
-    height: 37px;
-  }
-
-  .gallery__rule {
-    left: 136px;
-    top: 513px;
-    width: 315px;
-    height: 1px;
-    background: var(--color-line);
-  }
-
-  /* ---------- Event cards ---------- */
-  .cards {
-    top: 548px;
+  .top__copy {
+    left: 780px;
+    top: 190px;
     display: flex;
     flex-direction: column;
-    gap: 21px;
+    align-items: flex-start;
+    width: 470px;
   }
 
-  .cards--left {
-    left: 11px;
+  .top__album-title {
+    font-family: var(--font-mono);
+    font-size: 34px;
+    font-weight: var(--weight-regular);
+    line-height: 1.3;
   }
 
-  .cards--right {
-    left: 495px;
+  .top__album-text {
+    margin-top: 16px;
+    color: var(--color-text-soft);
+    font-size: 16px;
+    font-weight: var(--weight-light);
+    line-height: 1.58;
+  }
+
+  /* Sticky note */
+  .note {
+    margin: 28px 0 0 6px;
+    width: 270px;
+    min-height: 112px;
+    padding: 22px 21px;
+    background: #fff3a6;
+    border-radius: 2px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.22);
+    color: #4a3f1a;
+    font-family: var(--font-mono);
+    font-size: 17px;
+    font-weight: var(--weight-bold);
+    line-height: 1.4;
+    rotate: 2.5deg;
+  }
+
+  .top__button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 36px;
+    padding: 14px 28px;
+    border-radius: 999px;
+    background: var(--color-green);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
+    color: var(--color-white);
+    font-size: 15px;
+    font-weight: var(--weight-semibold);
+    transition: background-color 0.2s ease;
+  }
+
+  .top__button:hover,
+  .top__button:focus-visible {
+    background: #346344;
+  }
+
+  /* ---------- Drifting blossoms ---------- */
+  .drift {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    translate: 0 var(--drift, 0px);
+  }
+
+  .drift__blossom {
+    position: absolute;
+    height: auto;
+    rotate: var(--rot, 0deg);
+  }
+
+  /* ---------- All albums ---------- */
+  .gallery {
+    position: relative;
+    padding: 24px 0 88px;
+    background: var(--color-gray-bg);
+    overflow: hidden;
+  }
+
+  .gallery__stage {
+    position: relative;
+    width: var(--page-width);
+    margin-inline: auto;
+  }
+
+  .gallery__inner {
+    position: relative;
+    width: 1180px;
+    margin-inline: auto;
+  }
+
+  .panel__heading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 36px;
+  }
+
+  .panel__jp {
+    color: var(--color-red);
+    font-family: var(--font-serif-jp);
+    font-size: 15px;
+    font-weight: var(--weight-medium);
+  }
+
+  .panel__title {
+    color: var(--color-ink);
+    font-size: 32px;
+    font-weight: var(--weight-semibold);
+    letter-spacing: -0.01em;
+  }
+
+  .panel__count {
+    color: var(--color-muted);
+    font-size: 14px;
+    font-weight: var(--weight-light);
+  }
+
+  .panel__divider {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 300px;
+  }
+
+  .panel__line {
+    flex: 1;
+    height: 1px;
+    background: #fbd0cc;
+  }
+
+  .panel__line--left {
+    transform-origin: right;
+  }
+
+  .panel__line--right {
+    transform-origin: left;
+  }
+
+  .panel__divider :global(img) {
+    width: 17px;
+    height: auto;
+  }
+
+  /* Four columns, each starting at a different height so the prints do not line up in rows. */
+  .polaroids {
+    display: grid;
+    grid-template-columns: repeat(4, 295px);
+    justify-content: center;
+  }
+
+  .polaroids__column {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 36px;
+  }
+
+  .polaroids__column:nth-child(1) {
+    padding-top: 8px;
+  }
+
+  .polaroids__column:nth-child(2) {
+    padding-top: 72px;
+  }
+
+  .polaroids__column:nth-child(3) {
+    padding-top: 28px;
+  }
+
+  .polaroids__column:nth-child(4) {
+    padding-top: 96px;
+  }
+
+  /* ---------- Entrances (skipped when the visitor prefers reduced motion) ---------- */
+  @media (prefers-reduced-motion: no-preference) {
+    /* On load */
+    .top__title {
+      animation: fade 0.6s ease-out backwards;
+    }
+
+    /* The subtitle stays hidden until the page script starts its scramble (300 ms in). */
+    :global(.js) .top__subtitle:not(.is-on) {
+      opacity: 0;
+    }
+
+    .top__title-rule {
+      animation: draw 0.5s ease-out 0.3s backwards;
+    }
+
+    /* The polaroid appears in place and then develops, like an instant photo. */
+    .latest {
+      animation: fade 0.4s ease-out 0.1s backwards;
+    }
+
+    .latest__photo :global(img) {
+      animation: develop 1.8s ease-out 0.15s backwards;
+    }
+
+    .latest__photo::after {
+      animation: clear 1.8s ease-out 0.15s backwards;
+    }
+
+    .latest__tape {
+      animation: tape 0.25s ease-out 0.6s backwards;
+    }
+
+    /* Title, description, sticky note and button all arrive together, early and unhurried. */
+    .top__copy {
+      animation: fade 0.9s ease-out 0.5s backwards;
+    }
+
+    .drift__blossom {
+      animation: sway 4s ease-in-out infinite alternate;
+    }
+
+    /* On scroll: hidden until the page script adds .is-in */
+    :global(.js) [data-rise]:not(.is-in) {
+      opacity: 0;
+    }
+
+    [data-rise].is-in {
+      animation: rise 0.6s ease-out var(--delay, 0ms) backwards;
+    }
+
+    .panel__divider.is-in .panel__line {
+      animation: draw 0.6s ease-out calc(var(--delay, 0ms) + 200ms) backwards;
+    }
   }
 </style>

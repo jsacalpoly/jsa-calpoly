@@ -1,6 +1,6 @@
 ---
-title: "Laguna Picnic! 10.17.26"
-order: 4
+title: "Laguna Picnic!"
+date: 2026-10-17
 cover: ../../assets/events/laguna-picnic-2026.jpg
 album: https://photos.app.goo.gl/HXAFGoNW9tzxQuhR7
 ---

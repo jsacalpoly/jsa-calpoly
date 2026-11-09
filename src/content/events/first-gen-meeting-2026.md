@@ -1,6 +1,6 @@
 ---
-title: "1st Gen Meeting! 8.26.29"
-order: 14
+title: "1st Gen Meeting!"
+date: 2026-08-26
 cover: ../../assets/events/first-gen-meeting-2026.jpg
 album: https://photos.app.goo.gl/chFMHxsRmosk3Vp26
 ---

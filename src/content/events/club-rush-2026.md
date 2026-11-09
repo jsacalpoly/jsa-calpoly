@@ -1,6 +1,6 @@
 ---
-title: "JSA - Club Rush! 8.23.26"
-order: 16
+title: "JSA - Club Rush!"
+date: 2026-08-23
 cover: ../../assets/events/club-rush-2026.jpg
 album: https://photos.app.goo.gl/yyuCUVjKERm6q6TB7
 ---

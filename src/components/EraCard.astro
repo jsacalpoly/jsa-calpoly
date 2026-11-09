@@ -1,17 +1,9 @@
 ---
 import { Image } from "astro:assets";
 
-import pill from "../assets/eras/year-pill.png";
 import ornament from "../assets/eras/ornament-flower.png";
-import tileTreasurer from "../assets/eras/tile-treasurer.png";
-import tileSecretary from "../assets/eras/tile-secretary.png";
-import tileEvents from "../assets/eras/tile-events.png";
-import tileSports from "../assets/eras/tile-sports.png";
-import tileMedia from "../assets/eras/tile-media.png";
-import tileCultural from "../assets/eras/tile-cultural.png";
-import tileHistorian from "../assets/eras/tile-historian.png";
+import blossom from "../assets/eras/blossom.png";
 import iconTreasurer from "../assets/eras/icon-treasurer.png";
-import iconTreasurerSmall from "../assets/eras/icon-treasurer-small.png";
 import iconSecretary from "../assets/eras/icon-secretary.png";
 import iconEvents from "../assets/eras/icon-events.png";
 import iconSports from "../assets/eras/icon-sports.png";
@@ -24,25 +16,21 @@ type RoleIcon = "treasurer" | "secretary" | "events" | "sports" | "media" | "cul
 interface Props {
   year: string;
   heading: string;
-  size: "large" | "small";
   president: string;
   vicePresident: string;
-  roles: { title: string; names: string; icon: RoleIcon; compact?: boolean }[];
+  roles: { title: string; names: string; icon: RoleIcon }[];
+  /** "feature" is the wide card for the last era; "recent" and "small" sit in rows of three. */
+  variant: "feature" | "recent" | "small";
+  /** Text in the pill on the card's top edge. Defaults to the year. */
+  badge?: string;
+  /** Seconds to wait before the entrance, so a row of cards appears one after another. */
+  delay?: number;
 }
 
-const { year, heading, size, president, vicePresident, roles } = Astro.props;
+const { year, heading, president, vicePresident, roles, variant, badge, delay = 0 } = Astro.props;
 
-const tiles = {
-  treasurer: tileTreasurer,
-  secretary: tileSecretary,
-  events: tileEvents,
-  sports: tileSports,
-  media: tileMedia,
-  cultural: tileCultural,
-  historian: tileHistorian,
-};
 const icons = {
-  treasurer: size === "small" ? iconTreasurerSmall : iconTreasurer,
+  treasurer: iconTreasurer,
   secretary: iconSecretary,
   events: iconEvents,
   sports: iconSports,
@@ -51,43 +39,52 @@ const icons = {
   historian: iconHistorian,
 };
 
-// Long president names wrap onto two lines on large cards, pushing everything below down by one line.
-const wrapped = size === "large" && president.length > 16;
+// Older headings include the year, e.g. "21-22 : Kanpai Jidai". Keep only the era name, if there is one.
+const afterColon = heading.includes(":") ? heading.slice(heading.indexOf(":") + 1).trim() : heading.trim();
+const isYearOnly = /^\d{4}\s*[-–]\s*\d{4}$/.test(afterColon);
+const eraName = isYearOnly ? "" : afterColon;
+const title = eraName || "JSA Board";
+const yearText = year.replace("-", "–");
+const featured = variant === "feature";
 ---
 
-<article class:list={["era-card", `era-card--${size}`, { "era-card--wrapped": wrapped }]}>
-  {size === "large" && (
-    <div class="era-card__pill">
-      <Image src={pill} alt="" width={408} height={272} />
-      <span class="era-card__year">{year}</span>
+<article class:list={["era-card", `era-card--${variant}`]} data-reveal="up" style={`--reveal-delay: ${delay}s`}>
+  <span class="era-card__pill">{badge ?? yearText}</span>
+  {variant !== "small" && <Image class="era-card__blossom" src={blossom} alt="" width={184} height={186} />}
+
+  <header class="era-card__head">
+    <h3 class="era-card__title">{title}</h3>
+    {featured && <p class="era-card__year">{yearText.replace("–", " – ")}</p>}
+  </header>
+
+  <div class="era-card__divider">
+    <span class="era-card__line"></span>
+    <Image class="era-card__flower" src={ornament} alt="" width={34} height={40} />
+    <span class="era-card__line"></span>
+  </div>
+
+  <div class="era-card__officers">
+    <div class="era-card__person">
+      <p class="era-card__label">President</p>
+      <p class="era-card__name">{president}</p>
     </div>
-  )}
-
-  <Image class="era-card__flower era-card__flower--top" src={ornament} alt="" width={25} height={29} />
-  <span class="era-card__rule era-card__rule--top-left"></span>
-  <span class="era-card__rule era-card__rule--top-right"></span>
-  <span class="era-card__rule era-card__rule--vertical"></span>
-
-  <p class="era-card__label era-card__label--president">President</p>
-  <p class:list={["era-card__officer era-card__officer--president", { "is-wrapped": wrapped }]}>{president}</p>
-  <p class="era-card__label era-card__label--vice">Vice President</p>
-  <p class="era-card__officer era-card__officer--vice">{vicePresident}</p>
-
-  <Image class="era-card__flower era-card__flower--bottom" src={ornament} alt="" width={25} height={29} />
-  <span class="era-card__rule era-card__rule--bottom-left"></span>
-  <span class="era-card__rule era-card__rule--bottom-right"></span>
-
-  <h3 class="era-card__heading">{heading}</h3>
+    <span class="era-card__rule"></span>
+    <div class="era-card__person">
+      <p class="era-card__label">Vice President</p>
+      <p class="era-card__name">{vicePresident}</p>
+    </div>
+  </div>
 
   <ul class="era-card__roles">
     {roles.map((role) => (
       <li class="era-role">
-        <span class="era-role__badge">
-          <Image class="era-role__tile" src={tiles[role.icon]} alt="" width={44} height={44} />
-          <Image class={`era-role__icon era-role__icon--${role.icon}`} src={icons[role.icon]} alt="" />
+        <span class="era-role__chip">
+          <Image class="era-role__icon" src={icons[role.icon]} alt="" />
         </span>
-        <p class="era-role__title">{role.title}</p>
-        <p class:list={["era-role__names", { "era-role__names--compact": role.compact }]}>{role.names}</p>
+        <div class="era-role__text">
+          <p class="era-role__title">{role.title}</p>
+          <p class="era-role__names">{role.names}</p>
+        </div>
       </li>
     ))}
   </ul>
@@ -95,369 +92,348 @@ const wrapped = size === "large" && president.length > 16;
 
 <style>
   .era-card {
-    --shift: 0px; /* extra height when the president's name wraps */
+    --border: #fbd0cc;
+    --chip: 36px;
     position: relative;
-    width: var(--card-width);
-    color: #000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+    padding: 44px 28px 32px;
+    border: 1.5px solid var(--border);
+    border-radius: 24px;
+    background: var(--color-white);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+    color: var(--color-ink);
+    transition:
+      transform 0.25s ease,
+      border-color 0.25s ease,
+      box-shadow 0.25s ease;
   }
 
-  .era-card--wrapped {
-    --shift: 26px;
-  }
-
-  /* The 4px red border and gray fill live on a pseudo-element so child coordinates match Figma's border box. */
-  .era-card::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border: 4px solid var(--color-red);
-    border-radius: 30px;
-    background: var(--color-gray-bg);
-  }
-
-  /* ---------- Year pill (large cards only) ---------- */
+  /* ---------- Year pill straddling the top edge ---------- */
   .era-card__pill {
     position: absolute;
-    left: 141px;
-    top: -89.7px;
-    width: 204px;
-    height: 136px;
+    top: 0;
+    left: 50%;
+    translate: -50% -50%;
+    padding: 6px 16px;
+    border-radius: 999px;
+    background: var(--color-coral);
+    box-shadow: 0 4px 10px rgba(237, 69, 69, 0.3);
+    color: var(--color-white);
+    font-size: 12px;
+    font-weight: var(--weight-semibold);
+    letter-spacing: 0.08em;
+    line-height: normal;
+    text-transform: uppercase;
+    white-space: nowrap;
   }
 
-  .era-card__pill :global(img) {
-    width: 204px;
-    height: 136px;
+  .era-card__blossom {
+    position: absolute;
+    top: -40px;
+    right: -26px;
+    width: 78px;
+    height: auto;
+    rotate: -18deg;
+    pointer-events: none;
+    transition:
+      rotate 0.35s ease,
+      scale 0.35s ease;
+  }
+
+  /* ---------- Head ---------- */
+  .era-card__head {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    text-align: center;
+  }
+
+  .era-card__title {
+    font-size: 20px;
+    font-weight: var(--weight-semibold);
+    line-height: 1.15;
   }
 
   .era-card__year {
-    position: absolute;
-    left: 36px;
-    top: 47.85px;
-    color: var(--color-white);
-    font-size: 26px;
-    font-weight: var(--weight-semibold);
-    line-height: 36.7px;
-    white-space: nowrap;
+    color: var(--color-text-muted);
+    font-size: 13px;
+    font-weight: var(--weight-medium);
+    letter-spacing: 0.3em;
   }
 
-  /* ---------- Ornaments: flowers and rules ---------- */
+  .era-card__divider {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+  }
+
+  .era-card__line {
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
   .era-card__flower {
-    position: absolute;
-    width: 25px;
-    height: 29px;
-    left: var(--flower-left);
+    width: 17px;
+    height: auto;
   }
 
-  .era-card__flower--top {
-    top: var(--flower-top);
+  /* ---------- Officers ---------- */
+  .era-card__officers {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+    padding: 12px 12px 12px 14px;
+    border-radius: 16px;
+    background: var(--color-peach);
   }
 
-  .era-card__flower--bottom {
-    top: calc(var(--flower-bottom) + var(--shift));
+  .era-card__person {
+    display: flex;
+    flex: 1 1 0;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
   }
 
   .era-card__rule {
-    position: absolute;
-    height: 1px;
-    background: var(--color-line-soft);
-  }
-
-  .era-card__rule--top-left {
-    top: var(--rule-top);
-    left: var(--top-left-x);
-    width: var(--top-left-w);
-  }
-
-  .era-card__rule--top-right {
-    top: var(--rule-top);
-    left: var(--top-right-x);
-    width: var(--top-right-w);
-  }
-
-  .era-card__rule--vertical {
-    left: var(--vline-x);
-    top: var(--vline-top);
+    flex: none;
     width: 1px;
-    height: var(--vline-h);
-  }
-
-  .era-card__rule--bottom-left {
-    top: calc(var(--rule-bottom) + var(--shift));
-    left: var(--bottom-left-x);
-    width: var(--bottom-left-w);
-  }
-
-  .era-card__rule--bottom-right {
-    top: calc(var(--rule-bottom) + var(--shift));
-    left: var(--bottom-right-x);
-    width: var(--bottom-right-w);
-  }
-
-  /* ---------- President / Vice President ---------- */
-  .era-card__label,
-  .era-card__officer {
-    position: absolute;
-    translate: -50% 0;
-    text-align: center;
-    white-space: nowrap;
+    background: var(--border);
   }
 
   .era-card__label {
-    top: var(--label-top);
-    font-size: var(--label-size);
-    line-height: var(--label-lh);
-    font-weight: var(--weight-regular);
-  }
-
-  .era-card__officer {
-    top: var(--officer-top);
-    color: var(--color-salmon);
-    font-size: var(--officer-size);
-    line-height: var(--officer-lh);
+    color: var(--color-text-muted);
+    font-size: 9.5px;
     font-weight: var(--weight-semibold);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
   }
 
-  .era-card__officer.is-wrapped {
-    width: 165px;
-    white-space: normal;
+  .era-card__name {
+    font-size: 13px;
+    font-weight: var(--weight-medium);
+    line-height: 1.25;
   }
 
-  .era-card__label--president {
-    left: var(--president-label-x);
-  }
-
-  .era-card__label--vice {
-    left: var(--vice-label-x);
-  }
-
-  .era-card__officer--president {
-    left: var(--president-name-x);
-  }
-
-  .era-card__officer--vice {
-    left: var(--vice-name-x);
-  }
-
-  /* ---------- Era name ---------- */
-  .era-card__heading {
-    position: absolute;
-    left: var(--heading-x);
-    top: calc(var(--heading-top) + var(--shift));
-    translate: -50% 0;
-    color: var(--color-coral);
-    font-size: var(--heading-size);
-    line-height: var(--heading-lh);
-    font-weight: var(--weight-semibold);
-    white-space: nowrap;
-  }
-
-  /* ---------- Role list ---------- */
+  /* ---------- Roles ---------- */
   .era-card__roles {
-    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
     margin: 0;
-    padding: calc(var(--roles-top) + var(--shift)) 0 var(--card-pad-bottom) var(--roles-left);
+    padding: 0;
     list-style: none;
   }
 
   .era-role {
-    position: relative;
-    width: var(--role-width);
-    margin-bottom: var(--role-gap);
-    padding-bottom: var(--role-pad);
-    border-bottom: 1px solid var(--color-line-soft);
+    display: flex;
+    gap: 12px;
   }
 
-  .era-role__title {
-    color: var(--color-ink);
-    font-size: var(--role-title-size);
-    line-height: var(--role-title-lh);
-    font-weight: var(--weight-semibold);
-  }
-
-  .era-role__names {
-    margin-top: var(--role-names-pull);
-    font-size: var(--role-names-size);
-    line-height: var(--role-names-lh);
-    font-weight: var(--weight-regular);
-  }
-
-  .era-role__names--compact {
-    font-size: 9px;
-  }
-
-  .era-role__badge {
-    position: absolute;
-    left: var(--tile-left);
-    top: var(--tile-top);
-    width: 44px;
-    height: 44px;
-  }
-
-  .era-role__tile {
-    width: 44px;
-    height: 44px;
+  .era-role__chip {
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: var(--chip);
+    height: var(--chip);
+    border-radius: 50%;
+    background: #ffeeeb;
   }
 
   .era-role__icon {
-    position: absolute;
+    width: 52%;
+    height: 52%;
+    object-fit: contain;
   }
 
-  .era-role__icon--treasurer {
-    left: var(--piggy-x);
-    top: var(--piggy-y);
-    width: var(--piggy-size);
-    height: var(--piggy-size);
+  .era-role__text {
+    min-width: 0;
+    padding-top: 1px;
   }
 
-  .era-role__icon--secretary {
-    left: 9px;
-    top: 10px;
-    width: 28px;
-    height: 23px;
+  .era-role__title {
+    font-size: 11.5px;
+    font-weight: var(--weight-semibold);
+    line-height: 1.4;
   }
 
-  .era-role__icon--events {
-    left: 6px;
-    top: 7px;
-    width: 34px;
-    height: 29px;
+  .era-role__names {
+    color: var(--color-text-soft);
+    font-size: 12px;
+    font-weight: var(--weight-light);
+    line-height: 1.4;
   }
 
-  .era-role__icon--sports {
-    left: 8px;
-    top: 9px;
-    width: 29px;
-    height: 29px;
+  /* ---------- Hover: lift, coral border and glow, blossom turns ---------- */
+  .era-card:hover {
+    transform: translateY(-12px);
+    border-color: var(--color-coral);
+    box-shadow: 0 18px 40px -6px rgba(237, 69, 69, 0.24);
   }
 
-  .era-role__icon--media {
-    left: 9px;
-    top: 9px;
-    width: 25px;
-    height: 25px;
+  .era-card:hover .era-card__blossom {
+    rotate: -10deg;
+    scale: 1.18;
   }
 
-  .era-role__icon--cultural {
-    left: 5px;
-    top: 7px;
-    width: 33px;
-    height: 29px;
+  @media (prefers-reduced-motion: reduce) {
+    .era-card,
+    .era-card__blossom {
+      transition: none;
+    }
   }
 
-  .era-role__icon--historian {
-    left: 8px;
-    top: 11px;
-    width: 28px;
-    height: 23px;
+  /* ---------- Recent: three across, a little roomier ---------- */
+  .era-card--recent {
+    --chip: 36px;
+    padding: 44px 28px 32px;
   }
 
-  /* ================= LARGE: 488px wide ================= */
-  .era-card--large {
-    --card-width: 488px;
-    --flower-left: 231px;
-    --flower-top: 12px;
-    --flower-bottom: 135px;
-    --rule-top: 35.5px;
-    --top-left-x: 115px;
-    --top-left-w: 106px;
-    --top-right-x: 262px;
-    --top-right-w: 106px;
-    --vline-x: 249px;
-    --vline-top: 44.5px;
-    --vline-h: 84px;
-    --rule-bottom: 158.5px;
-    --bottom-left-x: 78px;
-    --bottom-left-w: 145px;
-    --bottom-right-x: 264px;
-    --bottom-right-w: 164px;
-    --label-top: 45.8px;
-    --label-size: 18px;
-    --label-lh: 30.6px;
-    --officer-top: 78px;
-    --officer-size: 26px;
-    --officer-lh: 26px;
-    --president-label-x: 127px;
-    --president-name-x: 130px;
-    --vice-label-x: 368px;
-    --vice-name-x: 371px;
-    --heading-x: 245px;
-    --heading-top: 174.8px;
-    --heading-size: 28px;
-    --heading-lh: 38.6px;
-    --roles-top: 208.5px;
-    --roles-left: 101px;
-    --role-width: 352px;
-    --role-pad: 9.7px;
-    --role-gap: 4.4px;
-    --role-names-pull: -5.3px;
-    --role-title-size: 16px;
-    --role-title-lh: 28.8px;
-    --role-names-size: 16px;
-    --role-names-lh: 27.2px;
-    --tile-left: -61px;
-    --tile-top: 3.1px;
-    --piggy-x: 4px;
-    --piggy-y: 2px;
-    --piggy-size: 36px;
-    --card-pad-bottom: 12px;
+  .era-card--recent .era-card__title {
+    font-size: 26px;
   }
 
-  .era-card--large .era-role__names {
-    width: 353px;
+  .era-card--recent .era-card__officers {
+    padding: 14px 12px 14px 16px;
   }
 
-  /* ================= SMALL: 343px wide ================= */
+  .era-card--recent .era-card__label {
+    font-size: 10px;
+  }
+
+  .era-card--recent .era-card__name {
+    font-size: 15px;
+  }
+
+  .era-card--recent .era-card__roles {
+    gap: 14px;
+  }
+
+  .era-card--recent .era-role__title {
+    font-size: 12.5px;
+  }
+
+  .era-card--recent .era-role__names {
+    font-size: 13px;
+  }
+
+  /* ---------- Small: the archive ---------- */
   .era-card--small {
-    --card-width: 343px;
-    --flower-left: 156px;
-    --flower-top: 13px;
-    --flower-bottom: 98px;
-    --rule-top: 36.5px;
-    --top-left-x: 40px;
-    --top-left-w: 106px;
-    --top-right-x: 187px;
-    --top-right-w: 106px;
-    --vline-x: 173.5px;
-    --vline-top: 45px;
-    --vline-h: 53px;
-    --rule-bottom: 121.5px;
-    --bottom-left-x: 28px;
-    --bottom-left-w: 118px;
-    --bottom-right-x: 190px;
-    --bottom-right-w: 142px;
-    --label-top: 45.9px;
-    --label-size: 14px;
-    --label-lh: 23.8px;
-    --officer-top: 78px;
-    --officer-size: 18px;
-    --officer-lh: 18px;
-    --president-label-x: 86px;
-    --president-name-x: 87px;
-    --vice-label-x: 251px;
-    --vice-name-x: 257.5px;
-    --heading-x: 174px;
-    --heading-top: 133.7px;
-    --heading-size: 22px;
-    --heading-lh: 30.4px;
-    --roles-top: 164px;
-    --roles-left: 74px;
-    --role-width: 238px;
-    --role-pad: 11.3px;
-    --role-gap: 4.3px;
-    --role-names-pull: -4.6px;
-    --role-title-size: 14px;
-    --role-title-lh: 25.2px;
-    --role-names-size: 10px;
-    --role-names-lh: 17px;
-    --tile-left: -57px;
-    --tile-top: 5.4px;
-    --piggy-x: 6px;
-    --piggy-y: 5px;
-    --piggy-size: 34px;
-    --card-pad-bottom: 12px;
+    --chip: 30px;
+    gap: 14px;
+    padding: 38px 22px 24px;
   }
 
-  .era-card--small .era-role__names {
-    white-space: nowrap;
+  /* ---------- Feature: the last era ---------- */
+  .era-card--feature {
+    --chip: 40px;
+    gap: 26px;
+    padding: 60px 56px 48px;
+    border-color: var(--color-coral);
+    border-radius: 22px;
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.06);
+  }
+
+  /* Thin inner keyline, like a certificate. */
+  .era-card--feature::before {
+    content: "";
+    position: absolute;
+    inset: 9px;
+    border: 1px solid var(--border);
+    border-radius: 15px;
+    pointer-events: none;
+  }
+
+  .era-card--feature:hover {
+    transform: none;
+    box-shadow: 0 14px 34px -8px rgba(237, 69, 69, 0.2);
+  }
+
+  .era-card--feature .era-card__blossom {
+    top: -44px;
+    right: -28px;
+    width: 92px;
+    rotate: -16deg;
+  }
+
+  .era-card--feature .era-card__head {
+    gap: 8px;
+  }
+
+  .era-card--feature .era-card__title {
+    color: var(--color-coral);
+    font-family: var(--font-serif);
+    font-size: 46px;
+    font-weight: var(--weight-regular);
+    line-height: 1.15;
+  }
+
+  .era-card--feature .era-card__divider {
+    width: 340px;
+    gap: 12px;
+  }
+
+  .era-card--feature .era-card__flower {
+    width: 19px;
+  }
+
+  .era-card--feature .era-card__officers {
+    justify-content: center;
+    align-items: center;
+    gap: 44px;
+    width: auto;
+    padding: 0;
+    background: none;
+  }
+
+  .era-card--feature .era-card__person {
+    flex: none;
+    align-items: center;
+    gap: 6px;
+    text-align: center;
+  }
+
+  .era-card--feature .era-card__rule {
+    align-self: stretch;
+  }
+
+  .era-card--feature .era-card__label {
+    color: var(--color-ink);
+    font-size: 10.5px;
+    letter-spacing: 0.18em;
+  }
+
+  .era-card--feature .era-card__name {
+    color: var(--color-coral);
+    font-family: var(--font-serif);
+    font-size: 22px;
+    font-weight: var(--weight-regular);
+  }
+
+  .era-card--feature .era-card__roles {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px 36px;
+  }
+
+  .era-card--feature .era-role {
+    padding-top: 14px;
+    border-top: 1px solid var(--border);
+  }
+
+  .era-card--feature .era-role__title {
+    font-size: 13px;
+  }
+
+  .era-card--feature .era-role__names {
+    font-size: 13.5px;
   }
 </style>

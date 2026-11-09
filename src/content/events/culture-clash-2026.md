@@ -1,6 +1,6 @@
 ---
-title: "Culture Clash / Pokemon Collab!! 5.16.26"
-order: 20
+title: "Culture Clash / Pokemon Collab!!"
+date: 2026-05-16
 cover: ../../assets/events/culture-clash-2026.png
 album: https://photos.app.goo.gl/JKCtTLHw85rTseA99
 ---
