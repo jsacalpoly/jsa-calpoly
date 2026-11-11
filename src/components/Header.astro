@@ -32,11 +32,13 @@ const path = Astro.url.pathname.replace(/\/$/, "") || "/";
               {link.name}
             </a>
             <div class="site-header__drop">
-              {link.children.map((child) => (
-                <a class="site-header__drop-link" href={child.href}>
-                  {child.name}
-                </a>
-              ))}
+              <div class="site-header__drop-card">
+                {link.children.map((child) => (
+                  <a class="site-header__drop-link" href={child.href}>
+                    {child.name}
+                  </a>
+                ))}
+              </div>
             </div>
           </div>
         ) : (
@@ -189,7 +191,8 @@ const path = Astro.url.pathname.replace(/\/$/, "") || "/";
     white-space: nowrap;
   }
 
-  /* "Board" opens a plain two-link menu on hover or keyboard focus. It starts right under the link, so the pointer never leaves it. */
+  /* "Board" opens a small menu on hover or keyboard focus. It is always in the page (just invisible), so tabbing
+     reaches it, and its top padding bridges the gap so the pointer never loses it on the way down. */
   .site-header__item {
     position: relative;
   }
@@ -202,33 +205,54 @@ const path = Astro.url.pathname.replace(/\/$/, "") || "/";
   .site-header__drop {
     position: absolute;
     top: 100%;
-    left: 0;
+    left: -12px;
     z-index: 5;
-    display: none;
-    min-width: 100%;
-    padding: 6px 0;
-    border: 1px solid var(--color-divider);
-    background: var(--color-white);
+    padding-top: 8px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-6px);
+    transition:
+      opacity 0.2s ease,
+      transform 0.2s ease,
+      visibility 0s 0.2s;
   }
 
   .site-header__item:hover .site-header__drop,
   .site-header__item:focus-within .site-header__drop {
-    display: block;
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    transition-delay: 0s;
+  }
+
+  .site-header__drop-card {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 164px;
+    padding: 8px;
+    border: 1px solid #f1e4e1;
+    border-radius: 16px;
+    background: var(--color-white);
+    box-shadow: 0 12px 32px rgba(76, 26, 26, 0.12);
   }
 
   .site-header__drop-link {
-    display: block;
-    padding: 0 16px;
+    padding: 9px 14px;
+    border-radius: 10px;
     color: var(--color-ink);
-    font-size: 14px;
-    font-weight: var(--weight-extralight);
-    line-height: 36px;
-    text-transform: uppercase;
+    font-size: 15px;
+    font-weight: var(--weight-regular);
+    line-height: 22px;
     white-space: nowrap;
+    transition:
+      background 0.15s ease,
+      color 0.15s ease;
   }
 
   .site-header__drop-link:hover,
   .site-header__drop-link:focus-visible {
+    background: #fff0ec;
     color: var(--color-coral);
   }
 
