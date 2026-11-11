@@ -63,7 +63,8 @@ const path = Astro.url.pathname.replace(/\/$/, "") || "/";
         <Image src={logo} alt="" width={48} height={45} densities={[1, 2, 3]} />
       </a>
       <a class="mobile-menu__title" href="/">
-        JAPANESE STUDENT ASSOCIATION
+        <span class="mobile-menu__name">JAPANESE STUDENT ASSOCIATION</span>
+        <span class="mobile-menu__school">CAL POLY SLO</span>
       </a>
       <button class="mobile-menu__close" type="button" aria-label="Close menu" data-menu-close>
         <svg viewBox="0 0 18 18" width="18" height="18" aria-hidden="true">
@@ -322,6 +323,15 @@ const path = Astro.url.pathname.replace(/\/$/, "") || "/";
       font-size: 12px;
       font-weight: var(--weight-semibold);
       line-height: 1.3;
+    }
+
+    :global(html.responsive) .mobile-menu__name,
+    :global(html.responsive) .mobile-menu__school {
+      display: block;
+    }
+
+    :global(html.responsive) .mobile-menu__school {
+      font-size: 10px;
     }
 
     :global(html.responsive) .mobile-menu__close {
