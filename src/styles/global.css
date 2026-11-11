@@ -29,6 +29,11 @@ body {
   html.responsive body > * {
     overflow-x: clip;
   }
+
+  /* The phone footer sits right under the last section, with no extra gap. */
+  html.responsive main {
+    padding-bottom: 0;
+  }
 }
 
 img {
