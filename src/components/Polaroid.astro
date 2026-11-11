@@ -191,16 +191,28 @@ const photoRatio = 262 / photoHeight;
     background: #c9bfae;
   }
 
-  /* Long descriptions fade out at the bottom instead of spilling over the card. */
+  /* Long descriptions scroll inside the card. They fade out at the bottom while there is more to read (the page
+     script adds .is-end once the end is reached, or when everything already fits). */
   .polaroid__desc {
     flex: 1;
     min-height: 0;
-    overflow: hidden;
+    padding-right: 4px;
+    overflow-y: auto;
     color: var(--color-text-soft);
     font-family: var(--font-mono);
     font-size: 12.5px;
     line-height: 1.5;
+    scrollbar-color: #c9bfae transparent;
+    scrollbar-width: thin;
+  }
+
+  .polaroid__desc:not(.is-end) {
     mask-image: linear-gradient(to bottom, #000 calc(100% - 26px), transparent);
+  }
+
+  .polaroid__desc:focus-visible {
+    outline: 2px solid var(--color-green);
+    outline-offset: 2px;
   }
 
   .polaroid__desc :global(p + p) {
