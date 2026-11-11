@@ -260,6 +260,20 @@ const galleryBlossoms = [
     }),
   );
 
+  // Long descriptions on the back of a polaroid scroll inside the card. The fade at the bottom shows only while
+  // there is more to read, and a description that overflows can be reached with the keyboard.
+  document.querySelectorAll<HTMLElement>(".polaroid__desc").forEach((desc) => {
+    const check = () => {
+      const overflows = desc.scrollHeight - desc.clientHeight > 2;
+      desc.classList.toggle("is-end", !overflows || desc.scrollTop + desc.clientHeight >= desc.scrollHeight - 2);
+      if (overflows) desc.tabIndex = 0;
+      else desc.removeAttribute("tabindex");
+    };
+    desc.addEventListener("scroll", check, { passive: true });
+    new ResizeObserver(check).observe(desc);
+    check();
+  });
+
   // Phones: "Show all" reveals the albums that start out hidden.
   document.querySelector<HTMLElement>("[data-show-more]")?.addEventListener("click", (event) => {
     document.querySelectorAll<HTMLElement>(".polaroids-m__more").forEach((group) => (group.hidden = false));
