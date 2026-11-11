@@ -50,14 +50,6 @@ const projects = [
     focus: "50% 0%",
   },
 ];
-
-// Phone-only tags on the Events stop. Colors come from the project cards.
-const tags = [
-  { label: "General meetings", bg: "var(--color-red)", fg: "var(--color-white)" },
-  { label: "Weekend events", bg: "var(--color-orange)", fg: "var(--color-ink)" },
-  { label: "Project teams", bg: "#fccbc7", fg: "var(--color-ink)" },
-  { label: "SPOOOORTS", bg: "var(--color-lavender)", fg: "var(--color-ink)" },
-];
 ---
 
 <BaseLayout title="Cal Poly JSA | Japanese Student Association" responsive>
@@ -75,7 +67,7 @@ const tags = [
     </div>
   </section>
 
-  <!-- Welcome, Join, Events. Desktop: three stacked rows. Phone: one strip that slides sideways while you scroll down. -->
+  <!-- Welcome, Join, Events. Desktop: three stacked rows. Phone: one strip you swipe sideways. -->
   <div class="stories" id="welcome">
     <div class="stories__pin">
       <div class="stories__strip">
@@ -191,22 +183,10 @@ const tags = [
                 JSA hosts weekly general meetings and weekend events, as well as project teams, and SPOOOORTS to keep
                 your calendar packed with fun times.
               </p>
-              <ul class="story__tags phone-only" aria-label="What we do">
-                {tags.map((tag) => (
-                  <li class="story__tag" style={`--tag-bg: ${tag.bg}; --tag-fg: ${tag.fg};`}>
-                    {tag.label}
-                  </li>
-                ))}
-              </ul>
-              <div class="story__note">
-                <p class="story__note-label phone-only" aria-hidden="true">
-                  先輩 · 後輩 senpai-kouhai
-                </p>
-                <p>
-                  Like most culture clubs on campus, JSA also has a “senpai-kouhai” (big-little) program that pairs
-                  older, experienced members with new members.
-                </p>
-              </div>
+              <p>
+                Like most culture clubs on campus, JSA also has a “senpai-kouhai” (big-little) program that pairs older,
+                experienced members with new members.
+              </p>
             </div>
           </div>
         </section>
@@ -275,63 +255,6 @@ const tags = [
     }
     requestAnimationFrame(step);
   });
-</script>
-
-<script>
-  // Phones: pin the story strip and let the page's vertical scroll slide it sideways.
-  const stories = document.querySelector<HTMLElement>(".stories");
-  const pin = stories?.querySelector<HTMLElement>(".stories__pin");
-  const strip = stories?.querySelector<HTMLElement>(".stories__strip");
-  const phone = window.matchMedia("(max-width: 768px)");
-  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-  let shift = 0;
-  let pinTop = 0;
-  let queued = false;
-
-  function slide() {
-    queued = false;
-    if (!stories || !strip || shift <= 0) return;
-    const progress = (pinTop - stories.getBoundingClientRect().top) / shift;
-    strip.style.transform = `translate3d(${-Math.min(1, Math.max(0, progress)) * shift}px, 0, 0)`;
-  }
-
-  function layout() {
-    if (!stories || !pin || !strip) return;
-    // Without the effect the strip is a normal row that scrolls sideways by swipe.
-    if (!phone.matches || reducedMotion.matches) {
-      stories.classList.remove("is-pinned");
-      stories.style.height = "";
-      stories.style.removeProperty("--pin-top");
-      strip.style.transform = "";
-      shift = 0;
-      return;
-    }
-    stories.classList.add("is-pinned");
-    strip.style.transform = "";
-    shift = Math.max(0, strip.scrollWidth - pin.clientWidth);
-    // Park the strip in the middle of the screen while it moves.
-    pinTop = Math.max(0, (window.innerHeight - strip.offsetHeight) / 2);
-    stories.style.setProperty("--pin-top", `${pinTop}px`);
-    // The tall track is exactly the distance the strip has to travel.
-    stories.style.height = `${strip.offsetHeight + shift}px`;
-    slide();
-  }
-
-  window.addEventListener(
-    "scroll",
-    () => {
-      if (queued || shift <= 0) return;
-      queued = true;
-      requestAnimationFrame(slide);
-    },
-    { passive: true },
-  );
-  window.addEventListener("resize", layout);
-  phone.addEventListener("change", layout);
-  reducedMotion.addEventListener("change", layout);
-  // Photos and fonts change the strip's size once they arrive.
-  if (strip) new ResizeObserver(layout).observe(strip);
-  layout();
 </script>
 
 <style>
@@ -523,25 +446,23 @@ const tags = [
     display: none;
   }
 
-  /* ---------- Phone: the three rows become one strip that slides sideways as you scroll down ---------- */
+  /* ---------- Phone: the three rows become one strip you swipe sideways ---------- */
   @media (max-width: 768px) {
     .desktop-only {
       display: none;
     }
 
-    /* Without JavaScript (or with reduced motion) the strip is a plain row you swipe. */
+    /* A plain row that scrolls sideways by swipe, with no snapping so it glides continuously. */
     .stories__pin {
       overflow-x: auto;
       overflow-y: hidden;
+      overscroll-behavior-x: contain;
       background: var(--color-white);
       scrollbar-width: none;
     }
 
-    /* With JavaScript, .stories gets a tall scroll track and the strip stays pinned while it moves. */
-    .stories.is-pinned .stories__pin {
-      position: sticky;
-      top: var(--pin-top, 0px);
-      overflow: hidden;
+    .stories__pin::-webkit-scrollbar {
+      display: none;
     }
 
     .stories__strip {
@@ -551,7 +472,6 @@ const tags = [
       gap: 16px;
       width: max-content;
       padding: 14px 40px 26px 24px;
-      will-change: transform;
     }
 
     /* The rows dissolve: their photo and text become items of the strip. */
@@ -572,12 +492,14 @@ const tags = [
       pointer-events: none;
     }
 
+    /* Kept light so it ties the stops together without pulling the eye. */
     .stories__thread path {
       fill: none;
       stroke: var(--color-red);
-      stroke-width: 2.5;
+      stroke-width: 2;
       stroke-linecap: round;
-      stroke-dasharray: 1 7;
+      stroke-dasharray: 1 8;
+      opacity: 0.55;
     }
 
     .stories__flower {
@@ -788,59 +710,6 @@ const tags = [
       font-size: 14px;
       font-weight: var(--weight-semibold);
       text-decoration: underline;
-    }
-
-    /* Events: paper tags with a punched hole, and a note with a dotted edge. */
-    .story__tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin: 0;
-      padding: 0;
-      list-style: none;
-    }
-
-    .story__tag {
-      position: relative;
-      padding: 8px 12px 8px 26px;
-      border-radius: 3px;
-      background: var(--tag-bg);
-      color: var(--tag-fg);
-      font-size: 13px;
-      font-weight: var(--weight-medium);
-      line-height: 1.2;
-    }
-
-    .story__tag::before {
-      content: "";
-      position: absolute;
-      top: 50%;
-      left: 10px;
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: var(--color-peach);
-      translate: 0 -50%;
-    }
-
-    .story__note {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      padding-left: 14px;
-      border-left: 2px dotted var(--color-red);
-    }
-
-    .story__note-label {
-      color: var(--color-red);
-      font-size: 12px;
-      font-weight: var(--weight-semibold);
-      letter-spacing: 0.04em;
-    }
-
-    .story__note p:not(.story__note-label) {
-      font-size: 14px;
-      line-height: 22px;
     }
   }
 
