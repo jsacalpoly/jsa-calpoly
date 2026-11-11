@@ -25,11 +25,28 @@ const path = Astro.url.pathname.replace(/\/$/, "") || "/";
     </a>
 
     <nav class="site-header__nav" aria-label="Main">
-      {navLinks.map((link) => (
-        <a class="site-header__link" href={link.href} style={`margin-left: ${Math.round(link.gap * 1.17)}px`}>
-          {link.name}
-        </a>
-      ))}
+      {navLinks.map((link) =>
+        link.children ? (
+          <div class="site-header__item" style={`margin-left: ${Math.round(link.gap * 1.17)}px`}>
+            <a class="site-header__link" href={link.href} aria-haspopup="true">
+              {link.name}
+            </a>
+            <div class="site-header__drop">
+              <div class="site-header__drop-card">
+                {link.children.map((child) => (
+                  <a class="site-header__drop-link" href={child.href}>
+                    {child.name}
+                  </a>
+                ))}
+              </div>
+            </div>
+          </div>
+        ) : (
+          <a class="site-header__link" href={link.href} style={`margin-left: ${Math.round(link.gap * 1.17)}px`}>
+            {link.name}
+          </a>
+        ),
+      )}
     </nav>
 
     <div class="site-header__language">
@@ -74,9 +91,18 @@ const path = Astro.url.pathname.replace(/\/$/, "") || "/";
     </div>
     <nav class="mobile-menu__links" aria-label="Main">
       {navLinks.map((link) => (
-        <a href={link.href} aria-current={path === link.href ? "page" : undefined}>
-          {link.name}
-        </a>
+        <>
+          <a href={link.href} aria-current={path === link.href ? "page" : undefined}>
+            {link.name}
+          </a>
+          {link.children
+            ?.filter((child) => child.href !== link.href)
+            .map((child) => (
+              <a class="mobile-menu__sub" href={child.href} aria-current={path === child.href ? "page" : undefined}>
+                {child.name}
+              </a>
+            ))}
+        </>
       ))}
     </nav>
     <div class="mobile-menu__language" role="group" aria-label="Language">
@@ -95,6 +121,14 @@ const path = Astro.url.pathname.replace(/\/$/, "") || "/";
   .site-header {
     background: var(--color-white);
     height: var(--header-height);
+  }
+
+  /* Above the page, so the Board menu opens over the content. Phones have no hover menu, and their own menu sits higher. */
+  @media (min-width: 769px) {
+    .site-header {
+      position: relative;
+      z-index: 50;
+    }
   }
 
   .site-header__inner {
@@ -148,6 +182,7 @@ const path = Astro.url.pathname.replace(/\/$/, "") || "/";
   }
 
   .site-header__link {
+    display: block;
     font-size: 16px;
     font-weight: var(--weight-extralight);
     line-height: 52px;
@@ -156,9 +191,74 @@ const path = Astro.url.pathname.replace(/\/$/, "") || "/";
     white-space: nowrap;
   }
 
+  /* "Board" opens a small menu on hover or keyboard focus. It is always in the page (just invisible), so tabbing
+     reaches it, and its top padding bridges the gap so the pointer never loses it on the way down. */
+  .site-header__item {
+    position: relative;
+  }
+
+  .site-header__item:hover .site-header__link,
+  .site-header__item:focus-within .site-header__link {
+    color: var(--color-coral);
+  }
+
+  .site-header__drop {
+    position: absolute;
+    top: 100%;
+    left: -12px;
+    z-index: 5;
+    padding-top: 8px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-6px);
+    transition:
+      opacity 0.2s ease,
+      transform 0.2s ease,
+      visibility 0s 0.2s;
+  }
+
+  .site-header__item:hover .site-header__drop,
+  .site-header__item:focus-within .site-header__drop {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    transition-delay: 0s;
+  }
+
+  .site-header__drop-card {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 164px;
+    padding: 8px;
+    border: 1px solid #f1e4e1;
+    border-radius: 16px;
+    background: var(--color-white);
+    box-shadow: 0 12px 32px rgba(76, 26, 26, 0.12);
+  }
+
+  .site-header__drop-link {
+    padding: 9px 14px;
+    border-radius: 10px;
+    color: var(--color-ink);
+    font-size: 15px;
+    font-weight: var(--weight-regular);
+    line-height: 22px;
+    white-space: nowrap;
+    transition:
+      background 0.15s ease,
+      color 0.15s ease;
+  }
+
+  .site-header__drop-link:hover,
+  .site-header__drop-link:focus-visible {
+    background: #fff0ec;
+    color: var(--color-coral);
+  }
+
   .site-header__language {
     position: relative;
-    margin: 20px 136.4px 0 15px;
+    margin: 20px 136.4px 0 40px;
     width: 132px;
     height: 52px;
   }
@@ -370,6 +470,15 @@ const path = Astro.url.pathname.replace(/\/$/, "") || "/";
       font-weight: var(--weight-extralight);
       letter-spacing: 0.05em;
       text-transform: uppercase;
+    }
+
+    /* Pages grouped under a link (like Previous eras under Board) are listed smaller beneath it. */
+    :global(html.responsive) .mobile-menu__links a.mobile-menu__sub {
+      height: 40px;
+      padding-left: 18px;
+      color: #78706c;
+      font-size: 15px;
+      text-transform: none;
     }
 
     /* The page you are on: bolder, maroon, with a dot. */

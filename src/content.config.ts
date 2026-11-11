@@ -1,6 +1,7 @@
 import { defineCollection } from "astro:content";
 import { glob } from "astro/loaders";
 import { z } from "astro/zod";
+import { presetIds } from "./utils/calendar";
 
 // One file per board year, e.g. src/content/boards/2026-2027.json
 const boards = defineCollection({
@@ -69,4 +70,31 @@ const eras = defineCollection({
   }),
 });
 
-export const collections = { boards, eras, events };
+// One Markdown file per calendar event, shown on the Forecast page (/calendar). The week builds itself from these:
+// a normal event appears on its date, `repeat: weekly` puts it on that weekday every week, and `featured: true` adds
+// it to the "Coming up" tickets (a featured event may leave out `date` while the date is still to be decided).
+const calendar = defineCollection({
+  loader: glob({ pattern: "**/*.md", base: "./src/content/calendar" }),
+  schema: z
+    .object({
+      title: z.string(),
+      /** Decides the card's color, border and doodle. */
+      preset: z.enum(presetIds),
+      /** The day it happens (YYYY-MM-DD). For a repeating event, the first day. */
+      date: z.coerce.date().optional(),
+      /** Last day of an event that runs over several days. */
+      endDate: z.coerce.date().optional(),
+      /** Written as it should read on the card, e.g. "7:00 PM" or "6:30 – 8:30 PM". */
+      time: z.string().optional(),
+      place: z.string().optional(),
+      repeat: z.enum(["weekly"]).optional(),
+      /** Last day a repeating event happens. Leave out to repeat forever. */
+      until: z.coerce.date().optional(),
+      featured: z.boolean().default(false),
+    })
+    .refine((event) => event.date || event.featured, {
+      message: "An event needs a date, unless it is featured and the date is still to be decided.",
+    }),
+});
+
+export const collections = { boards, eras, events, calendar };

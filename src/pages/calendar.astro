@@ -1,0 +1,610 @@
+---
+import { Image } from "astro:assets";
+import { getCollection } from "astro:content";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import EventCard from "../components/EventCard.astro";
+import TicketCard from "../components/TicketCard.astro";
+import {
+  buildWeeks,
+  comingUp,
+  layoutWeek,
+  monthName,
+  ticketLook,
+  todayInSlo,
+  weekdayName,
+  type CalendarEntry,
+} from "../utils/calendar";
+
+import blossom from "../assets/eras/blossom.png";
+import flowerDivider from "../assets/board/flower-divider.png";
+
+const entries: CalendarEntry[] = (await getCollection("calendar")).map((entry) => ({ id: entry.id, ...entry.data }));
+
+// The week always runs Wednesday to Tuesday. Half a year of weeks is built ahead, and a small script on the page shows the
+// one that matches the visitor's today, so the board stays right between deploys.
+const today = todayInSlo();
+const weeks = buildWeeks(entries, today, 26).map((week) => ({ week, layout: layoutWeek(week) }));
+const big = comingUp(entries, today);
+
+const tilts = [-0.8, 0.9, -0.6];
+const shifts = [14, -18, 6];
+---
+
+<BaseLayout
+  title="Calendar | Cal Poly JSA"
+  description="What is happening this week with the Cal Poly Japanese Student Association."
+  responsive
+>
+  <section class="forecast">
+    <div class="forecast__inner">
+      <div class="board" data-reveal="up">
+        <Image class="board__blossom board__blossom--top" src={blossom} alt="" width={70} />
+        <Image class="board__blossom board__blossom--bottom" src={blossom} alt="" width={52} />
+
+        <div class="board__head">
+          <div class="tile tile--sun" aria-hidden="true">
+            <svg viewBox="0 0 100 100">
+              <g stroke="#f4b93a" stroke-width="5" stroke-linecap="round">
+                <path d="M38 12v8M38 56v8M14 38h8M54 38h8M21 21l6 6M55 21l-6 6M21 55l6-6"></path>
+              </g>
+              <circle cx="38" cy="38" r="17" fill="#fbd84a"></circle>
+              <path
+                d="M48 74a12 12 0 0 1 4-23 16 16 0 0 1 30 4 11 11 0 0 1 2 22H52a9 9 0 0 1-4-3z"
+                fill="#fff"
+                stroke="#e6e1de"
+                stroke-width="2"
+              ></path>
+            </svg>
+          </div>
+
+          <div class="board__title">
+            <h1>FORECAST</h1>
+            <div class="board__divider" aria-hidden="true">
+              <Image src={flowerDivider} alt="" width={20} />
+            </div>
+            <p class="board__range">
+              This week at JSA &nbsp;·&nbsp; <span data-range>{weeks[0].week.label}</span>
+            </p>
+          </div>
+
+          <div class="tile tile--calendar" aria-hidden="true">
+            <svg viewBox="0 0 100 100">
+              <rect x="20" y="26" width="60" height="54" rx="8" fill="#fff" stroke="#d6786e" stroke-width="4"></rect>
+              <path d="M20 34a8 8 0 0 1 8-8h44a8 8 0 0 1 8 8v10H20z" fill="#d6786e"></path>
+              <path d="M34 18v14M66 18v14" stroke="#b8584e" stroke-width="5" stroke-linecap="round"></path>
+              <g fill="#e1dcda">
+                <rect x="28" y="52" width="10" height="8" rx="2"></rect>
+                <rect x="45" y="52" width="10" height="8" rx="2"></rect>
+                <rect x="62" y="52" width="10" height="8" rx="2"></rect>
+                <rect x="28" y="66" width="10" height="8" rx="2"></rect>
+                <rect x="45" y="66" width="10" height="8" rx="2"></rect>
+              </g>
+            </svg>
+          </div>
+        </div>
+
+        {weeks.map(({ week, layout }, index) => (
+          <div class="week" data-week-start={week.start} data-label={week.label} hidden={index !== 0}>
+            <ol
+              class="days"
+              style={`--column-height: ${layout.columnHeight}px; --phone-height: ${layout.phoneHeight}px`}
+            >
+              <svg
+                class="thread"
+                viewBox={`0 0 326 ${layout.phoneHeight}`}
+                preserveAspectRatio="none"
+                aria-hidden="true"
+              >
+                <path d={layout.thread} />
+              </svg>
+              {layout.days.map(({ day, slots, phoneHeight }) => (
+                <li class="day" data-date={day.key} style={`--day-height: ${phoneHeight}px`}>
+                  <div class="day__pill">
+                    <span class="day__badge">TODAY</span>
+                    <span class="day__name">{day.name}</span>
+                    <span class="day__number">{day.dayOfMonth}</span>
+                  </div>
+                  <div class="day__column">
+                    <span class="day__kanji" aria-hidden="true">
+                      {day.kanji}
+                    </span>
+                    <div class="day__events">
+                      {slots.map(({ event, top, tilt, wobble }) => (
+                        <div class="slot" style={`--top: ${top}px; --tilt: ${tilt}deg`}>
+                          <EventCard
+                            preset={event.preset}
+                            title={event.title}
+                            time={event.time}
+                            place={event.place}
+                            wobble={wobble}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                    {slots.length === 0 && <p class="day__quiet">nothing planned</p>}
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </div>
+        ))}
+      </div>
+
+      {big.length > 0 && (
+        <section class="coming" aria-labelledby="coming-title" data-reveal="up">
+          <h2 id="coming-title">Coming up</h2>
+          <ol class="coming__list">
+            {big.map((entry, i) => (
+              <TicketCard
+                title={entry.title}
+                kicker={entry.date ? weekdayName(entry.date) : "Save the date"}
+                month={entry.date ? monthName(entry.date) : "DATE"}
+                day={entry.date ? String(entry.date.getUTCDate()) : "TBD"}
+                details={[entry.time, entry.place].filter(Boolean).join("   ·   ") || undefined}
+                side={i % 2 === 0 ? "right" : "left"}
+                look={ticketLook(entry.preset)}
+                tilt={tilts[i % tilts.length]}
+                shift={shifts[i % shifts.length]}
+              />
+            ))}
+          </ol>
+        </section>
+      )}
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  import { addDays, todayInSlo } from "../utils/calendar";
+
+  // Show the week that holds today (Pacific time), and mark today and the days already gone.
+  const today = todayInSlo();
+  const weeks = [...document.querySelectorAll<HTMLElement>("[data-week-start]")];
+  const current =
+    weeks.find((week) => today >= week.dataset.weekStart! && today <= addDays(week.dataset.weekStart!, 6)) ??
+    (today < weeks[0].dataset.weekStart! ? weeks[0] : weeks[weeks.length - 1]);
+
+  weeks.forEach((week) => (week.hidden = week !== current));
+  current.querySelectorAll<HTMLElement>("[data-date]").forEach((day) => {
+    const date = day.dataset.date!;
+    day.classList.toggle("is-today", date === today);
+    day.classList.toggle("is-past", date < today);
+  });
+  const range = document.querySelector("[data-range]");
+  if (range) range.textContent = current.dataset.label ?? "";
+</script>
+
+<style>
+  .forecast {
+    --panel: #fffcfa;
+
+    padding: 64px 0 88px;
+    background: var(--color-peach);
+  }
+
+  .forecast__inner {
+    display: flex;
+    flex-direction: column;
+    gap: 36px;
+    width: var(--content-width);
+    margin-inline: auto;
+  }
+
+  /* ---------- The board ---------- */
+  .board {
+    position: relative;
+    padding: 30px 30px 34px;
+    border: 1.5px solid var(--color-kanji);
+    border-radius: 34px;
+    background: #fff;
+    box-shadow: 0 8px 26px rgba(133, 32, 36, 0.08);
+  }
+
+  .board__blossom {
+    position: absolute;
+    height: auto;
+    pointer-events: none;
+  }
+
+  .board__blossom--top {
+    top: -24px;
+    left: -26px;
+    rotate: -20deg;
+  }
+
+  .board__blossom--bottom {
+    right: -12px;
+    bottom: -14px;
+    rotate: 25deg;
+  }
+
+  .board__head {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    margin-bottom: 26px;
+  }
+
+  .tile {
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: 100px;
+    height: 100px;
+    border-radius: 22px;
+    background: #ffe6e2;
+  }
+
+  .tile--calendar {
+    background: #fcdcdc;
+  }
+
+  .tile svg {
+    width: 82%;
+    height: 82%;
+  }
+
+  .board__title {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 6px;
+    align-items: center;
+    padding: 18px 20px 16px;
+    border-radius: 26px;
+    background: #ffe9e6;
+  }
+
+  .board__title h1 {
+    color: var(--color-maroon);
+    font-size: 76px;
+    font-weight: var(--weight-bold);
+    letter-spacing: 4px;
+    line-height: 1;
+  }
+
+  /* A small blossom with a thin line running out to each side. */
+  .board__divider {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: center;
+    width: 340px;
+    max-width: 100%;
+  }
+
+  .board__divider::before,
+  .board__divider::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: #efc9c5;
+  }
+
+  .board__divider :global(img) {
+    width: 20px;
+    height: auto;
+  }
+
+  .board__range {
+    color: var(--color-maroon);
+    font-size: 14px;
+    font-weight: var(--weight-medium);
+  }
+
+  /* ---------- Days (desktop: seven tall columns) ---------- */
+  .week[hidden] {
+    display: none;
+  }
+
+  .days {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 16px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .thread {
+    display: none;
+  }
+
+  .day {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .day__pill {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 66px;
+    border-radius: 24px;
+    background: var(--color-kanji);
+    color: var(--color-maroon);
+    line-height: 1.1;
+  }
+
+  .day__name {
+    font-size: 28px;
+    font-weight: var(--weight-semibold);
+  }
+
+  .day__number {
+    font-size: 12px;
+    font-weight: var(--weight-light);
+  }
+
+  .day__badge {
+    position: absolute;
+    top: -9px;
+    display: none;
+    padding: 2px 8px;
+    border: 1px solid var(--color-coral);
+    border-radius: 999px;
+    background: #ffeeea;
+    color: var(--color-coral);
+    font-size: 9px;
+    font-weight: var(--weight-semibold);
+    letter-spacing: 0.04em;
+  }
+
+  .day__column {
+    position: relative;
+    height: var(--column-height);
+    border: 2px solid transparent;
+    border-radius: 56px;
+    background: var(--color-peach);
+  }
+
+  .day__kanji {
+    position: absolute;
+    bottom: 22px;
+    left: 0;
+    width: 100%;
+    color: var(--color-kanji);
+    font-family: var(--font-serif-jp);
+    font-size: 44px;
+    line-height: 1;
+    text-align: center;
+  }
+
+  .slot {
+    position: absolute;
+    top: var(--top);
+    left: 50%;
+    width: 112px;
+    translate: -50% 0;
+    rotate: var(--tilt);
+  }
+
+  .day__quiet {
+    display: none;
+  }
+
+  .day.is-today .day__pill {
+    background: var(--color-coral);
+    color: #fff;
+  }
+
+  .day.is-today .day__badge {
+    display: block;
+  }
+
+  .day.is-today .day__column {
+    border-color: var(--color-coral);
+    background: #ffe8e4;
+  }
+
+  .day.is-today .day__kanji {
+    color: var(--color-coral);
+  }
+
+  .day.is-past .day__pill,
+  .day.is-past .day__column {
+    opacity: 0.55;
+  }
+
+  /* ---------- Coming up ---------- */
+  .coming {
+    padding: 28px 30px 38px;
+    border: 1.5px solid var(--color-kanji);
+    border-radius: 28px;
+    background: var(--panel);
+    --ticket-backdrop: var(--panel);
+  }
+
+  .coming h2 {
+    color: var(--color-maroon);
+    font-size: 24px;
+    font-weight: var(--weight-semibold);
+  }
+
+  .coming__list {
+    display: flex;
+    flex-direction: column;
+    gap: 26px;
+    align-items: center;
+    margin: 28px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  /* ---------- Phone: a loose timeline with a loopy dotted line ---------- */
+  @media (max-width: 768px) {
+    .forecast {
+      padding: 28px 0 56px;
+    }
+
+    .forecast__inner {
+      gap: 24px;
+      width: auto;
+      padding-inline: 16px;
+    }
+
+    .board {
+      padding: 16px 16px 22px;
+      border-radius: 30px;
+    }
+
+    .board__blossom--top {
+      top: -18px;
+      left: -16px;
+      width: 44px;
+    }
+
+    .board__blossom--bottom {
+      display: none;
+    }
+
+    .board__head {
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .tile {
+      width: 46px;
+      height: 46px;
+      border-radius: 14px;
+    }
+
+    .board__title {
+      gap: 3px;
+      padding: 10px 8px 9px;
+      border-radius: 18px;
+    }
+
+    .board__title h1 {
+      font-size: 34px;
+      letter-spacing: 1px;
+    }
+
+    .board__divider {
+      width: 170px;
+    }
+
+    .board__divider :global(img) {
+      width: 16px;
+    }
+
+    .board__range {
+      font-size: 11px;
+    }
+
+    .days {
+      display: block;
+      height: var(--phone-height);
+    }
+
+    .thread {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      display: block;
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+      pointer-events: none;
+    }
+
+    .thread path {
+      fill: none;
+      stroke: var(--color-coral);
+      stroke-width: 3.5;
+      stroke-dasharray: 0.1 9;
+      stroke-linecap: round;
+      vector-effect: non-scaling-stroke;
+    }
+
+    .day {
+      display: grid;
+      grid-template-columns: 1fr 70px 1fr;
+      align-items: center;
+      height: var(--day-height);
+    }
+
+    .day__pill {
+      z-index: 1;
+      grid-column: 2;
+      grid-row: 1;
+      height: auto;
+      padding: 6px 12px;
+      border-radius: 18px;
+      box-shadow: 0 0 0 3px #fff;
+    }
+
+    .day__name {
+      font-size: 17px;
+    }
+
+    .day__column {
+      display: contents;
+    }
+
+    .day__kanji {
+      display: none;
+    }
+
+    .day__events {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      grid-column: 1;
+      grid-row: 1;
+    }
+
+    .day:nth-child(even) .day__events,
+    .day:nth-child(even) .day__quiet {
+      grid-column: 3;
+    }
+
+    .slot {
+      position: static;
+      width: 100%;
+      translate: none;
+    }
+
+    .day__quiet {
+      display: block;
+      grid-column: 1;
+      grid-row: 1;
+      color: #be9692;
+      font-family: var(--font-hand);
+      font-size: 21px;
+      text-align: right;
+    }
+
+    .day:nth-child(even) .day__quiet {
+      text-align: left;
+    }
+
+    .day.is-today .day__column {
+      background: none;
+    }
+
+    .day.is-past .day__events,
+    .day.is-past .day__quiet {
+      opacity: 0.55;
+    }
+
+    .coming {
+      padding: 20px 16px 26px;
+      border-radius: 26px;
+    }
+
+    .coming h2 {
+      font-size: 20px;
+    }
+
+    .coming__list {
+      gap: 22px;
+      margin-top: 22px;
+    }
+  }
+</style>
