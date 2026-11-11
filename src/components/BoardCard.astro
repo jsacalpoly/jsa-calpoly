@@ -36,9 +36,6 @@ const firstName = about?.nickname ?? name.split(" ")[0];
 
   {about && (
     <div class="board-card__about" aria-label={`About ${firstName}`}>
-      <span class="about__close" aria-hidden="true">
-        ✕
-      </span>
       <h4 class="about__title">About {firstName}</h4>
       <div class="about__flourish" aria-hidden="true">
         <span />
@@ -174,10 +171,6 @@ const firstName = about?.nickname ?? name.split(" ")[0];
     .board-card:focus-visible .board-card__about {
       opacity: 1;
     }
-  }
-
-  .about__close {
-    display: none;
   }
 
   .about__title {
@@ -326,12 +319,20 @@ const firstName = about?.nickname ?? name.split(" ")[0];
       --badge: 34px;
       --name-size: 15px;
       --role-size: 12px;
+      --title-size: 14px;
+      --text-size: 10px;
+      --icon: 30px;
+      --rule: 28px;
     }
 
     .board-card--executive.board-card--featured {
       --photo: 96px;
       --badge: 38px;
       --name-size: 17px;
+      --title-size: 16px;
+      --text-size: 11px;
+      --icon: 34px;
+      --rule: 36px;
     }
 
     .board-card--member {
@@ -339,6 +340,10 @@ const firstName = about?.nickname ?? name.split(" ")[0];
       --badge: 26px;
       --name-size: 12px;
       --role-size: 10px;
+      --title-size: 10px;
+      --text-size: 7.5px;
+      --icon: 18px;
+      --rule: 16px;
       padding: 10px 6px 12px;
     }
 
@@ -380,42 +385,66 @@ const firstName = about?.nickname ?? name.split(" ")[0];
       line-height: 1.35;
     }
 
-    /* The About panel: the same 244 x 216 card as on desktop, centered over a dimmed page. */
+    /* The About panel fades in over the card, like on desktop, with the contents sized to fit the card. */
     .board-card .board-card__about {
-      position: fixed;
-      inset: auto;
-      top: 50%;
-      left: 50%;
-      z-index: 60;
-      width: 244px;
-      height: 216px;
-      translate: -50% -50%;
-      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 8px 6px 6px;
     }
 
-    .board-card.is-open::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      z-index: 59;
-      background: rgba(0, 0, 0, 0.5);
+    .board-card .about__title {
+      margin: 0;
+      font-size: var(--title-size);
+      line-height: 1.2;
     }
 
-    /* Sits on the panel's top corner so it never covers the title. */
-    .about__close {
-      position: absolute;
-      top: -11px;
-      right: -11px;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-      display: grid;
-      place-items: center;
-      width: 22px;
-      height: 22px;
-      border-radius: 50%;
-      background: var(--color-white);
-      color: var(--color-ink);
-      font-family: var(--font-body, sans-serif);
-      font-size: 9px;
+    .board-card .about__flourish {
+      gap: 4px;
+      margin: 2px 0 3px;
+    }
+
+    .board-card .about__flourish span {
+      width: var(--rule);
+    }
+
+    .board-card .about__flourish svg {
+      width: 12px;
+      height: 12px;
+    }
+
+    .board-card .about__list {
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+      width: 100%;
+      font-size: var(--text-size);
+      line-height: 1.25;
+    }
+
+    .board-card .about__list li {
+      flex: 1;
+      gap: 6px;
+      height: auto;
+      padding: 3px 0 2px 2px;
+    }
+
+    .board-card .about__list li + li::before {
+      left: calc(var(--icon) + 8px);
+      width: auto;
+      right: 6px;
+    }
+
+    .board-card .about__icon {
+      width: var(--icon);
+      height: auto;
+    }
+
+    .board-card .about__list span {
+      flex: 1;
+      width: auto;
+      min-width: 0;
+      overflow-wrap: anywhere;
     }
   }
 </style>

@@ -69,34 +69,41 @@ for (let i = 0; i < members.length; i += 4) memberRows.push(members.slice(i, i +
 </BaseLayout>
 
 <script>
-  // Phones: a tap opens a card's About panel (desktop uses hover). Tap anywhere, or press Escape, to close it.
+  // Phones: a tap fades a card to its About panel (desktop uses hover). Tap it again, tap elsewhere, or press Escape to close.
   const phone = window.matchMedia("(max-width: 768px)");
   const cards = document.querySelectorAll<HTMLElement>(".board-card[tabindex]");
 
   function setOpen(card: HTMLElement, open: boolean) {
     card.classList.toggle("is-open", open);
     card.setAttribute("aria-expanded", String(open));
-    document.documentElement.style.overflow = open ? "hidden" : "";
   }
 
-  function closeAll() {
-    cards.forEach((card) => card.classList.contains("is-open") && setOpen(card, false));
+  function closeAll(except?: HTMLElement) {
+    cards.forEach((card) => card !== except && card.classList.contains("is-open") && setOpen(card, false));
+  }
+
+  function toggle(card: HTMLElement) {
+    closeAll(card);
+    setOpen(card, !card.classList.contains("is-open"));
   }
 
   cards.forEach((card) => {
     card.setAttribute("aria-expanded", "false");
-    card.addEventListener("click", () => {
-      if (phone.matches) setOpen(card, !card.classList.contains("is-open"));
+    card.addEventListener("click", (event) => {
+      if (!phone.matches) return;
+      event.stopPropagation();
+      toggle(card);
     });
     card.addEventListener("keydown", (event) => {
       if (!phone.matches || (event.key !== "Enter" && event.key !== " ")) return;
       event.preventDefault();
-      setOpen(card, !card.classList.contains("is-open"));
+      toggle(card);
     });
   });
 
+  document.addEventListener("click", () => closeAll());
   document.addEventListener("keydown", (event) => event.key === "Escape" && closeAll());
-  phone.addEventListener("change", closeAll);
+  phone.addEventListener("change", () => closeAll());
 </script>
 
 <style>
