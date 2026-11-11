@@ -17,8 +17,11 @@ const path = Astro.url.pathname.replace(/\/$/, "") || "/";
     <a class="site-header__title" href="/">
       <span class="site-header__name">JAPANESE STUDENT ASSOCIATION</span>
       <span class="site-header__school">
-        <span data-school-live aria-hidden="true">
+        <span class="site-header__school-full" data-school-live aria-hidden="true">
           CAL POLY SAN LUIS OBISPO
+        </span>
+        <span class="site-header__school-short" data-school-live aria-hidden="true">
+          CAL POLY SLO
         </span>
         <span class="site-header__sr">CAL POLY SAN LUIS OBISPO</span>
       </span>
@@ -131,6 +134,11 @@ const path = Astro.url.pathname.replace(/\/$/, "") || "/";
     font-size: 17px;
   }
 
+  /* The short "CAL POLY SLO" is only for the phone header. */
+  .site-header__school-short {
+    display: none;
+  }
+
   /* Read by screen readers, hidden while the visible text is scrambling. */
   .site-header__sr {
     position: absolute;
@@ -227,6 +235,14 @@ const path = Astro.url.pathname.replace(/\/$/, "") || "/";
 
     :global(html.responsive) .site-header__school {
       font-size: 10px;
+    }
+
+    :global(html.responsive) .site-header__school-full {
+      display: none;
+    }
+
+    :global(html.responsive) .site-header__school-short {
+      display: inline;
     }
 
     /* The desktop links and language select move into the menu. */
@@ -456,7 +472,10 @@ const path = Astro.url.pathname.replace(/\/$/, "") || "/";
 
 <script>
   // Only on the home page. The subtitle starts as "CHAPTER", then the letters shuffle and settle into the full name.
-  const live = document.querySelector<HTMLElement>("[data-school-live]");
+  // Whichever version of the line is showing: the full name on desktop, "CAL POLY SLO" on phones.
+  const live = Array.from(document.querySelectorAll<HTMLElement>("[data-school-live]")).find(
+    (el) => getComputedStyle(el).display !== "none",
+  );
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   const onHome = location.pathname === "/" || location.pathname === "/index.html";
