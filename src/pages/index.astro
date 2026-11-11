@@ -411,23 +411,31 @@ const tags = [
     border-color: transparent;
   }
 
-  /* Phone hero, from the mobile Figma frame: 500px tall, 60px title, button below it. */
+  /* Phone hero: fills the whole screen under the 64px header (never shorter than the 500px Figma frame).
+     The 60px title and the button stay centered in it, a little below the middle like the Figma frame.
+     svh is the screen height with the browser's address bar showing, so the hero does not jump while scrolling. */
   @media (max-width: 768px) {
     .hero {
-      height: 500px;
+      height: max(500px, calc(100vh - 64px));
+      height: max(500px, calc(100svh - 64px));
     }
 
     .hero__stage {
       top: 0;
       left: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 28px;
       width: 100%;
       height: 100%;
+      padding-top: 40px;
       translate: none;
     }
 
     .hero__title {
-      top: 170px;
-      right: 0;
+      position: static;
       font-size: 60px;
       line-height: 62px;
     }
@@ -438,9 +446,8 @@ const tags = [
     }
 
     .hero__button {
-      top: 322px;
-      left: 50%;
-      margin-left: -83px;
+      position: static;
+      flex: none;
     }
   }
 
