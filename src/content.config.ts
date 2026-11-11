@@ -8,7 +8,6 @@ const boards = defineCollection({
   schema: ({ image }) =>
     z.object({
       year: z.string(),
-      eraName: z.string().default(""),
       members: z.array(
         z.object({
           name: z.string(),
@@ -65,8 +64,6 @@ const eras = defineCollection({
         title: z.string(),
         names: z.string(),
         icon: z.enum(["treasurer", "secretary", "events", "sports", "media", "cultural", "historian"]),
-        /** Use the smaller 9px names size for long lists. */
-        compact: z.boolean().default(false),
       }),
     ),
   }),

@@ -4,7 +4,6 @@
   --color-coral: #fe6161;
   --color-orange: #f5ae5d;
   --color-pink: #e6999b;
-  --color-mint: #abd9d6;
   --color-ink: #181818;
   --color-white: #ffffff;
 
@@ -15,10 +14,8 @@
   --color-cream: #f6f2ef; /* 26-27 page backdrop */
   --color-cream-photos: #f7f3ef; /* photo gallery banner */
   --color-gray-bg: #f3f3f3; /* photo gallery columns */
-  --color-blush: #ffdcdc; /* photo event cards */
   --color-green: #3f7652; /* "Photos!!" button */
   --color-line: #282626;
-  --color-line-soft: #525252; /* era card dividers */
   --color-rose: #dd7376; /* eras reflection band */
   --color-salmon: #ff6161; /* era names */
   --color-off-white: #fafafa; /* eras banner */
@@ -58,5 +55,4 @@
 
   /* Shadows used on cards and photo frames */
   --shadow-frame: 0 1px 3px rgba(0, 0, 0, 0.5);
-  --shadow-card: 0 1px 4px #000;
 }
