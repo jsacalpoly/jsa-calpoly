@@ -21,9 +21,11 @@ interface Props {
   roles: { title: string; names: string; icon: RoleIcon }[];
   /** Used to link the button to the panel it opens. */
   id: string;
+  /** Seconds to wait before the entrance, so neighbouring rows rise one after another. */
+  delay?: number;
 }
 
-const { year, heading, president, vicePresident, roles, id } = Astro.props;
+const { year, heading, president, vicePresident, roles, id, delay = 0 } = Astro.props;
 
 const icons = {
   treasurer: iconTreasurer,
@@ -37,7 +39,7 @@ const icons = {
 ---
 
 <!-- Phone timeline entry: one line per era, tap to open the whole board. -->
-<li class="era-row">
+<li class="era-row" data-reveal="up" style={`--reveal-delay: ${delay}s`}>
   <Image class="era-row__node" src={blossom} alt="" width={52} height={52} />
   <div class="era-row__card">
     <button class="era-row__head" type="button" aria-expanded="false" aria-controls={id}>
