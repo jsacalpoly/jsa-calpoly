@@ -20,7 +20,7 @@ const memberRows = [];
 for (let i = 0; i < members.length; i += 4) memberRows.push(members.slice(i, i + 4));
 ---
 
-<BaseLayout title="26-27 | Cal Poly JSA" description="Meet the 2026-2027 Cal Poly JSA board.">
+<BaseLayout title="26-27 | Cal Poly JSA" description="Meet the 2026-2027 Cal Poly JSA board." responsive>
   <div class="board-wrap">
     <div class="board container">
       <div class="board__banner" data-reveal>
@@ -35,6 +35,7 @@ for (let i = 0; i < members.length; i += 4) memberRows.push(members.slice(i, i +
       </h1>
       <Image class="board__flower" src={flowerDivider} alt="" width={34} height={34} />
       <p class="board__subtitle">Meet the leaders behind JSA</p>
+      <p class="board__hint">Tap a card to learn more</p>
 
       <div class="divider divider--executive">
         <span class="divider__line" data-reveal="line" style="--reveal-delay: 0.1s"></span>
@@ -44,7 +45,7 @@ for (let i = 0; i < members.length; i += 4) memberRows.push(members.slice(i, i +
 
       <div class="board__executives">
         {executives.map((member, i) => (
-          <BoardCard variant="executive" {...member} delay={i * 0.08} />
+          <BoardCard variant="executive" featured={member.role === "President"} {...member} delay={i * 0.08} />
         ))}
       </div>
 
@@ -54,16 +55,49 @@ for (let i = 0; i < members.length; i += 4) memberRows.push(members.slice(i, i +
         <span class="divider__line" data-reveal="line" style="--reveal-delay: 0.1s"></span>
       </div>
 
-      {memberRows.map((row, index) => (
-        <div class:list={["board__members", `board__members--row${index + 1}`]}>
-          {row.map((member, i) => (
-            <BoardCard {...member} delay={i * 0.06} />
-          ))}
-        </div>
-      ))}
+      <div class="board__member-grid">
+        {memberRows.map((row, index) => (
+          <div class:list={["board__members", `board__members--row${index + 1}`]}>
+            {row.map((member, i) => (
+              <BoardCard {...member} delay={i * 0.06} />
+            ))}
+          </div>
+        ))}
+      </div>
     </div>
   </div>
 </BaseLayout>
+
+<script>
+  // Phones: a tap opens a card's About panel (desktop uses hover). Tap anywhere, or press Escape, to close it.
+  const phone = window.matchMedia("(max-width: 768px)");
+  const cards = document.querySelectorAll<HTMLElement>(".board-card[tabindex]");
+
+  function setOpen(card: HTMLElement, open: boolean) {
+    card.classList.toggle("is-open", open);
+    card.setAttribute("aria-expanded", String(open));
+    document.documentElement.style.overflow = open ? "hidden" : "";
+  }
+
+  function closeAll() {
+    cards.forEach((card) => card.classList.contains("is-open") && setOpen(card, false));
+  }
+
+  cards.forEach((card) => {
+    card.setAttribute("aria-expanded", "false");
+    card.addEventListener("click", () => {
+      if (phone.matches) setOpen(card, !card.classList.contains("is-open"));
+    });
+    card.addEventListener("keydown", (event) => {
+      if (!phone.matches || (event.key !== "Enter" && event.key !== " ")) return;
+      event.preventDefault();
+      setOpen(card, !card.classList.contains("is-open"));
+    });
+  });
+
+  document.addEventListener("keydown", (event) => event.key === "Escape" && closeAll());
+  phone.addEventListener("change", closeAll);
+</script>
 
 <style>
   /* The cream backdrop runs the full width of the screen; the content stays in the 980px column. */
@@ -211,5 +245,133 @@ for (let i = 0; i < members.length; i += 4) memberRows.push(members.slice(i, i +
 
   .board__members--row3 {
     margin-top: 45.4px;
+  }
+
+  /* The hint and the grid wrapper only matter on phones. */
+  .board__hint {
+    display: none;
+  }
+
+  .board__member-grid {
+    display: contents;
+  }
+
+  /* ---------- Phone: one column, cream backdrop, the president on top ---------- */
+  @media (max-width: 768px) {
+    .board {
+      width: auto;
+      height: auto;
+      padding: 14px 24px 44px;
+    }
+
+    .board__banner {
+      margin: 0;
+      width: auto;
+      height: auto;
+      aspect-ratio: 945 / 528;
+    }
+
+    /* Blossom branches overlap the lower corners of the banner (banner height = (screen - 48px) x 528 / 945). */
+    .board__blossoms--left {
+      left: 0;
+      top: calc(14px + (100vw - 48px) * 0.5587 - 34px);
+      width: 104px;
+      height: 93px;
+    }
+
+    .board__blossoms--right {
+      left: auto;
+      right: 0;
+      top: calc(14px + (100vw - 48px) * 0.5587 - 52px);
+      width: 186px;
+      height: 124px;
+    }
+
+    .board__title {
+      margin-top: 18px;
+      font-size: 40px;
+      line-height: 48px;
+    }
+
+    .board__flower {
+      width: 30px;
+      height: 30px;
+      margin: 2px auto 0;
+      left: 0;
+    }
+
+    .board__subtitle {
+      margin-top: 2px;
+    }
+
+    .board__hint {
+      position: relative;
+      display: block;
+      margin-top: 2px;
+      color: #787878;
+      font-size: 11px;
+      font-weight: var(--weight-light);
+      line-height: 16px;
+      text-align: center;
+    }
+
+    .divider,
+    .divider--executive,
+    .divider--members {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: auto;
+      height: auto;
+      margin: 22px 0 12px;
+    }
+
+    .divider--members {
+      margin-top: 28px;
+      margin-bottom: 14px;
+    }
+
+    .divider__line,
+    .divider--members .divider__line {
+      flex: 1;
+      margin: 0;
+    }
+
+    .divider__text,
+    .divider--members .divider__text {
+      padding: 0;
+      font-size: 16px;
+      line-height: 24px;
+    }
+
+    /* Executives: the president alone on top, the other two side by side. */
+    .board__executives {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin: 0;
+    }
+
+    .board__executives > :global(.board-card--featured) {
+      grid-column: 1 / -1;
+      justify-self: center;
+      order: -1;
+      width: 170px;
+    }
+
+    /* Board members: three across; the rows of four melt into one grid. */
+    .board__member-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 9px;
+    }
+
+    .board__members,
+    .board__members--row1,
+    .board__members--row2,
+    .board__members--row3 {
+      display: contents;
+      margin: 0;
+    }
   }
 </style>
