@@ -3,6 +3,7 @@ import { Image } from "astro:assets";
 import { getCollection } from "astro:content";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import EraCard from "../components/EraCard.astro";
+import EraRow from "../components/EraRow.astro";
 
 import blossomsLeft from "../assets/board/blossoms-left.png";
 import blossomsRight from "../assets/board/blossoms-right.png";
@@ -16,9 +17,28 @@ const [last, ...rest] = eras.filter((era) => era.data.size === "large");
 const recent = rest;
 const archive = eras.filter((era) => era.data.size === "small");
 const archiveRows = [archive.slice(0, 3), archive.slice(3, 6), archive.slice(6, 9)].filter((row) => row.length > 0);
+// On phones the recent and earlier eras share one timeline.
+const timeline = [...recent, ...archive];
+
+// Will Kriss's White Dream reflection, shown in full on desktop and in a sheet on phones.
+const reflection = {
+  highlights:
+    "The general meetings were definitely my favorite part of the White Dream era. Going through a period of transition from small club to big club, the general meetings were the main time we got to interact and entertain the majority of JSA. I really like to think that we made our general meetings unique and exciting every week. It's hard to narrow it down, but some of my favorite things we did were: rats being thrown at me, laser pointer, eating a whole thing of cabbage, T-posing for way too long, and punishment jan-ken-pon. I absolutely loved the energy at the meetings and I think that's where we as a board shined the brightest.",
+  advice:
+    'There are two main responsibilities or elements or whatever you want to call it for being on JSA board. The first is obviously making stuff happen. You can plan it all out beforehand or learn how to do it on the fly, but you have a responsibility to make things actually happen. The second element is creative direction. JSA is weird. Not in like a "society doesn\'t understand me" weird, but a fun, do things out of the box type of way. Be creative. Try to do things differently. The worst thing you can be is boring.',
+  passion:
+    "Now none of this is going to happen without your passion. Find what you're passionate about and find a way to bring it into JSA. Keep in mind that what you want to do needs to be for the best of the club, but the club won't strive unless you fully believe in what you're doing. If you're passionate about what you're doing for the club, it will show and you'll be able to go above and beyond.",
+  love: "AS ALWAYS love y'all <3 <3 <3",
+  sign: "- Will Kriss",
+};
 ---
 
-<BaseLayout title="Eras | Cal Poly JSA" description="JSA board through the eras: honoring our founders." flushFooter>
+<BaseLayout
+  title="Eras | Cal Poly JSA"
+  description="JSA board through the eras: honoring our founders."
+  flushFooter
+  responsive
+>
   <!-- Banner (79 to 257) -->
   <section class="banner">
     <div class="stage banner__stage">
@@ -45,6 +65,20 @@ const archiveRows = [archive.slice(0, 3), archive.slice(3, 6), archive.slice(6, 
       />
       <span class="banner__rule banner__rule--right" data-reveal="line" style="--reveal-delay: 0.15s"></span>
     </div>
+  </section>
+
+  <!-- Phone banner -->
+  <section class="banner-m">
+    <Image class="banner-m__branch banner-m__branch--right" src={blossomsRight} alt="" width={458} height={305} />
+    <Image class="banner-m__branch banner-m__branch--left" src={blossomsLeft} alt="" width={238} height={212} />
+    <p class="banner-m__kicker">
+      <span class="banner-m__rule"></span>
+      <span>Our Legacy</span>
+      <span class="banner-m__rule"></span>
+    </p>
+    <h1 class="banner-m__title">JSA Board Through the Eras</h1>
+    <p class="banner-m__subtitle">Honoring our founders</p>
+    <Image class="banner-m__flower" src={headerFlower} alt="" width={45} height={45} />
   </section>
 
   <!-- Eras -->
@@ -92,44 +126,117 @@ const archiveRows = [archive.slice(0, 3), archive.slice(3, 6), archive.slice(6, 
     </div>
   </section>
 
+  <!-- Phone: the last era, then every other era as a timeline you tap open -->
+  <section class="eras-m">
+    {last && (
+      <div class="eras-m__last">
+        <EraCard {...last.data} variant="feature" badge="Last era" />
+      </div>
+    )}
+
+    <div class="eras-m__heading">
+      <span class="eras__jp">歴代</span>
+      <h2 class="eras__title">Through the eras</h2>
+      <p class="eras-m__hint">Tap an era to meet its board</p>
+    </div>
+    <ol class="eras-m__timeline">
+      {timeline.map((era, i) => (
+        <EraRow {...era.data} id={`era-more-${i}`} />
+      ))}
+    </ol>
+  </section>
+
   <!-- Will Kriss's White Dream reflection -->
   <section class="reflection">
     <div class="stage reflection__stage">
       <h2 class="reflection__name">WILL KRISS'S</h2>
       <p class="reflection__label reflection__label--highlights">HIGHLIGHTS:</p>
-      <p class="reflection__text reflection__text--highlights">
-        The general meetings were definitely my favorite part of the White Dream era. Going through a period of
-        transition from small club to big club, the general meetings were the main time we got to interact and entertain
-        the majority of JSA. I really like to think that we made our general meetings unique and exciting every week.
-        It's hard to narrow it down, but some of my favorite things we did were: rats being thrown at me, laser pointer,
-        eating a whole thing of cabbage, T-posing for way too long, and punishment jan-ken-pon. I absolutely loved the
-        energy at the meetings and I think that's where we as a board shined the brightest.
-      </p>
+      <p class="reflection__text reflection__text--highlights">{reflection.highlights}</p>
 
       <p class="reflection__label reflection__label--advice">ADVICE FOR FUTURE JSA:</p>
-      <p class="reflection__text reflection__text--advice">
-        There are two main responsibilities or elements or whatever you want to call it for being on JSA board. The
-        first is obviously making stuff happen. You can plan it all out beforehand or learn how to do it on the fly, but
-        you have a responsibility to make things actually happen. The second element is creative direction. JSA is
-        weird. Not in like a "society doesn't understand me" weird, but a fun, do things out of the box type of way. Be
-        creative. Try to do things differently. The worst thing you can be is boring.
-      </p>
-      <p class="reflection__text reflection__text--passion">
-        Now none of this is going to happen without your passion. Find what you're passionate about and find a way to
-        bring it into JSA. Keep in mind that what you want to do needs to be for the best of the club, but the club
-        won't strive unless you fully believe in what you're doing. If you're passionate about what you're doing for the
-        club, it will show and you'll be able to go above and beyond.
-      </p>
+      <p class="reflection__text reflection__text--advice">{reflection.advice}</p>
+      <p class="reflection__text reflection__text--passion">{reflection.passion}</p>
 
       <h2 class="reflection__title">
         <span class="reflection__title-line reflection__title-line--white-dream">WHITE DREAM</span>
         <span class="reflection__title-line reflection__title-line--reflection">REFLECTION</span>
       </h2>
-      <p class="reflection__love">AS ALWAYS love y'all &lt;3 &lt;3 &lt;3</p>
-      <p class="reflection__sign">- Will Kriss</p>
+      <p class="reflection__love">{reflection.love}</p>
+      <p class="reflection__sign">{reflection.sign}</p>
     </div>
   </section>
+
+  <!-- Phone: a teaser for Will Kriss's reflection, which opens in a sheet -->
+  <section class="reflection-m">
+    <h2 class="reflection-m__name">WILL KRISS'S</h2>
+    <p class="reflection-m__label">WHITE DREAM REFLECTION</p>
+    <p class="reflection-m__quote">“The worst thing you can be is boring.”</p>
+    <button class="reflection-m__button" type="button" data-reflection-open>
+      Read the reflection&nbsp;&nbsp;→
+    </button>
+  </section>
+
+  <div
+    class="sheet"
+    id="reflection-sheet"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Will Kriss's White Dream reflection"
+    hidden
+  >
+    <button class="sheet__dim" type="button" aria-label="Close" tabindex="-1" data-reflection-close></button>
+    <div class="sheet__panel">
+      <span class="sheet__handle" aria-hidden="true"></span>
+      <button class="sheet__close" type="button" aria-label="Close" data-reflection-close>
+        <svg viewBox="0 0 12 12" width="12" height="12" aria-hidden="true">
+          <path d="M1 1 11 11M11 1 1 11"></path>
+        </svg>
+      </button>
+      <div class="sheet__scroll">
+        <h2 class="sheet__name">WILL KRISS'S</h2>
+        <p class="sheet__title">WHITE DREAM REFLECTION</p>
+        <p class="sheet__label">HIGHLIGHTS:</p>
+        <p class="sheet__text">{reflection.highlights}</p>
+        <p class="sheet__label">ADVICE FOR FUTURE JSA:</p>
+        <p class="sheet__text">{reflection.advice}</p>
+        <p class="sheet__text">{reflection.passion}</p>
+        <p class="sheet__love">{reflection.love}</p>
+        <p class="sheet__sign">{reflection.sign}</p>
+      </div>
+    </div>
+  </div>
 </BaseLayout>
+
+<script>
+  // Phones: the era timeline opens one era at a time.
+  const heads = document.querySelectorAll<HTMLButtonElement>(".era-row__head");
+  heads.forEach((head) =>
+    head.addEventListener("click", () => {
+      const wasOpen = head.getAttribute("aria-expanded") === "true";
+      heads.forEach((other) => other.setAttribute("aria-expanded", "false"));
+      head.setAttribute("aria-expanded", String(!wasOpen));
+    }),
+  );
+
+  // Phones: Will Kriss's reflection opens in a sheet that slides up over the page.
+  const sheet = document.querySelector<HTMLElement>("#reflection-sheet");
+  const openers = document.querySelectorAll<HTMLElement>("[data-reflection-open]");
+  const closers = document.querySelectorAll<HTMLElement>("[data-reflection-close]");
+
+  function setSheet(open: boolean) {
+    if (!sheet) return;
+    sheet.hidden = !open;
+    document.documentElement.style.overflow = open ? "hidden" : "";
+    if (open) sheet.querySelector<HTMLElement>(".sheet__close")?.focus();
+    else openers[0]?.focus();
+  }
+
+  openers.forEach((el) => el.addEventListener("click", () => setSheet(true)));
+  closers.forEach((el) => el.addEventListener("click", () => setSheet(false)));
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && sheet && !sheet.hidden) setSheet(false);
+  });
+</script>
 
 <style>
   /* Everything is positioned against the 1440px design width. */
@@ -438,5 +545,338 @@ const archiveRows = [archive.slice(0, 3), archive.slice(3, 6), archive.slice(6, 
     line-height: 27.2px;
     text-align: right;
     white-space: nowrap;
+  }
+
+  /* ---------- Phone-only pieces stay out of the desktop page ---------- */
+  .banner-m,
+  .eras-m,
+  .reflection-m,
+  .sheet {
+    display: none;
+  }
+
+  /* ---------- Phone: banner, a timeline of eras, and a reflection sheet ---------- */
+  @media (max-width: 768px) {
+    .banner,
+    .eras,
+    .reflection {
+      display: none;
+    }
+
+    .banner-m {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      padding: 22px 24px;
+      overflow: hidden;
+      background: var(--color-off-white);
+      text-align: center;
+    }
+
+    .banner-m > * {
+      position: relative;
+    }
+
+    .banner-m > :global(.banner-m__branch) {
+      position: absolute;
+      height: auto;
+      pointer-events: none;
+    }
+
+    .banner-m > :global(.banner-m__branch--right) {
+      top: -26px;
+      right: -30px;
+      width: 150px;
+    }
+
+    .banner-m > :global(.banner-m__branch--left) {
+      top: -6px;
+      left: -18px;
+      width: 96px;
+    }
+
+    .banner-m__kicker {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      width: 100%;
+      font-size: 20px;
+      font-weight: var(--weight-extralight);
+      line-height: 28px;
+    }
+
+    .banner-m__rule {
+      flex: 1;
+      height: 1px;
+      background: var(--color-line);
+    }
+
+    .banner-m__title {
+      color: var(--color-salmon);
+      font-size: 22px;
+      font-weight: var(--weight-regular);
+      line-height: 30px;
+    }
+
+    .banner-m__subtitle {
+      font-size: 14px;
+      font-weight: var(--weight-extralight);
+    }
+
+    .banner-m > :global(.banner-m__flower) {
+      width: 26px;
+      height: 26px;
+    }
+
+    /* Eras: the last era, then a timeline on a dotted thread. */
+    .eras-m {
+      display: block;
+      padding: 30px 0 44px;
+      background: var(--color-peach);
+    }
+
+    .eras-m__last {
+      padding: 14px 24px 0;
+    }
+
+    .eras-m__heading {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      padding: 36px 24px 18px;
+      text-align: center;
+    }
+
+    .eras-m__heading .eras__jp {
+      font-size: 14px;
+    }
+
+    .eras-m__heading .eras__title {
+      font-size: 28px;
+      line-height: 34px;
+    }
+
+    .eras-m__hint {
+      color: var(--color-text-muted);
+      font-size: 12px;
+      font-weight: var(--weight-light);
+    }
+
+    .eras-m__timeline {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin: 0;
+      padding: 0 24px;
+      list-style: none;
+    }
+
+    /* The dotted coral thread the blossoms sit on. */
+    .eras-m__timeline::before {
+      content: "";
+      position: absolute;
+      top: 28px;
+      bottom: 50px;
+      left: 39px;
+      width: 2px;
+      background: radial-gradient(circle, var(--color-coral) 1px, transparent 1.4px) 0 0 / 2px 8px repeat-y;
+    }
+
+    .eras-m__timeline > :global(.era-row) {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Will Kriss's reflection: a teaser; the full text opens in a sheet. */
+    .reflection-m {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      padding: 40px 24px 44px;
+      background: var(--color-rose);
+      color: var(--color-white);
+    }
+
+    .reflection-m__name {
+      font-size: 46px;
+      font-weight: var(--weight-bold);
+      letter-spacing: -0.03em;
+      line-height: 48px;
+    }
+
+    .reflection-m__label {
+      font-size: 24px;
+      font-weight: var(--weight-semibold);
+      line-height: 30px;
+    }
+
+    .reflection-m__quote {
+      font-family: var(--font-accent);
+      font-size: 15px;
+      font-style: italic;
+      font-weight: var(--weight-light);
+      line-height: 23px;
+    }
+
+    .reflection-m__button {
+      width: 100%;
+      padding: 14px 0;
+      border: 0;
+      border-radius: 999px;
+      background: var(--color-white);
+      color: var(--color-rose);
+      font: inherit;
+      font-size: 14px;
+      font-weight: var(--weight-medium);
+      cursor: pointer;
+    }
+
+    .sheet {
+      position: fixed;
+      inset: 0;
+      z-index: 80;
+      display: block;
+    }
+
+    .sheet[hidden] {
+      display: none;
+    }
+
+    .sheet__dim {
+      position: absolute;
+      inset: 0;
+      border: 0;
+      background: rgba(0, 0, 0, 0.5);
+      animation: sheet-fade 0.25s ease both;
+    }
+
+    .sheet__panel {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      display: flex;
+      flex-direction: column;
+      height: calc(100% - 144px);
+      overflow: hidden;
+      border-radius: 28px 28px 0 0;
+      background: var(--color-rose);
+      color: var(--color-white);
+      animation: sheet-up 0.3s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+    }
+
+    /* A soft fade at the bottom hints that the text scrolls. */
+    .sheet__panel::after {
+      content: "";
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      height: 70px;
+      background: linear-gradient(to bottom, transparent, var(--color-rose));
+      pointer-events: none;
+    }
+
+    .sheet__handle {
+      position: absolute;
+      top: 12px;
+      left: 50%;
+      width: 40px;
+      height: 4px;
+      border-radius: 2px;
+      background: rgba(255, 255, 255, 0.7);
+      translate: -50% 0;
+    }
+
+    .sheet__close {
+      position: absolute;
+      top: 26px;
+      right: 24px;
+      z-index: 2;
+      display: grid;
+      place-items: center;
+      width: 32px;
+      height: 32px;
+      padding: 0;
+      border: 0;
+      border-radius: 50%;
+      background: var(--color-white);
+      cursor: pointer;
+    }
+
+    .sheet__close path {
+      fill: none;
+      stroke: var(--color-ink);
+      stroke-width: 1.6;
+      stroke-linecap: round;
+    }
+
+    .sheet__scroll {
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+      gap: 12px;
+      padding: 44px 24px 80px;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+    }
+
+    .sheet__name {
+      font-size: 46px;
+      font-weight: var(--weight-bold);
+      letter-spacing: -0.03em;
+      line-height: 48px;
+    }
+
+    .sheet__title {
+      font-size: 24px;
+      font-weight: var(--weight-semibold);
+      line-height: 30px;
+    }
+
+    .sheet__label {
+      font-size: 11px;
+      font-weight: var(--weight-semibold);
+      letter-spacing: 0.12em;
+    }
+
+    .sheet__text {
+      font-size: 13px;
+      font-weight: var(--weight-light);
+      line-height: 21px;
+    }
+
+    .sheet__love {
+      font-family: var(--font-accent);
+      font-size: 13px;
+      font-weight: var(--weight-light);
+      line-height: 20px;
+    }
+
+    .sheet__sign {
+      font-family: var(--font-accent);
+      font-size: 15px;
+      font-style: italic;
+      font-weight: var(--weight-light);
+      line-height: 22px;
+      text-align: right;
+    }
+  }
+
+  @keyframes sheet-fade {
+    from {
+      opacity: 0;
+    }
+  }
+
+  @keyframes sheet-up {
+    from {
+      translate: 0 100%;
+    }
   }
 </style>
