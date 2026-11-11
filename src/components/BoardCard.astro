@@ -9,18 +9,20 @@ interface Props {
   photo: ImageMetadata;
   /** Executive cards are larger than board member cards. */
   variant?: "executive" | "member";
+  /** On phones the president sits alone on top, larger than the other executives. */
+  featured?: boolean;
   /** Details revealed with a fade when the card is hovered (or focused with the keyboard). */
   about?: { nickname?: string; year: string; hometown: string; food: string };
   /** Seconds to wait before the entrance, so a row of cards appears one after another. */
   delay?: number;
 }
 
-const { name, role, photo, variant = "member", about, delay = 0 } = Astro.props;
+const { name, role, photo, variant = "member", featured = false, about, delay = 0 } = Astro.props;
 const firstName = about?.nickname ?? name.split(" ")[0];
 ---
 
 <article
-  class:list={["board-card", `board-card--${variant}`]}
+  class:list={["board-card", `board-card--${variant}`, { "board-card--featured": featured }]}
   tabindex={about ? 0 : undefined}
   data-reveal="up"
   style={`--reveal-delay: ${delay}s`}
@@ -34,6 +36,9 @@ const firstName = about?.nickname ?? name.split(" ")[0];
 
   {about && (
     <div class="board-card__about" aria-label={`About ${firstName}`}>
+      <span class="about__close" aria-hidden="true">
+        ✕
+      </span>
       <h4 class="about__title">About {firstName}</h4>
       <div class="about__flourish" aria-hidden="true">
         <span />
@@ -158,9 +163,21 @@ const firstName = about?.nickname ?? name.split(" ")[0];
     transition: opacity 0.35s ease;
   }
 
-  .board-card:hover .board-card__about,
-  .board-card:focus-visible .board-card__about {
+  /* Desktop: hover or keyboard focus. Phones: a tap adds is-open instead (see the phone styles below). */
+  .board-card.is-open .board-card__about {
     opacity: 1;
+    pointer-events: auto;
+  }
+
+  @media (min-width: 769px) {
+    .board-card:hover .board-card__about,
+    .board-card:focus-visible .board-card__about {
+      opacity: 1;
+    }
+  }
+
+  .about__close {
+    display: none;
   }
 
   .about__title {
@@ -285,5 +302,120 @@ const firstName = about?.nickname ?? name.split(" ")[0];
     top: 149.4px;
     font-size: 11px;
     line-height: 15.4px;
+  }
+
+  /* ---------- Phone: cards flow in a grid, and a tap opens the About panel in the middle of the screen ---------- */
+  @media (max-width: 768px) {
+    .board-card,
+    .board-card--executive,
+    .board-card--member {
+      --scale: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      height: auto;
+      padding: 12px 6px 14px;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .board-card--executive {
+      --photo: 84px;
+      --badge: 34px;
+      --name-size: 15px;
+      --role-size: 12px;
+    }
+
+    .board-card--executive.board-card--featured {
+      --photo: 96px;
+      --badge: 38px;
+      --name-size: 17px;
+    }
+
+    .board-card--member {
+      --photo: 62px;
+      --badge: 26px;
+      --name-size: 12px;
+      --role-size: 10px;
+      padding: 10px 6px 12px;
+    }
+
+    .board-card .board-card__photo {
+      position: relative;
+      top: auto;
+      left: auto;
+      translate: none;
+      width: var(--photo);
+      height: var(--photo);
+      margin: 0 0 calc(var(--badge) * 0.55 + 6px);
+    }
+
+    .board-card .board-card__photo :global(img:first-child) {
+      border-radius: 50%;
+    }
+
+    .board-card .board-card__badge {
+      top: auto;
+      bottom: calc(var(--badge) * -0.45);
+      width: var(--badge);
+      height: var(--badge);
+    }
+
+    .board-card .board-card__name,
+    .board-card .board-card__role {
+      position: static;
+      width: auto;
+      margin: 0;
+    }
+
+    .board-card .board-card__name {
+      font-size: var(--name-size);
+      line-height: 1.3;
+    }
+
+    .board-card .board-card__role {
+      font-size: var(--role-size);
+      line-height: 1.35;
+    }
+
+    /* The About panel: the same 244 x 216 card as on desktop, centered over a dimmed page. */
+    .board-card .board-card__about {
+      position: fixed;
+      inset: auto;
+      top: 50%;
+      left: 50%;
+      z-index: 60;
+      width: 244px;
+      height: 216px;
+      translate: -50% -50%;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
+    }
+
+    .board-card.is-open::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: 59;
+      background: rgba(0, 0, 0, 0.5);
+    }
+
+    /* Sits on the panel's top corner so it never covers the title. */
+    .about__close {
+      position: absolute;
+      top: -11px;
+      right: -11px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+      display: grid;
+      place-items: center;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--color-white);
+      color: var(--color-ink);
+      font-family: var(--font-body, sans-serif);
+      font-size: 9px;
+    }
   }
 </style>
