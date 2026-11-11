@@ -427,21 +427,14 @@ const galleryBlossoms = [
     }
   }
 
-  @keyframes clear {
-    from {
+  /* The flash: the photo area starts pure white, holds for a beat, then clears to show the picture developing. */
+  @keyframes flash {
+    0%,
+    18% {
       opacity: 1;
     }
-    to {
+    100% {
       opacity: 0;
-    }
-  }
-
-  @keyframes tape {
-    from {
-      clip-path: inset(0 100% 0 0);
-    }
-    to {
-      clip-path: inset(0 0 0 0);
     }
   }
 
@@ -560,12 +553,12 @@ const galleryBlossoms = [
     box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08);
   }
 
-  /* The undeveloped film: invisible normally, only used by the entrance animation below. */
+  /* The flash of white over the photo: invisible normally, only used by the entrance animation below. */
   .latest__photo::after {
     content: "";
     position: absolute;
     inset: 0;
-    background: #ddd8cc;
+    background: #fff;
     opacity: 0;
     pointer-events: none;
   }
@@ -783,21 +776,14 @@ const galleryBlossoms = [
       animation: draw 0.5s ease-out 0.3s backwards;
     }
 
-    /* The polaroid appears in place and then develops, like an instant photo. */
-    .latest {
-      animation: fade 0.4s ease-out 0.1s backwards;
-    }
-
+    /* The polaroid frame and its tape are there from the start. Only the photo flashes white and then develops,
+       like an instant photo. */
     .latest__photo :global(img) {
-      animation: develop 1.8s ease-out 0.15s backwards;
+      animation: develop 1.8s ease-out 0.1s backwards;
     }
 
     .latest__photo::after {
-      animation: clear 1.8s ease-out 0.15s backwards;
-    }
-
-    .latest__tape {
-      animation: tape 0.25s ease-out 0.6s backwards;
+      animation: flash 1.8s ease-out 0.1s backwards;
     }
 
     /* Title, description, sticky note and button all arrive together, early and unhurried. */
