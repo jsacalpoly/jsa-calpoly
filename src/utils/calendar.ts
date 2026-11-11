@@ -161,3 +161,76 @@ export function comingUp(entries: CalendarEntry[], today: string) {
 
 export const monthName = (date: Date) => months[date.getUTCMonth()].toUpperCase();
 export const weekdayName = (date: Date) => weekdays[date.getUTCDay()];
+
+// ---------- Board layout ----------
+
+const COLUMN_BASE = 420; // height of a day column on desktop
+const CARD_HEIGHT = 128; // a card is about this tall, used to keep two events on one day from overlapping
+const CARD_TOP = 18; // the earliest an event sits in its column
+const KANJI_ZONE = 100; // room left at the bottom of the column for the weekday kanji
+const STACK_GAP = 10;
+const PHONE_EVENT_HEIGHT = 170; // phone timeline: height of a day with one event
+const PHONE_QUIET_HEIGHT = 92; // and of a day with nothing planned
+const PHONE_WIDTH = 326; // the dotted line is drawn in this width and stretches to fit
+const PILL_HALF = 26;
+
+const tilts = [-1.2, 0.8, -0.6, 1.1, -0.9, 0.7, -1];
+const hash = (text: string) => [...text].reduce((total, char) => (total * 31 + char.charCodeAt(0)) >>> 0, 7);
+
+export interface Slot {
+  event: Occurrence;
+  /** Distance from the top of the day column on desktop, so earlier events sit higher. */
+  top: number;
+  tilt: number;
+  wobble: number;
+}
+
+export interface DayLayout {
+  day: Day;
+  slots: Slot[];
+  phoneHeight: number;
+}
+
+/** Where everything goes for one week: card heights by time on desktop, and the loopy dotted line on phones. */
+export function layoutWeek(week: Week) {
+  const range = COLUMN_BASE - KANJI_ZONE - CARD_HEIGHT - CARD_TOP;
+  let columnHeight = COLUMN_BASE;
+  const days: DayLayout[] = week.days.map((day) => {
+    let previousBottom = -Infinity;
+    const slots = day.events.map((event): Slot => {
+      const fraction = Math.min(1, Math.max(0, (startHour(event.time) - 8) / 13));
+      const top = Math.max(CARD_TOP + fraction * range, previousBottom + STACK_GAP);
+      previousBottom = top + CARD_HEIGHT;
+      columnHeight = Math.max(columnHeight, previousBottom + KANJI_ZONE);
+      const h = hash(`${event.id}${day.key}`);
+      return { event, top: Math.round(top), tilt: tilts[h % tilts.length], wobble: (h >> 4) % 3 };
+    });
+    const phoneHeight = day.events.length === 0 ? PHONE_QUIET_HEIGHT : day.events.length * PHONE_EVENT_HEIGHT;
+    return { day, slots, phoneHeight };
+  });
+
+  // The dotted line runs through the middle of every day, wavering left and right, with a loop now and then.
+  const centers: number[] = [];
+  let y = 0;
+  for (const { phoneHeight } of days) {
+    centers.push(y + phoneHeight / 2);
+    y += phoneHeight;
+  }
+  const middle = PHONE_WIDTH / 2;
+  let thread = `M ${middle} ${centers[0] + PILL_HALF}`;
+  for (let i = 1; i < centers.length; i++) {
+    const from = centers[i - 1] + PILL_HALF;
+    const to = centers[i] - PILL_HALF;
+    const length = to - from;
+    const side = i % 2 ? 1 : -1;
+    const loop = i === 3 || i === 5;
+    const bend = loop ? 100 : 36;
+    const [a, b] = loop ? [0.98, 0.02] : [0.35, 0.65];
+    thread += ` C ${middle + side * bend} ${from + length * a} ${middle - side * bend} ${from + length * b} ${middle} ${to}`;
+  }
+  return { columnHeight, days, phoneHeight: y, thread };
+}
+
+/** Which look a big event's ticket gets. */
+export const ticketLook = (preset: PresetId): "maroon" | "kraft" | "coral" =>
+  preset === "special-event" ? "maroon" : preset === "cookbook" || preset === "matcha-run" ? "kraft" : "coral";
