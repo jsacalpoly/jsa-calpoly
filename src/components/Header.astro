@@ -25,11 +25,29 @@ const path = Astro.url.pathname.replace(/\/$/, "") || "/";
     </a>
 
     <nav class="site-header__nav" aria-label="Main">
-      {navLinks.map((link) => (
-        <a class="site-header__link" href={link.href} style={`margin-left: ${Math.round(link.gap * 1.17)}px`}>
-          {link.name}
-        </a>
-      ))}
+      {navLinks.map((link) =>
+        link.children ? (
+          <div class="site-header__item" style={`margin-left: ${Math.round(link.gap * 1.17)}px`}>
+            <a class="site-header__link" href={link.href} aria-haspopup="true">
+              {link.name}
+            </a>
+            <div class="site-header__drop">
+              <div class="site-header__drop-card">
+                {link.children.map((child) => (
+                  <a class="site-header__drop-link" href={child.href}>
+                    <span>{child.name}</span>
+                    <small>{child.note}</small>
+                  </a>
+                ))}
+              </div>
+            </div>
+          </div>
+        ) : (
+          <a class="site-header__link" href={link.href} style={`margin-left: ${Math.round(link.gap * 1.17)}px`}>
+            {link.name}
+          </a>
+        ),
+      )}
     </nav>
 
     <div class="site-header__language">
@@ -74,9 +92,18 @@ const path = Astro.url.pathname.replace(/\/$/, "") || "/";
     </div>
     <nav class="mobile-menu__links" aria-label="Main">
       {navLinks.map((link) => (
-        <a href={link.href} aria-current={path === link.href ? "page" : undefined}>
-          {link.name}
-        </a>
+        <>
+          <a href={link.href} aria-current={path === link.href ? "page" : undefined}>
+            {link.name}
+          </a>
+          {link.children
+            ?.filter((child) => child.href !== link.href)
+            .map((child) => (
+              <a class="mobile-menu__sub" href={child.href} aria-current={path === child.href ? "page" : undefined}>
+                {child.name}
+              </a>
+            ))}
+        </>
       ))}
     </nav>
     <div class="mobile-menu__language" role="group" aria-label="Language">
@@ -95,6 +122,14 @@ const path = Astro.url.pathname.replace(/\/$/, "") || "/";
   .site-header {
     background: var(--color-white);
     height: var(--header-height);
+  }
+
+  /* Above the page, so the Board menu opens over the content. Phones have no hover menu, and their own menu sits higher. */
+  @media (min-width: 769px) {
+    .site-header {
+      position: relative;
+      z-index: 50;
+    }
   }
 
   .site-header__inner {
@@ -156,9 +191,120 @@ const path = Astro.url.pathname.replace(/\/$/, "") || "/";
     white-space: nowrap;
   }
 
+  /* "Board" opens a small menu on hover or keyboard focus. The padding above the card keeps the pointer inside. */
+  .site-header__item {
+    position: relative;
+  }
+
+  .site-header__link {
+    position: relative;
+    display: block;
+  }
+
+  .site-header__item .site-header__link::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    bottom: 10px;
+    left: 0;
+    height: 2px;
+    background: var(--color-coral);
+    scale: 0 1;
+    transition: scale 0.2s ease;
+  }
+
+  .site-header__item:hover .site-header__link,
+  .site-header__item:focus-within .site-header__link {
+    color: var(--color-coral);
+  }
+
+  .site-header__item:hover .site-header__link::after,
+  .site-header__item:focus-within .site-header__link::after {
+    scale: 1 1;
+  }
+
+  .site-header__drop {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    z-index: 5;
+    padding-top: 6px;
+    opacity: 0;
+    pointer-events: none;
+    transform: translate(-50%, -4px);
+    transition:
+      opacity 0.18s ease,
+      transform 0.18s ease;
+  }
+
+  .site-header__item:hover .site-header__drop,
+  .site-header__item:focus-within .site-header__drop {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translate(-50%, 0);
+  }
+
+  .site-header__drop-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    width: 250px;
+    padding: 10px;
+    border: 1.5px solid var(--color-kanji);
+    border-radius: 20px;
+    background: var(--color-white);
+    box-shadow: 0 10px 24px rgba(76, 26, 26, 0.14);
+  }
+
+  /* The little point that aims the card at "Board". */
+  .site-header__drop-card::before {
+    content: "";
+    position: absolute;
+    top: -7px;
+    left: 50%;
+    width: 12px;
+    height: 12px;
+    border-top: 1.5px solid var(--color-kanji);
+    border-left: 1.5px solid var(--color-kanji);
+    background: var(--color-white);
+    rotate: 45deg;
+    translate: -50% 0;
+  }
+
+  .site-header__drop-link {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    padding: 10px 14px;
+    border-radius: 14px;
+    transition: background 0.15s;
+  }
+
+  .site-header__drop-link span {
+    color: var(--color-maroon);
+    font-size: 14px;
+    font-weight: var(--weight-medium);
+    line-height: 20px;
+    text-transform: none;
+  }
+
+  .site-header__drop-link small {
+    color: #78706c;
+    font-size: 12px;
+    font-weight: var(--weight-light);
+    line-height: 17px;
+  }
+
+  .site-header__drop-link:hover,
+  .site-header__drop-link:focus-visible {
+    background: #ffeeea;
+  }
+
   .site-header__language {
     position: relative;
-    margin: 20px 136.4px 0 15px;
+    margin: 20px 136.4px 0 40px;
     width: 132px;
     height: 52px;
   }
@@ -370,6 +516,15 @@ const path = Astro.url.pathname.replace(/\/$/, "") || "/";
       font-weight: var(--weight-extralight);
       letter-spacing: 0.05em;
       text-transform: uppercase;
+    }
+
+    /* Pages grouped under a link (like Previous eras under Board) are listed smaller beneath it. */
+    :global(html.responsive) .mobile-menu__links a.mobile-menu__sub {
+      height: 40px;
+      padding-left: 18px;
+      color: #78706c;
+      font-size: 15px;
+      text-transform: none;
     }
 
     /* The page you are on: bolder, maroon, with a dot. */
