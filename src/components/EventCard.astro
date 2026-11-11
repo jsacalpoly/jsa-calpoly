@@ -1,0 +1,187 @@
+---
+import { doodles, tightTime, type PresetId } from "../utils/calendar";
+
+interface Props {
+  preset: PresetId;
+  title: string;
+  time?: string;
+  place?: string;
+  /** 0 to 2: nudges the corners so the cards do not all look cut from the same mold. */
+  wobble?: number;
+}
+
+const { preset, title, time, place, wobble = 0 } = Astro.props;
+---
+
+<!-- One event on the week board. The preset sets the color, the border and the little doodle. -->
+<article class="event-card" data-preset={preset} data-wobble={wobble}>
+  <svg class="event-card__doodle" viewBox="0 0 24 24" aria-hidden="true">
+    <path d={doodles[preset]}></path>
+  </svg>
+  <h3 class="event-card__title">{title}</h3>
+  {time && <p class="event-card__time">{tightTime(time)}</p>}
+  {place && <p class="event-card__place">{place}</p>}
+</article>
+
+<style>
+  .event-card {
+    --paper: #fff;
+    --ink: var(--color-maroon);
+    --soft: #6e5050;
+    --edge: 2px solid var(--color-maroon);
+
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    width: 100%;
+    min-height: 112px;
+    padding: 14px 12px;
+    border: var(--edge);
+    border-radius: 18px 20px 17px 21px / 20px 17px 21px 18px;
+    background: var(--paper);
+    color: var(--ink);
+    text-align: left;
+  }
+
+  .event-card[data-wobble="1"] {
+    border-radius: 21px 17px 20px 18px / 17px 21px 18px 20px;
+  }
+
+  .event-card[data-wobble="2"] {
+    border-radius: 17px 21px 19px 22px / 21px 18px 20px 17px;
+  }
+
+  .event-card__doodle {
+    width: 28px;
+    height: 28px;
+    margin-bottom: 2px;
+    overflow: visible;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    rotate: -6deg;
+  }
+
+  .event-card__title {
+    font-family: var(--font-hand);
+    font-size: 21px;
+    font-weight: var(--weight-bold);
+    line-height: 22px;
+    overflow-wrap: anywhere;
+  }
+
+  .event-card__time {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: var(--weight-bold);
+    line-height: 1.35;
+  }
+
+  .event-card__place {
+    color: var(--soft);
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    line-height: 1.35;
+  }
+
+  /* A second thin line drawn inside the border, for the cards that have one. */
+  .event-card[data-preset="fishbowl"]::before,
+  .event-card[data-preset="special-event"]::before {
+    content: "";
+    position: absolute;
+    inset: 5px;
+    border: 1.2px solid #fff;
+    border-radius: 14px;
+    pointer-events: none;
+  }
+
+  .event-card[data-preset="gen-meeting"] {
+    --paper: #fff;
+    --ink: var(--color-maroon);
+  }
+
+  .event-card[data-preset="fishbowl"] {
+    --paper: var(--color-coral);
+    --ink: #fff;
+    --soft: #ffece6;
+    --edge: 1.8px solid #cd3c3c;
+  }
+
+  .event-card[data-preset="volleyball"] {
+    --paper: var(--color-orange);
+    --soft: #6e3c1e;
+    --edge: 2px dashed #be6e28;
+  }
+
+  .event-card[data-preset="weekend-event"] {
+    --paper: var(--color-kanji);
+    --soft: var(--color-maroon);
+    --edge: 3px dotted var(--color-coral);
+  }
+
+  .event-card[data-preset="special-event"] {
+    --paper: var(--color-maroon);
+    --ink: #fff;
+    --soft: #f5d796;
+    --edge: 2.2px solid #e8b846;
+  }
+
+  .event-card[data-preset="special-event"]::before {
+    border: 1px solid #e8b846;
+  }
+
+  .event-card[data-preset="matcha-run"] {
+    --paper: var(--color-green);
+    --ink: #fff;
+    --soft: #dcedd4;
+    --edge: 3px solid #bedeb4;
+  }
+
+  .event-card[data-preset="cookbook"] {
+    --paper: #f7ead0;
+    --ink: #6e4630;
+    --soft: #8c6950;
+    --edge: 1.8px dashed #966941;
+  }
+
+  /* The cinema one: a dark card with film holes down both sides. */
+  .event-card[data-preset="jseigakan"] {
+    --paper: #261e22;
+    --ink: #fff;
+    --soft: #ffcdc3;
+    --edge: 1.6px dotted #ffd7cd;
+
+    padding-inline: 17px;
+  }
+
+  .event-card[data-preset="jseigakan"] .event-card__title {
+    font-size: 18px;
+  }
+
+  .event-card[data-preset="jseigakan"]::before,
+  .event-card[data-preset="jseigakan"]::after {
+    content: "";
+    position: absolute;
+    top: 9px;
+    bottom: 9px;
+    width: 5px;
+    background: repeating-linear-gradient(to bottom, rgba(255, 246, 243, 0.85) 0 7px, transparent 7px 14px);
+    pointer-events: none;
+  }
+
+  .event-card[data-preset="jseigakan"]::before {
+    left: 6px;
+  }
+
+  .event-card[data-preset="jseigakan"]::after {
+    right: 6px;
+  }
+
+  .event-card[data-preset="volleyball"] .event-card__time,
+  .event-card[data-preset="jseigakan"] .event-card__time {
+    font-size: 10px;
+  }
+</style>
