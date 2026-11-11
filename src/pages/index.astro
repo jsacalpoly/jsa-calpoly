@@ -67,131 +67,194 @@ const projects = [
     </div>
   </section>
 
-  <!-- Welcome, Join, Events. Desktop: three stacked rows. Phone: one strip you swipe sideways. -->
+  <!-- Welcome, Join, Events. Desktop: three stacked rows. Phone: three stacked blocks tied by one dotted thread. -->
   <div class="stories" id="welcome">
-    <div class="stories__pin">
-      <div class="stories__strip">
-        <!-- Phone only: the dotted red thread that ties the three stops together, ending in a sakura. -->
-        <svg class="stories__thread" viewBox="0 0 2136 96" aria-hidden="true" focusable="false">
-          <path d="M-10 52C-4.9 51.7 11.5 51.7 20.8 50C30.1 48.4 33.4 39.6 46 42C58.6 44.4 64.3 68 96.5 64.3C128.8 60.5 190.8 20.9 239.6 19.6C288.4 18.2 341.7 53.6 389.4 56C437.2 58.4 481 37.6 526.2 34.2C571.4 30.9 633.4 34.6 660.7 35.9C688 37.2 674.2 36 690 42C705.8 48 718 78.1 755.7 72.1C793.3 66.1 863.9 8.6 916 6C968 3.4 1024.9 52.6 1068.1 56.5C1111.3 60.4 1134 27 1175.2 29.5C1216.4 32.1 1283.8 69.8 1315.4 71.9C1347 74.1 1352.4 47.5 1364.9 42.5C1377.3 37.5 1377.5 40.7 1390 42C1402.5 43.3 1409.2 56.2 1439.6 50.3C1470.1 44.4 1533.1 5.3 1572.7 6.4C1612.4 7.6 1643.8 55 1677.4 57.2C1710.9 59.3 1731.2 17.5 1773.9 19.2C1816.7 20.9 1885.4 67.5 1933.6 67.4C1981.9 67.3 2034.7 20.9 2063.4 18.6C2092.2 16.3 2098.9 47.7 2106 53.6"></path>
-        </svg>
-        <Image class="stories__flower" src={flower} alt="" width={34} height={34} />
-
-        <!-- Welcome: photo on the left -->
-        <section class="story story--welcome">
-          <div class="story__inner">
-            <span class="story__seal" style="--seal-x: 26px" aria-hidden="true">
-              歓迎
-            </span>
-            <TapedPhoto
-              src={welcome}
-              alt="A large group of JSA members posing outdoors"
-              width={500}
-              height={340}
-              tilt={-2.5}
-              sizes="(max-width: 768px) 268px, 500px"
-            />
-            <div class="story__text" data-reveal>
-              <p class="story__eyebrow phone-only" aria-hidden="true">
-                01 · WELCOME
-              </p>
-              <h2 class="story__heading">Welcome :D</h2>
-              <p>
-                We are Cal Poly's Japanese Student Association, dedicated to sharing and celebrating Japanese culture in
-                addition to fostering a JSA "family" on campus.
-              </p>
-              <p class="story__strong">JSA is open to everyone at Cal Poly!</p>
-            </div>
-          </div>
-        </section>
-
-        <!-- Join the family: red band, photo on the right -->
-        <section class="story story--red story--join">
-          <div class="story__inner">
-            <span class="story__seal" style="--seal-x: 670px" aria-hidden="true">
-              仲間
-            </span>
-            <div class="story__text story__text--white" data-reveal>
-              <p class="story__eyebrow phone-only" aria-hidden="true">
-                02 · JOIN US
-              </p>
-              <h2 class="story__heading story__heading--bold">Join the family!!</h2>
-              <p class="desktop-only">
-                The easiest way to join JSA is to drop by our general meetings - in Baker 107, every Wednesday at 7pm.
-                We hope to see you there!
-              </p>
-              <p class="phone-only">
-                The easiest way to join JSA is to drop by a general meeting. We hope to see you there!
-              </p>
-              <div class="story__ticket phone-only">
-                <div class="story__ticket-part">
-                  <span class="story__ticket-label">EVERY WEDNESDAY</span>
-                  <span class="story__ticket-value">7:00 PM</span>
-                </div>
-                <span class="story__ticket-split" aria-hidden="true"></span>
-                <div class="story__ticket-part story__ticket-part--where">
-                  <span class="story__ticket-label">BAKER</span>
-                  <span class="story__ticket-value">107</span>
-                </div>
-              </div>
-              <p class="story__small desktop-only">
-                Follow the{" "}
-                <a href="https://www.instagram.com/calpolyjsa" class="story__link">
-                  Cal Poly JSA Instagram
-                </a>{" "}
-                (@calpolyjsa) where we post club updates and event/meeting reminders! You can also join the JSA GroupMe
-                or dm the instagram for more info!
-              </p>
-              <p class="story__small phone-only">
-                Follow @calpolyjsa on Instagram for updates and reminders, or join the GroupMe / DM us for more info!
-              </p>
-              <a href="https://www.instagram.com/calpolyjsa" class="story__follow phone-only">
-                Follow @calpolyjsa →
-              </a>
-            </div>
-            <TapedPhoto
-              src={join}
-              alt="JSA members smiling together in a park"
-              width={480}
-              height={320}
-              tilt={2.2}
-              sizes="(max-width: 768px) 268px, 480px"
-            />
-          </div>
-        </section>
-
-        <!-- Our events: photo on the left -->
-        <section class="story story--events">
-          <div class="story__inner">
-            <span class="story__seal" style="--seal-x: 1370px" aria-hidden="true">
-              行事
-            </span>
-            <TapedPhoto
-              src={events}
-              alt="Smiling JSA members in front of blooming flowers"
-              width={500}
-              height={340}
-              tilt={-1.8}
-              sizes="(max-width: 768px) 268px, 500px"
-            />
-            <div class="story__text" data-reveal>
-              <p class="story__eyebrow phone-only" aria-hidden="true">
-                03 · EVENTS
-              </p>
-              <h2 class="story__heading">Our Events</h2>
-              <p>
-                JSA hosts weekly general meetings and weekend events, as well as project teams, and SPOOOORTS to keep
-                your calendar packed with fun times.
-              </p>
-              <p>
-                Like most culture clubs on campus, JSA also has a “senpai-kouhai” (big-little) program that pairs older,
-                experienced members with new members.
-              </p>
-            </div>
-          </div>
-        </section>
+    <!-- Welcome: photo on the left -->
+    <section class="story story--welcome">
+      <svg class="story__thread" viewBox="0 0 390 572" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+        <path d="M318 0C323.7 8.3 344.3 26.7 352 50C359.7 73.3 362 110 364 140C366 170 365 198.3 364 230C363 261.7 358.3 296.7 358 330C357.7 363.3 364.2 401.7 362 430C359.8 458.3 357 482 345 500C333 518 312.5 529.3 290 538C267.5 546.7 236.7 550.8 210 552C183.3 553.2 155 545 130 545C105 545 78.3 547.5 60 552C41.7 556.5 26.7 568.7 20 572"></path>
+      </svg>
+      <span class="story__seal story__seal--right" style="--seal-y: 206px" aria-hidden="true">
+        歓迎
+      </span>
+      <Image
+        class="story__petal"
+        style="--top: 56px; --right: 38px; --size: 20px; --turn: 20deg"
+        src={flower}
+        alt=""
+        width={40}
+        height={40}
+      />
+      <Image
+        class="story__petal"
+        style="--top: 298px; --right: 26px; --size: 40px; --turn: 16deg"
+        src={flower}
+        alt=""
+        width={80}
+        height={80}
+      />
+      <Image
+        class="story__petal"
+        style="--top: 264px; --right: 16px; --size: 24px; --turn: -14deg"
+        src={flower}
+        alt=""
+        width={48}
+        height={48}
+      />
+      <div class="story__inner">
+        <TapedPhoto
+          src={welcome}
+          alt="A large group of JSA members posing outdoors"
+          width={500}
+          height={340}
+          tilt={-2.5}
+          sizes="(max-width: 768px) 288px, 500px"
+        />
+        <div class="story__text" data-reveal>
+          <h2 class="story__heading">Welcome :D</h2>
+          <p>
+            We are Cal Poly's Japanese Student Association, dedicated to sharing and celebrating Japanese culture in
+            addition to fostering a JSA "family" on campus.
+          </p>
+          <p class="story__strong">JSA is open to everyone at Cal Poly!</p>
+        </div>
       </div>
-    </div>
+    </section>
+
+    <!-- Join the family: red band, photo on the right -->
+    <section class="story story--red story--join">
+      <svg
+        class="story__wave story__wave--top"
+        viewBox="0 0 390 27"
+        preserveAspectRatio="none"
+        aria-hidden="true"
+        focusable="false"
+      >
+        <path d="M0 1.5L390 1.5L390 13.5C357 31.5 325 31.5 292 13.5C260 -4.5 228 -4.5 195 13.5C162 31.5 130 31.5 97 13.5C65 -4.5 32 -4.5 0 13.5L0 1.5Z"></path>
+      </svg>
+      <svg
+        class="story__wave story__wave--bottom"
+        viewBox="0 0 390 27"
+        preserveAspectRatio="none"
+        aria-hidden="true"
+        focusable="false"
+      >
+        <path d="M0 1.5L390 1.5L390 13.5C357 31.5 325 31.5 292 13.5C260 -4.5 228 -4.5 195 13.5C162 31.5 130 31.5 97 13.5C65 -4.5 32 -4.5 0 13.5L0 1.5Z"></path>
+      </svg>
+      <svg
+        class="story__thread story__thread--white"
+        viewBox="0 0 390 704"
+        preserveAspectRatio="none"
+        aria-hidden="true"
+        focusable="false"
+      >
+        <path d="M15 -3C16.2 11.2 21.7 48.2 22 82C22.3 115.8 18.7 158.7 17 200C15.3 241.3 12 285 12 330C12 375 15.5 428.3 17 470C18.5 511.7 21.2 540.2 21 580C20.8 619.8 16.8 687.5 16 709"></path>
+      </svg>
+      <span class="story__seal story__seal--left" style="--seal-y: 66px" aria-hidden="true">
+        仲間
+      </span>
+      <Image
+        class="story__petal"
+        style="--top: 62px; --right: 52px; --size: 26px; --turn: 18deg"
+        src={flower}
+        alt=""
+        width={52}
+        height={52}
+      />
+      <div class="story__inner">
+        <div class="story__text story__text--white" data-reveal>
+          <h2 class="story__heading story__heading--bold">Join the family!!</h2>
+          <p class="desktop-only">
+            The easiest way to join JSA is to drop by our general meetings - in Baker 107, every Wednesday at 7pm. We
+            hope to see you there!
+          </p>
+          <p class="phone-only">
+            The easiest way to join JSA is to drop by a general meeting. We hope to see you there!
+          </p>
+          <div class="story__ticket phone-only">
+            <div class="story__ticket-part">
+              <span class="story__ticket-label">EVERY WEDNESDAY</span>
+              <span class="story__ticket-value">7:00 PM</span>
+            </div>
+            <span class="story__ticket-split" aria-hidden="true"></span>
+            <div class="story__ticket-part story__ticket-part--where">
+              <span class="story__ticket-label">BAKER</span>
+              <span class="story__ticket-value">107</span>
+            </div>
+          </div>
+          <p class="story__small desktop-only">
+            Follow the{" "}
+            <a href="https://www.instagram.com/calpolyjsa" class="story__link">
+              Cal Poly JSA Instagram
+            </a>{" "}
+            (@calpolyjsa) where we post club updates and event/meeting reminders! You can also join the JSA GroupMe or
+            dm the instagram for more info!
+          </p>
+          <a href="https://www.instagram.com/calpolyjsa" class="story__follow phone-only">
+            Follow @calpolyjsa on Instagram →
+          </a>
+          <p class="story__small phone-only">
+            Updates and reminders are there. You can also join the GroupMe or DM us for more info!
+          </p>
+        </div>
+        <TapedPhoto
+          src={join}
+          alt="JSA members smiling together in a park"
+          width={480}
+          height={320}
+          tilt={2.2}
+          sizes="(max-width: 768px) 288px, 480px"
+        />
+      </div>
+    </section>
+
+    <!-- Our events: photo on the left -->
+    <section class="story story--events">
+      <svg class="story__thread" viewBox="0 0 390 620" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+        <path d="M19 -3C25.8 0.5 39.8 11.8 60 18C80.2 24.2 113.3 32.7 140 34C166.7 35.3 195 26.3 220 26C245 25.7 270 25.3 290 32C310 38.7 327.7 48 340 66C352.3 84 359.7 112.7 364 140C368.3 167.3 366.7 198.3 366 230C365.3 261.7 360.3 296.7 360 330C359.7 363.3 362.7 396.7 364 430C365.3 463.3 366.7 502.3 368 530C369.3 557.7 371.3 585 372 596"></path>
+      </svg>
+      <span class="story__seal story__seal--right" style="--seal-y: 160px" aria-hidden="true">
+        行事
+      </span>
+      <Image
+        class="story__petal"
+        style="--top: 250px; --right: 28px; --size: 38px; --turn: 14deg"
+        src={flower}
+        alt=""
+        width={76}
+        height={76}
+      />
+      <Image
+        class="story__petal"
+        style="--top: 70px; --right: 36px; --size: 20px; --turn: 18deg"
+        src={flower}
+        alt=""
+        width={40}
+        height={40}
+      />
+      <Image class="story__knot" src={flower} alt="" width={68} height={68} />
+      <div class="story__inner">
+        <TapedPhoto
+          src={events}
+          alt="Smiling JSA members in front of blooming flowers"
+          width={500}
+          height={340}
+          tilt={-1.8}
+          sizes="(max-width: 768px) 288px, 500px"
+        />
+        <div class="story__text" data-reveal>
+          <h2 class="story__heading">Our Events</h2>
+          <p>
+            JSA hosts weekly general meetings and weekend events, as well as project teams, and SPOOOORTS to keep your
+            calendar packed with fun times.
+          </p>
+          <p>
+            Like most culture clubs on campus, JSA also has a “senpai-kouhai” (big-little) program that pairs older,
+            experienced members with new members.
+          </p>
+        </div>
+      </div>
+    </section>
   </div>
 
   <BlossomDivider />
@@ -439,155 +502,215 @@ const projects = [
   }
 
   /* Pieces that only exist on phones stay hidden on desktop. */
-  .stories__thread,
-  .stories__flower,
+  .story__thread,
+  .story__wave,
+  .story__petal,
+  .story__knot,
   .story__seal,
   .phone-only {
     display: none;
   }
 
-  /* ---------- Phone: the three rows become one strip you swipe sideways ---------- */
+  /* ---------- Phone: three stacked blocks (peach, red with wavy edges, white) tied by one dotted thread ---------- */
   @media (max-width: 768px) {
     .desktop-only {
       display: none;
     }
 
-    /* A plain row that scrolls sideways by swipe, with no snapping so it glides continuously. */
-    .stories__pin {
-      overflow-x: auto;
-      overflow-y: hidden;
-      overscroll-behavior-x: contain;
-      background: var(--color-white);
-      scrollbar-width: none;
-    }
-
-    .stories__pin::-webkit-scrollbar {
-      display: none;
-    }
-
-    .stories__strip {
+    .story {
       position: relative;
-      display: flex;
-      align-items: flex-start;
-      gap: 16px;
-      width: max-content;
-      padding: 14px 40px 26px 24px;
+      padding: 32px 24px 56px;
     }
 
-    /* The rows dissolve: their photo and text become items of the strip. */
-    .story,
+    .story--welcome {
+      background: var(--color-peach);
+    }
+
+    /* The red band sits above its neighbours so its wavy edges can reach into them. */
+    .story--red {
+      z-index: 1;
+      padding: 52px 24px;
+    }
+
+    .story--events {
+      padding: 56px 24px 52px;
+    }
+
+    /* Each block lays out as one column. The text block dissolves so the heading and paragraphs sit next to the photo. */
     .story__inner {
+      position: relative;
+      z-index: 1;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 16px;
+      padding-inline: 0;
+    }
+
+    .story--join .story__inner {
+      gap: 14px;
+    }
+
+    .story__text {
       display: contents;
     }
 
-    /* Dotted red thread behind everything, with the sakura at its end (path drawn for a 2136px strip). */
-    .stories__thread {
+    .story--join .story__inner > :global(.taped),
+    .story--events .story__inner > :global(.taped),
+    .story--welcome .story__heading {
+      order: -1;
+    }
+
+    .story__text > * {
+      min-width: 0;
+    }
+
+    .story__text > :not(.story__heading):not(.story__ticket):not(.story__follow) {
+      font-size: 16px;
+      font-weight: var(--weight-light);
+      line-height: 26px;
+      color: var(--color-text-soft);
+    }
+
+    /* The dotted thread: one string that wanders down the whole stack, behind the content. */
+    .story__thread {
       display: block;
       position: absolute;
-      top: 0;
+      top: -3px;
       left: 0;
-      width: 2136px;
-      height: 96px;
+      z-index: 0;
+      width: 100%;
+      height: calc(100% + 6px);
       overflow: visible;
       pointer-events: none;
     }
 
-    /* Kept light so it ties the stops together without pulling the eye. */
-    .stories__thread path {
+    .story__thread path {
       fill: none;
       stroke: var(--color-red);
-      stroke-width: 2;
+      stroke-width: 2.2;
       stroke-linecap: round;
-      stroke-dasharray: 1 8;
-      opacity: 0.55;
+      stroke-dasharray: 0.1 7.5;
+      vector-effect: non-scaling-stroke;
     }
 
-    .stories__flower {
+    .story__thread--white path {
+      stroke: var(--color-white);
+    }
+
+    /* Wavy top and bottom edges of the red band: peach pushes in at the top, white at the bottom. */
+    .story__wave {
       display: block;
       position: absolute;
-      left: 2089px;
-      top: 37px;
-      width: 34px;
-      height: 34px;
+      left: 0;
+      z-index: 0;
+      width: 100%;
+      height: 27px;
+      pointer-events: none;
     }
 
-    /* Hanko-style seals sitting on the thread above each photo. */
+    .story__wave--top {
+      top: -3px;
+      fill: var(--color-peach);
+    }
+
+    .story__wave--bottom {
+      bottom: -3px;
+      fill: var(--color-white);
+      scale: 1 -1;
+    }
+
+    /* Hanko-style seals sitting on the thread. */
     .story__seal {
       position: absolute;
       z-index: 2;
-      top: 22px;
-      left: var(--seal-x);
+      top: var(--seal-y);
       display: grid;
       place-items: center;
-      width: 40px;
-      height: 40px;
-      border-radius: 6px;
+      width: 32px;
+      height: 32px;
+      border-radius: 5px;
       background: var(--color-red);
-      box-shadow: 0 0 0 3px var(--color-white);
       color: var(--color-white);
       font-family: var(--font-jp);
-      font-size: 13px;
+      font-size: 12px;
       font-weight: var(--weight-bold);
       rotate: -6deg;
     }
 
-    /* Photos: a smaller, squarer print than on desktop. */
+    .story__seal--right {
+      right: 10px;
+    }
+
+    .story__seal--left {
+      left: 8px;
+    }
+
+    .story--red .story__seal {
+      background: var(--color-white);
+      color: var(--color-red);
+    }
+
+    /* Sakura petals scattered around the photos. */
+    .story__petal {
+      display: block;
+      position: absolute;
+      z-index: 2;
+      top: var(--top);
+      right: var(--right);
+      width: var(--size);
+      height: var(--size);
+      rotate: var(--turn);
+      pointer-events: none;
+    }
+
+    /* A bigger sakura where the thread ends. */
+    .story__knot {
+      display: block;
+      position: absolute;
+      z-index: 2;
+      right: 0;
+      bottom: 11px;
+      width: 34px;
+      height: 34px;
+      pointer-events: none;
+    }
+
+    /* Photos: a polaroid, 312 wide, with room for its tilt. */
     .story :global(.taped) {
-      --photo-w: 268px !important;
-      --photo-h: 256px !important;
-      z-index: 1;
-      margin-top: 80px;
-      padding: 12px 12px 44px;
+      --photo-w: min(288px, calc(100vw - 98px)) !important;
+      --photo-h: 168px !important;
+      align-self: flex-start;
+      margin: 12px 0 6px 26px;
+      padding: 12px 12px 42px;
       border-radius: 1px;
       box-shadow: 0 5px 14px rgba(0, 0, 0, 0.16);
     }
 
+    .story--join :global(.taped) {
+      margin-left: 20px;
+    }
+
     .story :global(.taped__tape) {
-      top: -10px;
-      width: 72px;
+      top: -12px;
+      width: 76px;
       height: 22px;
+      background: rgba(237, 214, 128, 0.92);
     }
 
-    .story__text {
-      position: relative;
-      z-index: 1;
-      flex: none;
-      width: 320px;
-      margin-top: 88px;
-      gap: 12px;
-      font-size: 15px;
-      line-height: 24px;
-    }
-
-    .story--welcome .story__text {
-      gap: 14px;
-      font-size: 17px;
-      line-height: 27px;
-    }
-
-    .story--events .story__text {
-      width: 420px;
-      margin-top: 80px;
-    }
-
-    .story__eyebrow {
-      color: var(--color-red);
-      font-size: 11px;
-      font-weight: var(--weight-semibold);
-      letter-spacing: 0.16em;
-      line-height: 1.2;
-    }
-
-    .story--welcome .story__heading,
-    .story--events .story__heading {
-      font-size: 40px;
-      line-height: 46px;
+    .story__heading {
+      font-size: 42px;
+      line-height: 48px;
       letter-spacing: -0.01em;
     }
 
-    .story--events .story__heading {
-      font-size: 34px;
-      line-height: 40px;
+    .story--join .story__heading--bold {
+      font-size: 36px;
+      line-height: 42px;
+      letter-spacing: -0.02em;
+    }
+
+    .story__text--white > :not(.story__ticket):not(.story__follow) {
+      color: var(--color-white);
     }
 
     /* A hand-drawn coral underline under the red headings. */
@@ -595,48 +718,11 @@ const projects = [
     .story--events .story__heading::after {
       content: "";
       display: block;
-      width: 120px;
+      width: 130px;
       height: 10px;
-      margin-top: 2px;
+      margin-top: 0;
       background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 10'%3E%3Cpath d='M0 5C18 0 42 9 60 4C78 0 102 2 120 6' fill='none' stroke='%23fe6161' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E")
         no-repeat center / 100% 100%;
-    }
-
-    /* Join: red paper with tape, like the project cards. */
-    .story--join .story__text {
-      width: 376px;
-      margin-top: 80px;
-      padding: 22px 20px 20px;
-      border-radius: 4px;
-      background: var(--color-red);
-      box-shadow: 0 5px 14px rgba(0, 0, 0, 0.16);
-      line-height: 23px;
-      rotate: -1deg;
-    }
-
-    .story--join .story__text::before {
-      content: "";
-      position: absolute;
-      top: -12px;
-      right: 28px;
-      width: 72px;
-      height: 22px;
-      background: rgba(239, 224, 160, 0.9);
-      rotate: 5deg;
-    }
-
-    .story--join .story__eyebrow {
-      color: var(--color-white);
-    }
-
-    .story--join .story__heading--bold {
-      font-size: 31px;
-      line-height: 36px;
-    }
-
-    .story--join .story__small {
-      font-size: 13px;
-      line-height: 20px;
     }
 
     p.phone-only,
@@ -644,13 +730,31 @@ const projects = [
       display: block;
     }
 
+    .story--events .story__text > p + p {
+      font-size: 14px;
+      line-height: 22px;
+    }
+
+    /* "Open to everyone": a highlighter swipe. */
+    .story__text > .story__strong {
+      align-self: flex-start;
+      padding: 5px 12px;
+      border-radius: 3px;
+      background: #ffdbd1;
+      color: var(--color-ink);
+      font-size: 15px;
+      font-weight: var(--weight-medium);
+      line-height: 23px;
+      rotate: -1deg;
+    }
+
     /* Meeting ticket: when, a dotted tear line with two notches, where. */
     .story__ticket {
       display: flex;
       align-items: center;
-      gap: 14px;
-      padding: 12px 16px;
-      border-radius: 4px;
+      gap: 16px;
+      padding: 14px 20px;
+      border-radius: 6px;
       background: var(--color-peach);
       color: var(--color-ink);
     }
@@ -690,26 +794,36 @@ const projects = [
     .story__ticket-split::after {
       content: "";
       position: absolute;
-      left: -7px;
-      width: 12px;
-      height: 12px;
+      left: -8px;
+      width: 14px;
+      height: 14px;
       border-radius: 50%;
       background: var(--color-red);
     }
 
     .story__ticket-split::before {
-      top: -18px;
+      top: -21px;
     }
 
     .story__ticket-split::after {
-      bottom: -18px;
+      bottom: -21px;
     }
 
-    .story__follow {
-      color: var(--color-white);
-      font-size: 14px;
+    /* Follow: a white pill button. */
+    .story__text > .story__follow {
+      padding: 14px 0;
+      border-radius: 28px;
+      background: var(--color-white);
+      color: var(--color-red);
+      font-size: 15px;
       font-weight: var(--weight-semibold);
-      text-decoration: underline;
+      line-height: 23px;
+      text-align: center;
+    }
+
+    .story__text--white > .story__small {
+      font-size: 13px;
+      line-height: 20px;
     }
   }
 
