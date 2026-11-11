@@ -53,4 +53,32 @@ import flower from "../assets/eras/header-flower.png";
     width: 45px;
     height: 45px;
   }
+
+  /* Phone: a 40px flower in the middle with a 110px line each side. */
+  @media (max-width: 768px) {
+    .divider__stage {
+      width: 100%;
+    }
+
+    .divider__line {
+      width: 110px;
+    }
+
+    .divider__line--left {
+      left: 40px;
+    }
+
+    .divider__line--right {
+      right: 40px;
+      left: auto;
+    }
+
+    .divider__flower {
+      left: 50%;
+      top: 12px;
+      width: 40px;
+      height: 40px;
+      translate: -50% 0;
+    }
+  }
 </style>

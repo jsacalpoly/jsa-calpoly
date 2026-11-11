@@ -105,4 +105,51 @@ const {
   .paper__link:focus-visible {
     text-decoration: underline;
   }
+
+  /* Phone: a 300px paper with a smaller taped photo, from the mobile Figma frame. */
+  @media (max-width: 768px) {
+    .project {
+      padding-top: 37px;
+    }
+
+    .paper {
+      gap: 12px;
+      width: 300px;
+      padding: 189px 22.5px 25.5px;
+      border-radius: 4.5px;
+      box-shadow: 0 3.75px 9px rgba(0, 0, 0, 0.25);
+    }
+
+    .paper__photo {
+      top: -33px;
+      left: 26px;
+    }
+
+    .paper__photo :global(.taped) {
+      --photo-w: 224px !important;
+      --photo-h: 150px !important;
+      padding: 12px 12px 42px;
+      border-radius: 2.25px;
+      box-shadow: 0 4.5px 12px rgba(0, 0, 0, 0.25);
+    }
+
+    .paper__photo :global(.taped__tape) {
+      top: -10px;
+      width: 72px;
+      height: 22px;
+    }
+
+    .paper__title {
+      font-size: 24px;
+    }
+
+    .paper__description {
+      font-size: 14px;
+      line-height: 22px;
+    }
+
+    .paper__link {
+      font-size: 14px;
+    }
+  }
 </style>
