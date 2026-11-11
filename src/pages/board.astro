@@ -21,6 +21,7 @@ const year = [
   title="About | Cal Poly JSA"
   description="About the Japanese Student Association at Cal Poly SLO."
   flushFooter
+  responsive
 >
   <!-- Hero -->
   <section class="hero">
@@ -60,19 +61,29 @@ const year = [
       <p class="year__subtitle">Some of our biggest annual events</p>
     </div>
     <div class="year__cards container">
-      {year.map((item, i) => (
-        <article class="season-card" data-reveal="up" style={`--reveal-delay: ${i * 0.08}s`}>
-          <div class="season-card__top">
-            <span class="season-card__season">{item.season}</span>
-            <span class="season-card__kanji" aria-hidden="true">
-              {item.kanji}
-            </span>
-          </div>
-          <h3 class="season-card__title">{item.title}</h3>
-          <p class="season-card__text">{item.text}</p>
-        </article>
+      <div class="year__track">
+        {year.map((item, i) => (
+          <article class="season-card" data-reveal="up" style={`--reveal-delay: ${i * 0.08}s`}>
+            <div class="season-card__top">
+              <span class="season-card__season">{item.season}</span>
+              <span class="season-card__kanji" aria-hidden="true">
+                {item.kanji}
+              </span>
+            </div>
+            <h3 class="season-card__title">{item.title}</h3>
+            <p class="season-card__text">{item.text}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+    <!-- Phone only: the belt the cards ride on, and which card is showing. -->
+    <div class="year__rail" aria-hidden="true"></div>
+    <div class="year__dots" aria-hidden="true">
+      {year.map((_, i) => (
+        <span class:list={{ "is-active": i === 0 }} />
       ))}
     </div>
+    <p class="year__hint">Slides on its own · swipe to take over</p>
   </section>
 
   <!-- Senpai x Kouhai -->
@@ -104,7 +115,157 @@ const year = [
       </div>
     </div>
   </section>
+
+  <!-- Phone only: a nudge to the projects instead of the senpai block. -->
+  <section class="pointer">
+    <div class="pointer__card">
+      <p class="eyebrow">
+        <span class="eyebrow__rule"></span>
+        <span class="eyebrow__label">JSA projects</span>
+        <span class="eyebrow__jp">プロジェクト</span>
+      </p>
+      <h2 class="pointer__title">More than meetings.</h2>
+      <p class="pointer__text">
+        JSA also runs projects, each one started by dedicated members exploring their own interests.
+      </p>
+      <a class="button-solid pointer__button" aria-disabled="true">
+        See our projects&nbsp;&nbsp;→
+      </a>
+    </div>
+  </section>
 </BaseLayout>
+
+<script>
+  // Phones: "A year with JSA" is a one-card conveyor belt. It slides on its own, loops, and you can swipe to take over.
+  const phone = window.matchMedia("(max-width: 768px)");
+  const calm = window.matchMedia("(prefers-reduced-motion: reduce)");
+  const viewport = document.querySelector<HTMLElement>(".year__cards");
+  const track = document.querySelector<HTMLElement>(".year__track");
+  const dots = document.querySelectorAll<HTMLElement>(".year__dots span");
+
+  const CARD = 300;
+  const STEP = CARD + 16; // card width plus the gap
+  const EVERY = 3500; // ms between automatic slides
+  const PAUSE = 6000; // ms the belt waits after someone touches it
+
+  if (viewport && track) {
+    const originals = Array.from(track.children) as HTMLElement[];
+    originals.forEach((card, i) => (card.dataset.index = String(i)));
+    let running = false;
+    let busy = false;
+    let timer = 0;
+    let pausedUntil = 0;
+
+    // Where the track sits when the current card is centered (one card, plus its gap, comes before it).
+    const home = () => (viewport.clientWidth - CARD) / 2 - STEP;
+    const place = (x: number, animated: boolean) => {
+      track.style.transition = animated ? "transform 0.7s cubic-bezier(0.65, 0, 0.35, 1)" : "none";
+      track.style.transform = `translateX(${x}px)`;
+    };
+    const show = (current: Element | null) => {
+      for (const card of Array.from(track.children)) card.classList.toggle("is-current", card === current);
+      const index = Number((current as HTMLElement | null)?.dataset.index ?? 0);
+      dots.forEach((dot, i) => dot.classList.toggle("is-active", i === index));
+    };
+
+    const next = () => {
+      if (busy) return;
+      busy = true;
+      place(home() - STEP, true);
+      show(track.children[2] ?? null);
+      let done = false;
+      const finish = () => {
+        if (done) return;
+        done = true;
+        track.append(track.firstElementChild as Element);
+        place(home(), false);
+        busy = false;
+      };
+      track.addEventListener("transitionend", finish, { once: true });
+      window.setTimeout(finish, 800);
+    };
+
+    const previous = (from = 0) => {
+      if (busy) return;
+      busy = true;
+      track.prepend(track.lastElementChild as Element);
+      place(home() - STEP + from, false);
+      void track.offsetWidth; // let the browser register the jump before animating back
+      place(home(), true);
+      show(track.children[1] ?? null);
+      window.setTimeout(() => (busy = false), 750);
+    };
+
+    const start = () => {
+      if (running) return;
+      running = true;
+      track.prepend(track.lastElementChild as Element);
+      place(home(), false);
+      show(track.children[1]);
+      timer = window.setInterval(() => {
+        if (document.hidden || calm.matches || Date.now() < pausedUntil) return;
+        next();
+      }, EVERY);
+    };
+
+    const stop = () => {
+      if (!running) return;
+      running = false;
+      window.clearInterval(timer);
+      originals.forEach((card) => {
+        track.append(card);
+        card.classList.remove("is-current");
+      });
+      track.style.transition = "";
+      track.style.transform = "";
+    };
+
+    // Swipe to take over: the track follows the finger, then moves on if it was dragged far enough.
+    let startX = 0;
+    let startY = 0;
+    let dx = 0;
+    let dragging = false;
+    viewport.addEventListener(
+      "touchstart",
+      (event) => {
+        if (!running || busy) return;
+        startX = event.touches[0].clientX;
+        startY = event.touches[0].clientY;
+        dx = 0;
+        dragging = true;
+        pausedUntil = Date.now() + PAUSE;
+      },
+      { passive: true },
+    );
+    viewport.addEventListener(
+      "touchmove",
+      (event) => {
+        if (!dragging) return;
+        const x = event.touches[0].clientX - startX;
+        const y = event.touches[0].clientY - startY;
+        if (Math.abs(y) > Math.abs(x) && Math.abs(x) < 10) return; // a vertical scroll, leave it alone
+        dx = x;
+        place(home() + dx, false);
+      },
+      { passive: true },
+    );
+    const release = () => {
+      if (!dragging) return;
+      dragging = false;
+      pausedUntil = Date.now() + PAUSE;
+      if (dx < -40) next();
+      else if (dx > 40) previous(dx);
+      else place(home(), true);
+    };
+    viewport.addEventListener("touchend", release);
+    viewport.addEventListener("touchcancel", release);
+
+    const sync = () => (phone.matches ? start() : stop());
+    sync();
+    phone.addEventListener("change", sync);
+    window.addEventListener("resize", () => running && !busy && place(home(), false));
+  }
+</script>
 
 <style>
   /* ---------- Shared bits ---------- */
@@ -339,5 +500,225 @@ const year = [
     font-size: 16px;
     font-weight: var(--weight-light);
     line-height: 1.65;
+  }
+
+  /* The belt, dots, hint and pointer only exist on phones. */
+  .year__track {
+    display: contents;
+  }
+
+  .year__rail,
+  .year__dots,
+  .year__hint,
+  .pointer {
+    display: none;
+  }
+
+  /* ---------- Phone ---------- */
+  @media (max-width: 768px) {
+    .eyebrow {
+      gap: 10px;
+      font-size: 12px;
+    }
+
+    .eyebrow__rule {
+      width: 28px;
+    }
+
+    /* Hero: eyebrow, then the title beside a small tilted photo, then the intro. */
+    .hero {
+      padding: 32px 24px 36px;
+    }
+
+    .hero__row {
+      display: grid;
+      grid-template-columns: 1fr 112px;
+      gap: 18px 14px;
+      align-items: center;
+      width: auto;
+    }
+
+    .hero__copy {
+      display: contents;
+    }
+
+    .hero__copy .eyebrow {
+      grid-area: 1 / 1 / 2 / 3;
+    }
+
+    .hero__title {
+      grid-area: 2 / 1 / 3 / 2;
+      font-size: 38px;
+      line-height: 48px;
+    }
+
+    .hero__photo {
+      grid-area: 2 / 2 / 3 / 3;
+      width: 112px;
+      height: 140px;
+      border-radius: 18px;
+      box-shadow: 0 12px 28px -6px rgba(0, 0, 0, 0.12);
+      rotate: -4deg;
+    }
+
+    .hero__intro {
+      grid-area: 3 / 1 / 4 / 3;
+      font-size: 15px;
+      line-height: 26px;
+    }
+
+    /* A year with JSA: a one-card conveyor belt. */
+    .year {
+      gap: 20px;
+      padding: 40px 0 44px;
+    }
+
+    .year__heading {
+      gap: 8px;
+      padding-inline: 24px;
+      text-align: center;
+    }
+
+    .year__jp {
+      font-size: 14px;
+    }
+
+    .year__title {
+      font-size: 32px;
+      line-height: 40px;
+    }
+
+    .year__subtitle {
+      font-size: 15px;
+    }
+
+    /* The window the cards ride through: the current card sits in the middle, its neighbours peek in at the edges. */
+    .year__cards {
+      width: 100%;
+      margin: 0;
+      padding: 10px 0 6px;
+      overflow: hidden;
+    }
+
+    .year__track {
+      display: flex;
+      gap: 16px;
+      touch-action: pan-y;
+      will-change: transform;
+    }
+
+    .season-card {
+      flex: none;
+      gap: 8px;
+      width: 300px;
+      min-height: 176px;
+      padding: 20px 24px 24px;
+    }
+
+    /* Cards beside the current one are faded; the entrance fade must not hide the ones peeking in. */
+    :global(.js) .year__cards .season-card[data-reveal] {
+      opacity: 0.55;
+      animation: none;
+      transition: opacity 0.5s ease;
+    }
+
+    :global(.js) .year__cards .season-card.is-current[data-reveal] {
+      opacity: 1;
+    }
+
+    .season-card__top {
+      height: 49px;
+    }
+
+    .season-card__season {
+      font-size: 12px;
+    }
+
+    .season-card__title {
+      font-size: 20px;
+      line-height: 25px;
+    }
+
+    .season-card__text {
+      line-height: 21px;
+    }
+
+    /* The belt itself: a dashed strip, with dots for the current card. */
+    .year__rail {
+      display: block;
+      align-self: stretch;
+      height: 8px;
+      margin-inline: 24px;
+      border: 1.5px dashed rgba(237, 69, 69, 0.5);
+      border-radius: 4px;
+      background-color: rgba(237, 69, 69, 0.14);
+    }
+
+    .year__dots {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+    }
+
+    .year__dots span {
+      width: 7px;
+      height: 7px;
+      border-radius: 4px;
+      background: rgba(237, 69, 69, 0.28);
+      transition:
+        width 0.3s ease,
+        background-color 0.3s ease;
+    }
+
+    .year__dots span.is-active {
+      width: 20px;
+      background: var(--color-red);
+    }
+
+    .year__hint {
+      display: block;
+      color: var(--color-text-muted);
+      font-size: 12px;
+      font-weight: var(--weight-light);
+      text-align: center;
+    }
+
+    /* The senpai block gives way to a short pointer to the projects. */
+    .senpai {
+      display: none;
+    }
+
+    .pointer {
+      display: block;
+      padding: 36px 24px 44px;
+    }
+
+    .pointer__card {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 24px 22px;
+      border-radius: 28px;
+      background: var(--color-peach);
+    }
+
+    .pointer__title {
+      color: var(--color-ink);
+      font-size: 26px;
+      font-weight: var(--weight-semibold);
+      letter-spacing: -0.01em;
+      line-height: 32px;
+    }
+
+    .pointer__text {
+      color: var(--color-text-soft);
+      font-size: 15px;
+      font-weight: var(--weight-light);
+      line-height: 24px;
+    }
+
+    .pointer__button {
+      justify-content: center;
+    }
   }
 </style>
