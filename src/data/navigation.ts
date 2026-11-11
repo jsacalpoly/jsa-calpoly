@@ -5,7 +5,7 @@ export interface NavLink {
   name: string;
   href: string;
   gap: number;
-  children?: { name: string; href: string; note: string }[];
+  children?: { name: string; href: string }[];
 }
 
 export const navLinks: NavLink[] = [
@@ -15,8 +15,8 @@ export const navLinks: NavLink[] = [
     href: "/26-27",
     gap: 29.55,
     children: [
-      { name: "26-27 board", href: "/26-27", note: "Meet this year's officers" },
-      { name: "Previous eras", href: "/eras", note: "Honoring our founders" },
+      { name: "26-27", href: "/26-27" },
+      { name: "Previous eras", href: "/eras" },
     ],
   },
   { name: "Photos", href: "/photos", gap: 29.25 },

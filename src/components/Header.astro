@@ -32,14 +32,11 @@ const path = Astro.url.pathname.replace(/\/$/, "") || "/";
               {link.name}
             </a>
             <div class="site-header__drop">
-              <div class="site-header__drop-card">
-                {link.children.map((child) => (
-                  <a class="site-header__drop-link" href={child.href}>
-                    <span>{child.name}</span>
-                    <small>{child.note}</small>
-                  </a>
-                ))}
-              </div>
+              {link.children.map((child) => (
+                <a class="site-header__drop-link" href={child.href}>
+                  {child.name}
+                </a>
+              ))}
             </div>
           </div>
         ) : (
@@ -183,6 +180,7 @@ const path = Astro.url.pathname.replace(/\/$/, "") || "/";
   }
 
   .site-header__link {
+    display: block;
     font-size: 16px;
     font-weight: var(--weight-extralight);
     line-height: 52px;
@@ -191,26 +189,9 @@ const path = Astro.url.pathname.replace(/\/$/, "") || "/";
     white-space: nowrap;
   }
 
-  /* "Board" opens a small menu on hover or keyboard focus. The padding above the card keeps the pointer inside. */
+  /* "Board" opens a plain two-link menu on hover or keyboard focus. It starts right under the link, so the pointer never leaves it. */
   .site-header__item {
     position: relative;
-  }
-
-  .site-header__link {
-    position: relative;
-    display: block;
-  }
-
-  .site-header__item .site-header__link::after {
-    content: "";
-    position: absolute;
-    right: 0;
-    bottom: 10px;
-    left: 0;
-    height: 2px;
-    background: var(--color-coral);
-    scale: 0 1;
-    transition: scale 0.2s ease;
   }
 
   .site-header__item:hover .site-header__link,
@@ -218,88 +199,37 @@ const path = Astro.url.pathname.replace(/\/$/, "") || "/";
     color: var(--color-coral);
   }
 
-  .site-header__item:hover .site-header__link::after,
-  .site-header__item:focus-within .site-header__link::after {
-    scale: 1 1;
-  }
-
   .site-header__drop {
     position: absolute;
     top: 100%;
-    left: 50%;
+    left: 0;
     z-index: 5;
-    padding-top: 6px;
-    opacity: 0;
-    pointer-events: none;
-    transform: translate(-50%, -4px);
-    transition:
-      opacity 0.18s ease,
-      transform 0.18s ease;
+    display: none;
+    min-width: 100%;
+    padding: 6px 0;
+    border: 1px solid var(--color-divider);
+    background: var(--color-white);
   }
 
   .site-header__item:hover .site-header__drop,
   .site-header__item:focus-within .site-header__drop {
-    opacity: 1;
-    pointer-events: auto;
-    transform: translate(-50%, 0);
-  }
-
-  .site-header__drop-card {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    width: 250px;
-    padding: 10px;
-    border: 1.5px solid var(--color-kanji);
-    border-radius: 20px;
-    background: var(--color-white);
-    box-shadow: 0 10px 24px rgba(76, 26, 26, 0.14);
-  }
-
-  /* The little point that aims the card at "Board". */
-  .site-header__drop-card::before {
-    content: "";
-    position: absolute;
-    top: -7px;
-    left: 50%;
-    width: 12px;
-    height: 12px;
-    border-top: 1.5px solid var(--color-kanji);
-    border-left: 1.5px solid var(--color-kanji);
-    background: var(--color-white);
-    rotate: 45deg;
-    translate: -50% 0;
+    display: block;
   }
 
   .site-header__drop-link {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    gap: 1px;
-    padding: 10px 14px;
-    border-radius: 14px;
-    transition: background 0.15s;
-  }
-
-  .site-header__drop-link span {
-    color: var(--color-maroon);
+    display: block;
+    padding: 0 16px;
+    color: var(--color-ink);
     font-size: 14px;
-    font-weight: var(--weight-medium);
-    line-height: 20px;
-    text-transform: none;
-  }
-
-  .site-header__drop-link small {
-    color: #78706c;
-    font-size: 12px;
-    font-weight: var(--weight-light);
-    line-height: 17px;
+    font-weight: var(--weight-extralight);
+    line-height: 36px;
+    text-transform: uppercase;
+    white-space: nowrap;
   }
 
   .site-header__drop-link:hover,
   .site-header__drop-link:focus-visible {
-    background: #ffeeea;
+    color: var(--color-coral);
   }
 
   .site-header__language {
