@@ -54,6 +54,13 @@ const slides = [
       </svg>
     </button>
   </div>
+
+  <!-- Phone only: one dot per slide. -->
+  <div class="slideshow__dots" aria-hidden="true">
+    {slides.map((_, index) => (
+      <span data-dot class:list={{ "is-active": index === 0 }} />
+    ))}
+  </div>
 </div>
 
 <style>
@@ -124,6 +131,40 @@ const slides = [
   .slideshow__arrow--next {
     left: 1310px;
   }
+
+  .slideshow__dots {
+    display: none;
+  }
+
+  /* Phone: no arrows (swipe instead), and a row of dots near the bottom. */
+  @media (max-width: 768px) {
+    .slideshow__stage {
+      display: none;
+    }
+
+    .slideshow__dots {
+      position: absolute;
+      z-index: 2;
+      bottom: 29px;
+      left: 50%;
+      display: flex;
+      gap: 8px;
+      translate: -50% 0;
+    }
+
+    .slideshow__dots span {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #fff;
+      opacity: 0.5;
+      transition: opacity 0.3s ease;
+    }
+
+    .slideshow__dots span.is-active {
+      opacity: 1;
+    }
+  }
 </style>
 
 <script>
@@ -131,6 +172,7 @@ const slides = [
 
   if (root) {
     const slides = [...root.querySelectorAll<HTMLElement>("[data-slide]")];
+    const dots = [...root.querySelectorAll<HTMLElement>("[data-dot]")];
     const interval = Number(root.dataset.interval) || 5000;
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
     let index = 0;
@@ -144,6 +186,7 @@ const slides = [
       const incoming = slides[next];
       incoming.hidden = false;
       index = next;
+      dots.forEach((dot, i) => dot.classList.toggle("is-active", i === index));
 
       if (reduceMotion.matches) {
         current.hidden = true;
@@ -190,6 +233,30 @@ const slides = [
       go(-1);
       start();
     });
+    // Phones: swipe sideways on the photo to change slide.
+    let touchX = 0;
+    let touchY = 0;
+    root.addEventListener(
+      "touchstart",
+      (event) => {
+        touchX = event.touches[0].clientX;
+        touchY = event.touches[0].clientY;
+      },
+      { passive: true },
+    );
+    root.addEventListener(
+      "touchend",
+      (event) => {
+        const dx = event.changedTouches[0].clientX - touchX;
+        const dy = event.changedTouches[0].clientY - touchY;
+        // Only clear sideways swipes count, so scrolling the page up and down never changes the slide.
+        if (Math.abs(dx) < 50 || Math.abs(dx) < Math.abs(dy) * 1.5) return;
+        go(dx < 0 ? 1 : -1);
+        start();
+      },
+      { passive: true },
+    );
+
     document.addEventListener("visibilitychange", () => (document.hidden ? stop() : start()));
     start();
   }
