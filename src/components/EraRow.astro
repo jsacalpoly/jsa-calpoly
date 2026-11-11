@@ -1,0 +1,292 @@
+---
+import { Image } from "astro:assets";
+import { eraTitle, eraYear } from "../utils/era";
+
+import blossom from "../assets/eras/blossom.png";
+import iconTreasurer from "../assets/eras/icon-treasurer.png";
+import iconSecretary from "../assets/eras/icon-secretary.png";
+import iconEvents from "../assets/eras/icon-events.png";
+import iconSports from "../assets/eras/icon-sports.png";
+import iconMedia from "../assets/eras/icon-media.png";
+import iconCultural from "../assets/eras/icon-cultural.png";
+import iconHistorian from "../assets/eras/icon-historian.png";
+
+type RoleIcon = "treasurer" | "secretary" | "events" | "sports" | "media" | "cultural" | "historian";
+
+interface Props {
+  year: string;
+  heading: string;
+  president: string;
+  vicePresident: string;
+  roles: { title: string; names: string; icon: RoleIcon }[];
+  /** Used to link the button to the panel it opens. */
+  id: string;
+  /** Seconds to wait before the entrance, so neighbouring rows rise one after another. */
+  delay?: number;
+}
+
+const { year, heading, president, vicePresident, roles, id, delay = 0 } = Astro.props;
+
+const icons = {
+  treasurer: iconTreasurer,
+  secretary: iconSecretary,
+  events: iconEvents,
+  sports: iconSports,
+  media: iconMedia,
+  cultural: iconCultural,
+  historian: iconHistorian,
+};
+---
+
+<!-- Phone timeline entry: one line per era, tap to open the whole board. -->
+<li class="era-row" data-reveal="up" style={`--reveal-delay: ${delay}s`}>
+  <Image class="era-row__node" src={blossom} alt="" width={52} height={52} />
+  <div class="era-row__card">
+    <button class="era-row__head" type="button" aria-expanded="false" aria-controls={id}>
+      <span class="era-row__name">{eraTitle(heading)}</span>
+      <span class="era-row__year">{eraYear(year)}</span>
+      <span class="era-row__toggle" aria-hidden="true"></span>
+    </button>
+    <p class="era-row__officers">
+      Pres. {president} · VP {vicePresident}
+    </p>
+
+    <div class="era-row__more" id={id}>
+      <div class="era-row__more-inner">
+        <div class="era-row__panel">
+          <div class="era-row__person">
+            <p class="era-row__label">President</p>
+            <p class="era-row__person-name">{president}</p>
+          </div>
+          <span class="era-row__rule"></span>
+          <div class="era-row__person">
+            <p class="era-row__label">Vice President</p>
+            <p class="era-row__person-name">{vicePresident}</p>
+          </div>
+        </div>
+        <ul class="era-row__roles">
+          {roles.map((role) => (
+            <li class="era-row__role">
+              <span class="era-row__chip">
+                <Image src={icons[role.icon]} alt="" />
+              </span>
+              <div>
+                <p class="era-row__role-title">{role.title}</p>
+                <p class="era-row__role-names">{role.names}</p>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </div>
+</li>
+
+<style>
+  .era-row {
+    position: relative;
+    display: grid;
+    grid-template-columns: 30px 1fr;
+    gap: 10px;
+    align-items: start;
+  }
+
+  /* The sakura that sits on the dotted thread. */
+  .era-row__node {
+    width: 26px;
+    height: auto;
+    margin: 12px 0 0 2px;
+  }
+
+  .era-row__card {
+    min-width: 0;
+    padding: 12px 16px;
+    border: 1.5px solid transparent;
+    border-radius: 20px;
+    background: var(--color-white);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+    transition: border-color 0.25s ease;
+  }
+
+  .era-row:has(.era-row__head[aria-expanded="true"]) .era-row__card {
+    border-color: var(--color-coral);
+  }
+
+  .era-row__head {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    width: 100%;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--color-ink);
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .era-row__name {
+    flex: 1;
+    min-width: 0;
+    font-size: 18px;
+    font-weight: var(--weight-semibold);
+    line-height: 24px;
+  }
+
+  .era-row__year {
+    flex: none;
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: var(--color-coral);
+    color: var(--color-white);
+    font-size: 11px;
+    font-weight: var(--weight-semibold);
+    line-height: 16px;
+  }
+
+  /* A plus that turns into a minus when the era is open. */
+  .era-row__toggle {
+    position: relative;
+    flex: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #ffeeea;
+  }
+
+  .era-row__toggle::before,
+  .era-row__toggle::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 10px;
+    height: 1.5px;
+    border-radius: 1px;
+    background: var(--color-coral);
+    translate: -50% -50%;
+    transition: rotate 0.25s ease;
+  }
+
+  .era-row__toggle::after {
+    rotate: 90deg;
+  }
+
+  .era-row__head[aria-expanded="true"] .era-row__toggle::after {
+    rotate: 0deg;
+  }
+
+  .era-row__officers {
+    margin-top: 4px;
+    color: var(--color-text-muted);
+    font-size: 12px;
+    font-weight: var(--weight-light);
+    line-height: 17px;
+  }
+
+  /* Opens by growing from 0 to its full height. */
+  .era-row__more {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.3s ease;
+  }
+
+  .era-row:has(.era-row__head[aria-expanded="true"]) .era-row__more {
+    grid-template-rows: 1fr;
+  }
+
+  .era-row__more-inner {
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .era-row__panel {
+    display: flex;
+    gap: 10px;
+    margin-top: 12px;
+    padding: 12px 12px 12px 14px;
+    border-radius: 16px;
+    background: var(--color-peach);
+  }
+
+  .era-row__person {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  .era-row__rule {
+    flex: none;
+    width: 1px;
+    background: #fbd0cc;
+  }
+
+  .era-row__label {
+    color: var(--color-text-muted);
+    font-size: 10px;
+    font-weight: var(--weight-semibold);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .era-row__person-name {
+    margin-top: 3px;
+    font-size: 15px;
+    font-weight: var(--weight-medium);
+    line-height: 1.25;
+  }
+
+  .era-row__roles {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin: 14px 0 4px;
+    padding: 0;
+    list-style: none;
+  }
+
+  .era-row__role {
+    display: flex;
+    gap: 12px;
+  }
+
+  .era-row__chip {
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #ffeeeb;
+  }
+
+  .era-row__chip :global(img) {
+    width: 52%;
+    height: 52%;
+    object-fit: contain;
+  }
+
+  .era-row__role-title {
+    padding-top: 1px;
+    font-size: 12.5px;
+    font-weight: var(--weight-semibold);
+    line-height: 1.4;
+  }
+
+  .era-row__role-names {
+    color: var(--color-text-soft);
+    font-size: 13px;
+    font-weight: var(--weight-light);
+    line-height: 1.4;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .era-row__card,
+    .era-row__more,
+    .era-row__toggle::before,
+    .era-row__toggle::after {
+      transition: none;
+    }
+  }
+</style>

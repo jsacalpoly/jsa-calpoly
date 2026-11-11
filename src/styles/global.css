@@ -18,6 +18,24 @@ body {
   min-width: var(--page-width);
 }
 
+/* Pages that opt in with the "responsive" class on <html> use real phone widths. */
+@media (max-width: 768px) {
+  html.responsive body {
+    min-width: 0;
+  }
+
+  /* Parts that still use the fixed 1440px layout (header, hero, footer) are cropped to the screen
+     instead of making the whole page wider. clip, unlike hidden, keeps position: sticky working. */
+  html.responsive body > * {
+    overflow-x: clip;
+  }
+
+  /* The phone footer sits right under the last section, with no extra gap. */
+  html.responsive main {
+    padding-bottom: 0;
+  }
+}
+
 img {
   display: block;
   max-width: none;

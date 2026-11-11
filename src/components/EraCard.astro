@@ -1,6 +1,8 @@
 ---
 import { Image } from "astro:assets";
 
+import { eraTitle, eraYear } from "../utils/era";
+
 import ornament from "../assets/eras/ornament-flower.png";
 import blossom from "../assets/eras/blossom.png";
 import iconTreasurer from "../assets/eras/icon-treasurer.png";
@@ -39,12 +41,8 @@ const icons = {
   historian: iconHistorian,
 };
 
-// Older headings include the year, e.g. "21-22 : Kanpai Jidai". Keep only the era name, if there is one.
-const afterColon = heading.includes(":") ? heading.slice(heading.indexOf(":") + 1).trim() : heading.trim();
-const isYearOnly = /^\d{4}\s*[-–]\s*\d{4}$/.test(afterColon);
-const eraName = isYearOnly ? "" : afterColon;
-const title = eraName || "JSA Board";
-const yearText = year.replace("-", "–");
+const title = eraTitle(heading);
+const yearText = eraYear(year);
 const featured = variant === "feature";
 ---
 
@@ -435,5 +433,52 @@ const featured = variant === "feature";
 
   .era-card--feature .era-role__names {
     font-size: 13.5px;
+  }
+
+  /* ---------- Phone: the last-era card keeps its look, with the roles in one column ---------- */
+  @media (max-width: 768px) {
+    .era-card--feature {
+      --chip: 36px;
+      gap: 22px;
+      padding: 52px 22px 36px;
+    }
+
+    .era-card--feature .era-card__blossom {
+      top: -36px;
+      right: -4px;
+      width: 78px;
+    }
+
+    .era-card--feature .era-card__title {
+      font-size: 38px;
+    }
+
+    .era-card--feature .era-card__divider {
+      width: 100%;
+    }
+
+    .era-card--feature .era-card__officers {
+      gap: 22px;
+      width: 100%;
+    }
+
+    .era-card--feature .era-card__person {
+      flex: 1 1 0;
+      min-width: 0;
+    }
+
+    .era-card--feature .era-card__name {
+      font-size: 15px;
+    }
+
+    .era-card--feature .era-card__roles {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .era-card--feature .era-role {
+      padding-top: 10px;
+    }
   }
 </style>

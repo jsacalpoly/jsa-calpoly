@@ -3,6 +3,9 @@ import { Image } from "astro:assets";
 import logo from "../assets/shared/jsa-logo.png";
 import chevron from "../assets/shared/select-chevron.png";
 import { navLinks } from "../data/navigation";
+
+// Which page we are on, for the phone menu's highlighted link.
+const path = Astro.url.pathname.replace(/\/$/, "") || "/";
 ---
 
 <header class="site-header">
@@ -35,8 +38,58 @@ import { navLinks } from "../data/navigation";
       </select>
       <Image class="site-header__chevron" src={chevron} alt="" width={12} height={6} />
     </div>
+
+    <!-- Phone only: the menu button. -->
+    <button
+      class="site-header__menu"
+      type="button"
+      aria-label="Open menu"
+      aria-expanded="false"
+      aria-controls="mobile-menu"
+      data-menu-open
+    >
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
   </div>
 </header>
+
+<!-- Phone only: the full-width menu that drops from the top, with the page dimmed behind it. -->
+<div class="mobile-menu" id="mobile-menu" role="dialog" aria-modal="true" aria-label="Menu" hidden data-menu>
+  <div class="mobile-menu__panel">
+    <div class="mobile-menu__bar">
+      <a class="mobile-menu__logo" href="/" aria-label="JSA home">
+        <Image src={logo} alt="" width={48} height={45} densities={[1, 2, 3]} />
+      </a>
+      <a class="mobile-menu__title" href="/">
+        <span class="mobile-menu__name">JAPANESE STUDENT ASSOCIATION</span>
+        <span class="mobile-menu__school">CAL POLY SAN LUIS OBISPO</span>
+      </a>
+      <button class="mobile-menu__close" type="button" aria-label="Close menu" data-menu-close>
+        <svg viewBox="0 0 18 18" width="18" height="18" aria-hidden="true">
+          <path d="M2 2 16 16M16 2 2 16"></path>
+        </svg>
+      </button>
+    </div>
+    <nav class="mobile-menu__links" aria-label="Main">
+      {navLinks.map((link) => (
+        <a href={link.href} aria-current={path === link.href ? "page" : undefined}>
+          {link.name}
+        </a>
+      ))}
+    </nav>
+    <div class="mobile-menu__language" role="group" aria-label="Language">
+      <span class="is-active" aria-current="true">
+        EN
+      </span>
+      <span lang="ja" aria-disabled="true">
+        日本語
+      </span>
+    </div>
+  </div>
+  <button class="mobile-menu__dim" type="button" aria-label="Close menu" tabindex="-1" data-menu-close></button>
+</div>
 
 <style>
   .site-header {
@@ -131,7 +184,285 @@ import { navLinks } from "../data/navigation";
     top: 23px;
     pointer-events: none;
   }
+
+  /* Phone-only pieces stay out of the desktop header. */
+  .site-header__menu,
+  .mobile-menu {
+    display: none;
+  }
+
+  /* ---------- Phone header and menu (pages that opt in with html.responsive) ---------- */
+  @media (max-width: 768px) {
+    :global(html.responsive) .site-header {
+      height: 64px;
+    }
+
+    :global(html.responsive) .site-header__inner {
+      align-items: center;
+      gap: 14px;
+      width: 100%;
+      padding: 0 20px;
+    }
+
+    :global(html.responsive) .site-header__logo {
+      margin: 0;
+    }
+
+    :global(html.responsive) .site-header__logo :global(img) {
+      width: 40px;
+      height: 38px;
+    }
+
+    /* The wordmark with the school line under it (which still scrambles in from "CHAPTER"). */
+    :global(html.responsive) .site-header__title {
+      flex: 1;
+      width: auto;
+      min-width: 0;
+      margin: 0;
+      line-height: 1.3;
+    }
+
+    :global(html.responsive) .site-header__name {
+      font-size: 12px;
+    }
+
+    :global(html.responsive) .site-header__school {
+      font-size: 10px;
+    }
+
+    /* The desktop links and language select move into the menu. */
+    :global(html.responsive) .site-header__nav,
+    :global(html.responsive) .site-header__language {
+      display: none;
+    }
+
+    /* Three bars in a 44px tap target. */
+    :global(html.responsive) .site-header__menu {
+      position: relative;
+      display: block;
+      flex: none;
+      width: 44px;
+      height: 44px;
+      margin-right: -6px;
+      padding: 0;
+      border: 0;
+      background: none;
+      cursor: pointer;
+    }
+
+    :global(html.responsive) .site-header__menu span {
+      position: absolute;
+      left: 10px;
+      width: 24px;
+      height: 2px;
+      border-radius: 1px;
+      background: var(--color-ink);
+    }
+
+    :global(html.responsive) .site-header__menu span:nth-child(1) {
+      top: 14px;
+    }
+
+    :global(html.responsive) .site-header__menu span:nth-child(2) {
+      top: 21px;
+    }
+
+    :global(html.responsive) .site-header__menu span:nth-child(3) {
+      top: 28px;
+    }
+
+    :global(html.responsive) .mobile-menu:not([hidden]) {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: block;
+    }
+
+    :global(html.responsive) .mobile-menu__dim {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      padding: 0;
+      border: 0;
+      background: rgba(0, 0, 0, 0.4);
+      animation: menu-fade 0.25s ease both;
+    }
+
+    :global(html.responsive) .mobile-menu__panel {
+      position: relative;
+      z-index: 1;
+      border-radius: 0 0 28px 28px;
+      background: var(--color-white);
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.16);
+      animation: menu-drop 0.3s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+    }
+
+    :global(html.responsive) .mobile-menu__bar {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      height: 64px;
+      padding: 0 20px;
+    }
+
+    :global(html.responsive) .mobile-menu__logo {
+      display: block;
+      flex: none;
+    }
+
+    :global(html.responsive) .mobile-menu__logo :global(img) {
+      width: 40px;
+      height: 38px;
+    }
+
+    :global(html.responsive) .mobile-menu__title {
+      flex: 1;
+      min-width: 0;
+      color: var(--color-maroon);
+      font-size: 12px;
+      font-weight: var(--weight-semibold);
+      line-height: 1.3;
+    }
+
+    :global(html.responsive) .mobile-menu__name,
+    :global(html.responsive) .mobile-menu__school {
+      display: block;
+    }
+
+    :global(html.responsive) .mobile-menu__school {
+      font-size: 10px;
+    }
+
+    :global(html.responsive) .mobile-menu__close {
+      display: grid;
+      flex: none;
+      place-items: center;
+      width: 44px;
+      height: 44px;
+      margin-right: -6px;
+      padding: 0;
+      border: 0;
+      background: none;
+      cursor: pointer;
+    }
+
+    :global(html.responsive) .mobile-menu__close path {
+      fill: none;
+      stroke: var(--color-ink);
+      stroke-width: 2;
+      stroke-linecap: round;
+    }
+
+    :global(html.responsive) .mobile-menu__links {
+      display: flex;
+      flex-direction: column;
+      padding: 4px 32px 8px;
+    }
+
+    :global(html.responsive) .mobile-menu__links a {
+      position: relative;
+      display: flex;
+      align-items: center;
+      height: 56px;
+      color: var(--color-ink);
+      font-size: 20px;
+      font-weight: var(--weight-extralight);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    /* The page you are on: bolder, maroon, with a dot. */
+    :global(html.responsive) .mobile-menu__links a[aria-current="page"] {
+      color: var(--color-maroon);
+      font-size: 18px;
+      font-weight: var(--weight-semibold);
+      letter-spacing: 0.04em;
+    }
+
+    :global(html.responsive) .mobile-menu__links a[aria-current="page"]::before {
+      content: "";
+      position: absolute;
+      left: -14px;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--color-maroon);
+    }
+
+    /* EN / 日本語 pill. Only English exists for now, so the Japanese side is shown but not clickable. */
+    :global(html.responsive) .mobile-menu__language {
+      display: flex;
+      gap: 2px;
+      width: 130px;
+      margin: 8px 32px 28px;
+      padding: 4px;
+      border-radius: 22px;
+      background: #f4f4f4;
+    }
+
+    :global(html.responsive) .mobile-menu__language span {
+      display: grid;
+      flex: 1;
+      place-items: center;
+      height: 36px;
+      border-radius: 18px;
+      color: #737373;
+      font-family: var(--font-jp);
+      font-size: 14px;
+    }
+
+    :global(html.responsive) .mobile-menu__language .is-active {
+      background: var(--color-ink);
+      color: var(--color-white);
+      font-family: var(--font-body);
+      font-weight: var(--weight-medium);
+    }
+
+    @keyframes menu-fade {
+      from {
+        opacity: 0;
+      }
+    }
+
+    @keyframes menu-drop {
+      from {
+        opacity: 0;
+        translate: 0 -12px;
+      }
+    }
+  }
+
+  @media (max-width: 768px) and (prefers-reduced-motion: reduce) {
+    :global(html.responsive) .mobile-menu__dim,
+    :global(html.responsive) .mobile-menu__panel {
+      animation: none;
+    }
+  }
 </style>
+
+<script>
+  // Phone menu: opens from the menu button, closes with the X, the dimmed area, Escape or a link.
+  const menu = document.querySelector<HTMLElement>("[data-menu]");
+  const openButton = document.querySelector<HTMLButtonElement>("[data-menu-open]");
+
+  function setMenu(open: boolean) {
+    if (!menu || !openButton) return;
+    menu.hidden = !open;
+    openButton.setAttribute("aria-expanded", String(open));
+    // Keep the page behind from scrolling while the menu is up.
+    document.documentElement.style.overflow = open ? "hidden" : "";
+    if (open) menu.querySelector<HTMLElement>(".mobile-menu__close")?.focus();
+    else openButton.focus();
+  }
+
+  openButton?.addEventListener("click", () => setMenu(true));
+  menu?.querySelectorAll("[data-menu-close]").forEach((el) => el.addEventListener("click", () => setMenu(false)));
+  menu?.querySelectorAll(".mobile-menu__links a").forEach((el) => el.addEventListener("click", () => setMenu(false)));
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && menu && !menu.hidden) setMenu(false);
+  });
+</script>
 
 <script>
   // Only on the home page. The subtitle starts as "CHAPTER", then the letters shuffle and settle into the full name.

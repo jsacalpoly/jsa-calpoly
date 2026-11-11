@@ -20,9 +20,15 @@ interface Props {
 }
 
 const { title, dateLabel, cover, album, tilt = 0, photoHeight = 240, tape = false, delay = 0 } = Astro.props;
+// Width over height of the photo (262px is the photo width at full size), so phones can keep its shape at any size.
+const photoRatio = 262 / photoHeight;
 ---
 
-<article class="polaroid" data-rise style={`--tilt: ${tilt}deg; --photo-h: ${photoHeight}px; --delay: ${delay}ms;`}>
+<article
+  class="polaroid"
+  data-rise
+  style={`--tilt: ${tilt}deg; --photo-h: ${photoHeight}px; --photo-ratio: ${photoRatio}; --delay: ${delay}ms;`}
+>
   <div class="polaroid__inner">
     <!-- Front: the photo with its title written underneath -->
     <div class="polaroid__face polaroid__front">
@@ -90,9 +96,15 @@ const { title, dateLabel, cover, album, tilt = 0, photoHeight = 240, tape = fals
   }
 
   /* Flip over on hover, or when the album button is reached with the keyboard. */
-  .polaroid:hover .polaroid__inner,
-  .polaroid:focus-within .polaroid__inner {
+  .polaroid.is-flipped .polaroid__inner {
     transform: rotateY(180deg);
+  }
+
+  @media (min-width: 769px) {
+    .polaroid:hover .polaroid__inner,
+    .polaroid:focus-within .polaroid__inner {
+      transform: rotateY(180deg);
+    }
   }
 
   .polaroid__face {
@@ -179,16 +191,28 @@ const { title, dateLabel, cover, album, tilt = 0, photoHeight = 240, tape = fals
     background: #c9bfae;
   }
 
-  /* Long descriptions fade out at the bottom instead of spilling over the card. */
+  /* Long descriptions scroll inside the card. They fade out at the bottom while there is more to read (the page
+     script adds .is-end once the end is reached, or when everything already fits). */
   .polaroid__desc {
     flex: 1;
     min-height: 0;
-    overflow: hidden;
+    padding-right: 4px;
+    overflow-y: auto;
     color: var(--color-text-soft);
     font-family: var(--font-mono);
     font-size: 12.5px;
     line-height: 1.5;
+    scrollbar-color: #c9bfae transparent;
+    scrollbar-width: thin;
+  }
+
+  .polaroid__desc:not(.is-end) {
     mask-image: linear-gradient(to bottom, #000 calc(100% - 26px), transparent);
+  }
+
+  .polaroid__desc:focus-visible {
+    outline: 2px solid var(--color-green);
+    outline-offset: 2px;
   }
 
   .polaroid__desc :global(p + p) {
@@ -243,6 +267,63 @@ const { title, dateLabel, cover, album, tilt = 0, photoHeight = 240, tape = fals
   @media (prefers-reduced-motion: reduce) {
     .polaroid__inner {
       transition: none;
+    }
+  }
+
+  /* ---------- Phone: a smaller print that keeps the photo's shape, flipped with a tap ---------- */
+  @media (max-width: 768px) {
+    .polaroid {
+      width: 100%;
+      rotate: calc(var(--tilt) * 0.7);
+    }
+
+    .polaroid__inner {
+      min-height: 0;
+    }
+
+    .polaroid__front {
+      padding: 8px 8px 10px;
+    }
+
+    .polaroid__photo {
+      height: auto;
+      aspect-ratio: var(--photo-ratio);
+    }
+
+    .polaroid__caption {
+      margin-top: 8px;
+      font-size: 11px;
+    }
+
+    .polaroid__tape {
+      top: -8px;
+      width: 54px;
+      height: 17px;
+    }
+
+    .polaroid__back {
+      padding: 12px 12px 10px;
+    }
+
+    .polaroid__title {
+      font-size: 11px;
+    }
+
+    .polaroid__rule {
+      width: 36px;
+      margin: 6px 0 8px;
+    }
+
+    .polaroid__desc {
+      font-size: 9.5px;
+      line-height: 1.45;
+    }
+
+    .polaroid__button {
+      gap: 6px;
+      margin-top: 8px;
+      padding: 7px 12px;
+      font-size: 11px;
     }
   }
 </style>

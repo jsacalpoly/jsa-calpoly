@@ -9,18 +9,20 @@ interface Props {
   photo: ImageMetadata;
   /** Executive cards are larger than board member cards. */
   variant?: "executive" | "member";
+  /** On phones the president sits alone on top, larger than the other executives. */
+  featured?: boolean;
   /** Details revealed with a fade when the card is hovered (or focused with the keyboard). */
   about?: { nickname?: string; year: string; hometown: string; food: string };
   /** Seconds to wait before the entrance, so a row of cards appears one after another. */
   delay?: number;
 }
 
-const { name, role, photo, variant = "member", about, delay = 0 } = Astro.props;
+const { name, role, photo, variant = "member", featured = false, about, delay = 0 } = Astro.props;
 const firstName = about?.nickname ?? name.split(" ")[0];
 ---
 
 <article
-  class:list={["board-card", `board-card--${variant}`]}
+  class:list={["board-card", `board-card--${variant}`, { "board-card--featured": featured }]}
   tabindex={about ? 0 : undefined}
   data-reveal="up"
   style={`--reveal-delay: ${delay}s`}
@@ -158,9 +160,17 @@ const firstName = about?.nickname ?? name.split(" ")[0];
     transition: opacity 0.35s ease;
   }
 
-  .board-card:hover .board-card__about,
-  .board-card:focus-visible .board-card__about {
+  /* Desktop: hover or keyboard focus. Phones: a tap adds is-open instead (see the phone styles below). */
+  .board-card.is-open .board-card__about {
     opacity: 1;
+    pointer-events: auto;
+  }
+
+  @media (min-width: 769px) {
+    .board-card:hover .board-card__about,
+    .board-card:focus-visible .board-card__about {
+      opacity: 1;
+    }
   }
 
   .about__title {
@@ -285,5 +295,156 @@ const firstName = about?.nickname ?? name.split(" ")[0];
     top: 149.4px;
     font-size: 11px;
     line-height: 15.4px;
+  }
+
+  /* ---------- Phone: cards flow in a grid, and a tap opens the About panel in the middle of the screen ---------- */
+  @media (max-width: 768px) {
+    .board-card,
+    .board-card--executive,
+    .board-card--member {
+      --scale: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      height: auto;
+      padding: 12px 6px 14px;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .board-card--executive {
+      --photo: 84px;
+      --badge: 34px;
+      --name-size: 15px;
+      --role-size: 12px;
+      --title-size: 14px;
+      --text-size: 10px;
+      --icon: 30px;
+      --rule: 28px;
+    }
+
+    .board-card--executive.board-card--featured {
+      --photo: 96px;
+      --badge: 38px;
+      --name-size: 17px;
+      --title-size: 16px;
+      --text-size: 11px;
+      --icon: 34px;
+      --rule: 36px;
+    }
+
+    .board-card--member {
+      --photo: 62px;
+      --badge: 26px;
+      --name-size: 12px;
+      --role-size: 10px;
+      --title-size: 10px;
+      --text-size: 7.5px;
+      --icon: 18px;
+      --rule: 16px;
+      padding: 10px 6px 12px;
+    }
+
+    .board-card .board-card__photo {
+      position: relative;
+      top: auto;
+      left: auto;
+      translate: none;
+      width: var(--photo);
+      height: var(--photo);
+      margin: 0 0 calc(var(--badge) * 0.55 + 6px);
+    }
+
+    .board-card .board-card__photo :global(img:first-child) {
+      border-radius: 50%;
+    }
+
+    .board-card .board-card__badge {
+      top: auto;
+      bottom: calc(var(--badge) * -0.45);
+      width: var(--badge);
+      height: var(--badge);
+    }
+
+    .board-card .board-card__name,
+    .board-card .board-card__role {
+      position: static;
+      width: auto;
+      margin: 0;
+    }
+
+    .board-card .board-card__name {
+      font-size: var(--name-size);
+      line-height: 1.3;
+    }
+
+    .board-card .board-card__role {
+      font-size: var(--role-size);
+      line-height: 1.35;
+    }
+
+    /* The About panel fades in over the card, like on desktop, with the contents sized to fit the card. */
+    .board-card .board-card__about {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 8px 6px 6px;
+    }
+
+    .board-card .about__title {
+      margin: 0;
+      font-size: var(--title-size);
+      line-height: 1.2;
+    }
+
+    .board-card .about__flourish {
+      gap: 4px;
+      margin: 2px 0 3px;
+    }
+
+    .board-card .about__flourish span {
+      width: var(--rule);
+    }
+
+    .board-card .about__flourish svg {
+      width: 12px;
+      height: 12px;
+    }
+
+    .board-card .about__list {
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+      width: 100%;
+      font-size: var(--text-size);
+      line-height: 1.25;
+    }
+
+    .board-card .about__list li {
+      flex: 1;
+      gap: 6px;
+      height: auto;
+      padding: 3px 0 2px 2px;
+    }
+
+    .board-card .about__list li + li::before {
+      left: calc(var(--icon) + 8px);
+      width: auto;
+      right: 6px;
+    }
+
+    .board-card .about__icon {
+      width: var(--icon);
+      height: auto;
+    }
+
+    .board-card .about__list span {
+      flex: 1;
+      width: auto;
+      min-width: 0;
+      overflow-wrap: anywhere;
+    }
   }
 </style>

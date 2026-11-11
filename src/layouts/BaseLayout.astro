@@ -9,17 +9,20 @@ interface Props {
   description?: string;
   /** Skip the gap above the footer, for pages that end in a full-width colored band. */
   flushFooter?: boolean;
+  /** Pages with their own phone layout opt in, so phones are no longer shrunk to fit the 1440px design. */
+  responsive?: boolean;
 }
 
 const {
   title = "Cal Poly Japanese Student Association",
   description = "The Japanese Student Association at Cal Poly San Luis Obispo. Sharing and celebrating Japanese culture, and building a JSA family on campus.",
   flushFooter = false,
+  responsive = false,
 } = Astro.props;
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en" class:list={{ responsive }}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -38,6 +41,11 @@ const {
         const root = document.documentElement;
         function fit() {
           root.style.zoom = "";
+          // Pages with a phone layout (class "responsive") use real phone widths, so no shrinking there.
+          if (root.classList.contains("responsive") && root.clientWidth <= 768) {
+            root.style.setProperty("--viewport-h", window.innerHeight + "px");
+            return;
+          }
           const scale = Math.min(1, root.clientWidth / 1440);
           if (scale < 1) root.style.zoom = String(scale);
           // Window height in the zoomed page's pixels, so the hero can still fill the screen.

@@ -95,7 +95,10 @@ const changelogHref = "https://github.com/jsacalpoly/jsa-calpoly/commits/main";
       </ul>
     </div>
 
-    <p class="site-footer__copy">© 2026 Japanese Student Association, Cal Poly SLO</p>
+    <p class="site-footer__copy">
+      © 2026 Japanese Student Association,
+      <br class="site-footer__br" /> Cal Poly SLO
+    </p>
     <p class="site-footer__changelog">
       <a href={changelogHref} aria-label={`Changelog: ${changelog}`}>
         <span data-scramble={`Changelog: ${changelog}`} aria-hidden="true">
@@ -305,6 +308,109 @@ const changelogHref = "https://github.com/jsacalpoly/jsa-calpoly/commits/main";
   .site-footer__changelog a:focus-visible {
     color: var(--color-ink);
     text-decoration: underline;
+  }
+
+  .site-footer__br {
+    display: none;
+  }
+
+  /* ---------- Phone footer, from the mobile Figma frame (pages that opt in with html.responsive) ---------- */
+  @media (max-width: 768px) {
+    /* One centered column: a short rule, brand, time, links, social, then the small print. */
+    :global(html.responsive) .site-footer__inner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 22px;
+      margin: 0;
+      padding: 18px 32px 24px;
+      border-top: 0;
+    }
+
+    :global(html.responsive) .site-footer__inner::before {
+      content: "";
+      width: 48px;
+      height: 2px;
+      margin-bottom: 8px;
+      border-radius: 1px;
+      background: #d1d1d1;
+    }
+
+    :global(html.responsive) .site-footer__brand {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+    }
+
+    :global(html.responsive) .site-footer__name {
+      gap: 10px;
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    :global(html.responsive) .site-footer__name :global(img) {
+      width: 40px;
+      height: 38px;
+    }
+
+    :global(html.responsive) .site-footer__time {
+      justify-content: center;
+      margin-top: 0;
+      font-size: 14px;
+      line-height: 21px;
+    }
+
+    :global(html.responsive) .site-footer__nav {
+      display: flex;
+      gap: 22px;
+    }
+
+    :global(html.responsive) .site-footer__nav a {
+      color: #737373;
+      font-size: 15px;
+      line-height: 23px;
+    }
+
+    /* The Figma phone footer shows only the social buttons, so the invite line and email are left out. */
+    :global(html.responsive) .site-footer__prompt,
+    :global(html.responsive) .site-footer__email {
+      display: none;
+    }
+
+    :global(html.responsive) .site-footer__social {
+      justify-content: center;
+      gap: 14px;
+      margin: 0;
+    }
+
+    :global(html.responsive) .site-footer__social a {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #f4f4f4;
+    }
+
+    :global(html.responsive) .site-footer__social svg {
+      width: 22px;
+      height: 22px;
+    }
+
+    :global(html.responsive) .site-footer__copy {
+      margin-top: 0;
+      font-size: 11px;
+      line-height: 17px;
+    }
+
+    :global(html.responsive) .site-footer__br {
+      display: inline;
+    }
+
+    :global(html.responsive) .site-footer__changelog {
+      margin-top: -18px;
+      font-size: 11px;
+      line-height: 17px;
+    }
   }
 </style>
 
