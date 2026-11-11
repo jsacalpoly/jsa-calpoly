@@ -67,18 +67,28 @@ const reflection = {
     </div>
   </section>
 
-  <!-- Phone banner -->
+  <!-- Phone banner: the same stack as desktop, centered, with the same entrance fades -->
   <section class="banner-m">
     <Image class="banner-m__branch banner-m__branch--right" src={blossomsRight} alt="" width={458} height={305} />
     <Image class="banner-m__branch banner-m__branch--left" src={blossomsLeft} alt="" width={238} height={212} />
-    <p class="banner-m__kicker">
-      <span class="banner-m__rule"></span>
-      <span>Our Legacy</span>
-      <span class="banner-m__rule"></span>
-    </p>
-    <h1 class="banner-m__title">JSA Board Through the Eras</h1>
+    <p class="banner-m__kicker">Our Legacy</p>
+    <h1 class="banner-m__title" data-reveal>
+      JSA Board Through the Eras
+    </h1>
     <p class="banner-m__subtitle">Honoring our founders</p>
-    <Image class="banner-m__flower" src={headerFlower} alt="" width={45} height={45} />
+    <div class="banner-m__flower-row">
+      <span class="banner-m__rule" data-reveal="line" style="--reveal-delay: 0.15s"></span>
+      <Image
+        class="banner-m__flower"
+        src={headerFlower}
+        alt=""
+        width={45}
+        height={45}
+        data-reveal
+        style="--reveal-delay: 0.1s"
+      />
+      <span class="banner-m__rule" data-reveal="line" style="--reveal-delay: 0.15s"></span>
+    </div>
   </section>
 
   <!-- Eras -->
@@ -134,14 +144,14 @@ const reflection = {
       </div>
     )}
 
-    <div class="eras-m__heading">
+    <div class="eras-m__heading" data-reveal="up">
       <span class="eras__jp">歴代</span>
       <h2 class="eras__title">Through the eras</h2>
       <p class="eras-m__hint">Tap an era to meet its board</p>
     </div>
     <ol class="eras-m__timeline">
       {timeline.map((era, i) => (
-        <EraRow {...era.data} id={`era-more-${i}`} />
+        <EraRow {...era.data} id={`era-more-${i}`} delay={(i % 3) * 0.06} />
       ))}
     </ol>
   </section>
@@ -570,7 +580,7 @@ const reflection = {
       flex-direction: column;
       align-items: center;
       gap: 4px;
-      padding: 22px 24px;
+      padding: 16px 24px 14px;
       overflow: hidden;
       background: var(--color-off-white);
       text-align: center;
@@ -587,25 +597,43 @@ const reflection = {
     }
 
     .banner-m > :global(.banner-m__branch--right) {
-      top: -26px;
-      right: -30px;
+      top: -14px;
+      right: -10px;
       width: 150px;
     }
 
     .banner-m > :global(.banner-m__branch--left) {
-      top: -6px;
-      left: -18px;
-      width: 96px;
+      bottom: 9px;
+      left: -6px;
+      width: 98px;
     }
 
     .banner-m__kicker {
+      font-size: 22px;
+      font-weight: var(--weight-extralight);
+      line-height: 30px;
+    }
+
+    .banner-m__title {
+      color: var(--color-salmon);
+      font-family: var(--font-serif);
+      font-size: 21px;
+      font-weight: var(--weight-regular);
+      line-height: 32px;
+    }
+
+    .banner-m__subtitle {
+      font-size: 15px;
+      font-weight: var(--weight-extralight);
+      line-height: 22px;
+    }
+
+    .banner-m__flower-row {
       display: flex;
       gap: 12px;
       align-items: center;
       width: 100%;
-      font-size: 20px;
-      font-weight: var(--weight-extralight);
-      line-height: 28px;
+      padding-top: 10px;
     }
 
     .banner-m__rule {
@@ -614,21 +642,10 @@ const reflection = {
       background: var(--color-line);
     }
 
-    .banner-m__title {
-      color: var(--color-salmon);
-      font-size: 22px;
-      font-weight: var(--weight-regular);
-      line-height: 30px;
-    }
-
-    .banner-m__subtitle {
-      font-size: 14px;
-      font-weight: var(--weight-extralight);
-    }
-
-    .banner-m > :global(.banner-m__flower) {
-      width: 26px;
-      height: 26px;
+    .banner-m__flower-row > :global(.banner-m__flower) {
+      flex: none;
+      width: 34px;
+      height: 34px;
     }
 
     /* Eras: the last era, then a timeline on a dotted thread. */
