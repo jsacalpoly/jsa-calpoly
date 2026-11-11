@@ -136,7 +136,8 @@ const year = [
 </BaseLayout>
 
 <script>
-  // Phones: "A year with JSA" is a one-card conveyor belt. It slides on its own, loops, and you can swipe to take over.
+  // Phones: "A year with JSA" is a conveyor belt that glides along at a steady speed and loops forever.
+  // Touch and drag to take over; it carries on once you let go.
   const phone = window.matchMedia("(max-width: 768px)");
   const calm = window.matchMedia("(prefers-reduced-motion: reduce)");
   const viewport = document.querySelector<HTMLElement>(".year__cards");
@@ -145,95 +146,91 @@ const year = [
 
   const CARD = 300;
   const STEP = CARD + 16; // card width plus the gap
-  const EVERY = 3500; // ms between automatic slides
-  const PAUSE = 6000; // ms the belt waits after someone touches it
+  const SPEED = 34; // px per second
+  const RESUME = 1200; // ms the belt waits after a touch
 
   if (viewport && track) {
     const originals = Array.from(track.children) as HTMLElement[];
     originals.forEach((card, i) => (card.dataset.index = String(i)));
     let running = false;
-    let busy = false;
-    let timer = 0;
-    let pausedUntil = 0;
+    let frame = 0;
+    let last = 0;
+    let offset = 0; // how far the belt has moved past its starting spot, 0 to STEP
+    let holdUntil = 0;
+    let dragging = false;
+    let dragFrom = 0;
+    let dragStart = 0;
 
-    // Where the track sits when the current card is centered (one card, plus its gap, comes before it).
-    const home = () => (viewport.clientWidth - CARD) / 2 - STEP;
-    const place = (x: number, animated: boolean) => {
-      track.style.transition = animated ? "transform 0.7s cubic-bezier(0.65, 0, 0.35, 1)" : "none";
-      track.style.transform = `translateX(${x}px)`;
+    // Move the first card to the back (or the last to the front) so the belt never runs out.
+    const wrap = () => {
+      while (offset >= STEP) {
+        track.append(track.firstElementChild as Element);
+        offset -= STEP;
+      }
+      while (offset < 0) {
+        track.prepend(track.lastElementChild as Element);
+        offset += STEP;
+      }
     };
-    const show = (current: Element | null) => {
-      for (const card of Array.from(track.children)) card.classList.toggle("is-current", card === current);
-      const index = Number((current as HTMLElement | null)?.dataset.index ?? 0);
+
+    // Draw one frame: slide the track, fade each card by how far it is from the middle, and light the right dot.
+    const draw = () => {
+      track.style.transform = `translateX(${-offset}px)`;
+      const middle = viewport.clientWidth / 2;
+      const left = (viewport.clientWidth - CARD) / 2;
+      let nearest: HTMLElement | null = null;
+      let best = Infinity;
+      Array.from(track.children).forEach((child, i) => {
+        const card = child as HTMLElement;
+        const distance = Math.abs(left + i * STEP + CARD / 2 - offset - middle);
+        card.style.opacity = String(1 - 0.45 * Math.min(1, distance / STEP));
+        if (distance < best) {
+          best = distance;
+          nearest = card;
+        }
+      });
+      const index = Number((nearest as HTMLElement | null)?.dataset.index ?? 0);
       dots.forEach((dot, i) => dot.classList.toggle("is-active", i === index));
     };
 
-    const next = () => {
-      if (busy) return;
-      busy = true;
-      place(home() - STEP, true);
-      show(track.children[2] ?? null);
-      let done = false;
-      const finish = () => {
-        if (done) return;
-        done = true;
-        track.append(track.firstElementChild as Element);
-        place(home(), false);
-        busy = false;
-      };
-      track.addEventListener("transitionend", finish, { once: true });
-      window.setTimeout(finish, 800);
-    };
-
-    const previous = (from = 0) => {
-      if (busy) return;
-      busy = true;
-      track.prepend(track.lastElementChild as Element);
-      place(home() - STEP + from, false);
-      void track.offsetWidth; // let the browser register the jump before animating back
-      place(home(), true);
-      show(track.children[1] ?? null);
-      window.setTimeout(() => (busy = false), 750);
+    const tick = (time: number) => {
+      const dt = Math.min(time - last, 50) / 1000;
+      last = time;
+      if (!dragging && !calm.matches && time > holdUntil && !document.hidden) offset += SPEED * dt;
+      wrap();
+      draw();
+      frame = requestAnimationFrame(tick);
     };
 
     const start = () => {
       if (running) return;
       running = true;
-      track.prepend(track.lastElementChild as Element);
-      place(home(), false);
-      show(track.children[1]);
-      timer = window.setInterval(() => {
-        if (document.hidden || calm.matches || Date.now() < pausedUntil) return;
-        next();
-      }, EVERY);
+      track.style.paddingLeft = `${(viewport.clientWidth - CARD) / 2}px`;
+      last = performance.now();
+      frame = requestAnimationFrame(tick);
     };
 
     const stop = () => {
       if (!running) return;
       running = false;
-      window.clearInterval(timer);
+      cancelAnimationFrame(frame);
       originals.forEach((card) => {
         track.append(card);
-        card.classList.remove("is-current");
+        card.style.opacity = "";
       });
-      track.style.transition = "";
       track.style.transform = "";
+      track.style.paddingLeft = "";
+      offset = 0;
     };
 
-    // Swipe to take over: the track follows the finger, then moves on if it was dragged far enough.
-    let startX = 0;
-    let startY = 0;
-    let dx = 0;
-    let dragging = false;
+    // Dragging moves the belt with the finger.
     viewport.addEventListener(
       "touchstart",
       (event) => {
-        if (!running || busy) return;
-        startX = event.touches[0].clientX;
-        startY = event.touches[0].clientY;
-        dx = 0;
+        if (!running) return;
         dragging = true;
-        pausedUntil = Date.now() + PAUSE;
+        dragStart = event.touches[0].clientX;
+        dragFrom = offset;
       },
       { passive: true },
     );
@@ -241,21 +238,15 @@ const year = [
       "touchmove",
       (event) => {
         if (!dragging) return;
-        const x = event.touches[0].clientX - startX;
-        const y = event.touches[0].clientY - startY;
-        if (Math.abs(y) > Math.abs(x) && Math.abs(x) < 10) return; // a vertical scroll, leave it alone
-        dx = x;
-        place(home() + dx, false);
+        offset = dragFrom - (event.touches[0].clientX - dragStart);
+        wrap();
+        dragFrom = offset + (event.touches[0].clientX - dragStart);
       },
       { passive: true },
     );
     const release = () => {
-      if (!dragging) return;
       dragging = false;
-      pausedUntil = Date.now() + PAUSE;
-      if (dx < -40) next();
-      else if (dx > 40) previous(dx);
-      else place(home(), true);
+      holdUntil = performance.now() + RESUME;
     };
     viewport.addEventListener("touchend", release);
     viewport.addEventListener("touchcancel", release);
@@ -263,7 +254,9 @@ const year = [
     const sync = () => (phone.matches ? start() : stop());
     sync();
     phone.addEventListener("change", sync);
-    window.addEventListener("resize", () => running && !busy && place(home(), false));
+    window.addEventListener("resize", () => {
+      if (running) track.style.paddingLeft = `${(viewport.clientWidth - CARD) / 2}px`;
+    });
   }
 </script>
 
@@ -596,7 +589,8 @@ const year = [
     .year__cards {
       width: 100%;
       margin: 0;
-      padding: 10px 0 6px;
+      padding: 10px 0 26px;
+      margin-bottom: -20px;
       overflow: hidden;
     }
 
@@ -615,15 +609,10 @@ const year = [
       padding: 20px 24px 24px;
     }
 
-    /* Cards beside the current one are faded; the entrance fade must not hide the ones peeking in. */
+    /* The belt sets each card's fade as it moves; the entrance fade must not hide the ones peeking in. */
     :global(.js) .year__cards .season-card[data-reveal] {
       opacity: 0.55;
       animation: none;
-      transition: opacity 0.5s ease;
-    }
-
-    :global(.js) .year__cards .season-card.is-current[data-reveal] {
-      opacity: 1;
     }
 
     .season-card__top {
