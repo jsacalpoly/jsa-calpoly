@@ -35,6 +35,7 @@
   --font-serif-jp: "Noto Serif JP", "Noto Sans JP", serif; /* About page Japanese accents */
   --font-jp: "Noto Sans JP", "Poppins", system-ui, sans-serif;
   --font-mono: "Courier Prime", "Courier New", monospace; /* photo event titles */
+  --font-hand: "Caveat", "Segoe Script", cursive; /* Forecast calendar handwriting */
   --font-title: "Aboreto", "Poppins", system-ui, sans-serif; /* Photo Gallery heading */
   --font-serif: "Inknut Antiqua", Georgia, serif; /* Eras page title */
   --font-accent: "Jost", "Poppins", system-ui, sans-serif; /* Eras reflection sign-off */
