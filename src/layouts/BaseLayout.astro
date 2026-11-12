@@ -11,6 +11,10 @@ interface Props {
   flushFooter?: boolean;
   /** Pages with their own phone layout opt in, so phones are no longer shrunk to fit the 1440px design. */
   responsive?: boolean;
+  /** Standalone pages (like /links) leave out the header and footer. */
+  bare?: boolean;
+  /** Keep the page out of search results. */
+  noindex?: boolean;
 }
 
 const {
@@ -18,6 +22,8 @@ const {
   description = "The Japanese Student Association at Cal Poly San Luis Obispo. Sharing and celebrating Japanese culture, and building a JSA family on campus.",
   flushFooter = false,
   responsive = false,
+  bare = false,
+  noindex = false,
 } = Astro.props;
 ---
 
@@ -27,6 +33,7 @@ const {
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
     <title>{title}</title>
     <link rel="icon" href="/favicon.ico" sizes="32x32" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
@@ -65,11 +72,11 @@ const {
     />
   </head>
   <body>
-    <Header />
-    <main class:list={{ "flush-footer": flushFooter }}>
+    {!bare && <Header />}
+    <main class:list={{ "flush-footer": flushFooter || bare }}>
       <slot />
     </main>
-    <Footer />
+    {!bare && <Footer />}
   </body>
 </html>
 
