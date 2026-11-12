@@ -159,6 +159,45 @@ export function comingUp(entries: CalendarEntry[], today: string) {
     .slice(0, 3);
 }
 
+/** One event in the list the /links ticket picks from. */
+export interface UpcomingEvent {
+  /** YYYY-MM-DD */
+  key: string;
+  title: string;
+  preset: PresetId;
+  time?: string;
+  place?: string;
+  /** Hour it starts, 0-24, so the page can tell whether it already began today. */
+  hour: number;
+}
+
+/** The next few events in date order, for the /links ticket. The page script drops any that have already started. */
+export function upcoming(entries: CalendarEntry[], today: string, count = 8): UpcomingEvent[] {
+  return buildWeeks(entries, today, 26)
+    .flatMap((week) => week.days)
+    .flatMap((day) => day.events.map((event) => ({ day, event })))
+    .filter(({ day }) => day.key >= today)
+    .slice(0, count)
+    .map(({ day, event }) => ({
+      key: day.key,
+      title: event.title,
+      preset: event.preset,
+      time: event.time,
+      place: event.place,
+      hour: startHour(event.time),
+    }));
+}
+
+/** The first event that has not started yet. `hour` is the current hour in Pacific time. A short grace keeps a meeting
+ *  on the ticket while it is still going on. */
+export function pickNext(list: UpcomingEvent[], today: string, hour: number) {
+  const GRACE = 2;
+  return list.find((event) => event.key > today || (event.key === today && event.hour + GRACE > hour));
+}
+
+/** "Wednesday" for a YYYY-MM-DD key. */
+export const weekdayOfKey = (key: string) => weekdays[new Date(toTime(key)).getUTCDay()];
+
 export const monthName = (date: Date) => months[date.getUTCMonth()].toUpperCase();
 export const weekdayName = (date: Date) => weekdays[date.getUTCDay()];
 
