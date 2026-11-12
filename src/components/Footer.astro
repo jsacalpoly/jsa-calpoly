@@ -6,8 +6,7 @@ import groupme from "../assets/shared/social-groupme.png";
 import tiktok from "../assets/shared/social-tiktok.png";
 import linkedin from "../assets/shared/social-linkedin.png";
 import { navLinks } from "../data/navigation";
-
-const email = "jsacalpoly@gmail.com";
+import { email, groupmeHref, instagramHref, linkedinHref, tiktokHref } from "../data/contact";
 
 // Shown under the copyright. Set when the site is built, as MM-DD-YY.
 const now = new Date();
@@ -16,10 +15,10 @@ const changelog = [now.getMonth() + 1, now.getDate(), now.getFullYear() % 100]
   .join("-");
 
 const socials = [
-  { label: "Instagram", href: "https://www.instagram.com/calpolyjsa", icon: instagram },
-  { label: "GroupMe", href: "https://groupme.com/join_group/110719786/Ws1imRVH", icon: groupme },
-  { label: "TikTok", href: "https://www.tiktok.com/@jsa_officialaccount", icon: tiktok },
-  { label: "LinkedIn", href: "https://www.linkedin.com/company/cpjsa/", icon: linkedin },
+  { label: "Instagram", href: instagramHref, icon: instagram },
+  { label: "GroupMe", href: groupmeHref, icon: groupme },
+  { label: "TikTok", href: tiktokHref, icon: tiktok },
+  { label: "LinkedIn", href: linkedinHref, icon: linkedin },
 ];
 
 const githubHref = "https://github.com/jsacalpoly";

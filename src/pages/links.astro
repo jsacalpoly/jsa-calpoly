@@ -1,0 +1,560 @@
+---
+import { Image } from "astro:assets";
+import { getCollection } from "astro:content";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import logo from "../assets/shared/jsa-logo.png";
+import instagram from "../assets/shared/social-instagram.png";
+import tiktok from "../assets/shared/social-tiktok.png";
+import linkedin from "../assets/shared/social-linkedin.png";
+import groupme from "../assets/shared/social-groupme.png";
+import blossom from "../assets/eras/blossom.png";
+import { email, groupmeHref, instagramHref, linkedinHref, tiktokHref, venmoHandle, venmoHref } from "../data/contact";
+import { monthName, pickNext, todayInSlo, upcoming, weekdayOfKey, type CalendarEntry } from "../utils/calendar";
+
+const entries: CalendarEntry[] = (await getCollection("calendar")).map((entry) => ({ id: entry.id, ...entry.data }));
+const today = todayInSlo();
+const list = upcoming(entries, today);
+
+// What the ticket says when the page is built. The script below picks again in the visitor's browser, so it stays right
+// between deploys.
+const next = pickNext(list, today, 0);
+const monthOf = (key: string) => monthName(new Date(`${key}T00:00:00Z`));
+const dayOf = (key: string) => String(Number(key.slice(8)));
+
+const socials = [
+  { label: "Instagram", href: instagramHref, icon: instagram },
+  { label: "TikTok", href: tiktokHref, icon: tiktok },
+  { label: "LinkedIn", href: linkedinHref, icon: linkedin },
+];
+---
+
+<BaseLayout
+  title="Links | Cal Poly JSA"
+  description="Everything for the Cal Poly Japanese Student Association in one place."
+  responsive
+  bare
+  noindex
+>
+  <div class="links">
+    <Image class="links__blossom links__blossom--a" src={blossom} alt="" width={70} />
+    <Image class="links__blossom links__blossom--b" src={blossom} alt="" width={46} />
+
+    <div class="links__column">
+      <header class="links__head">
+        <span class="links__logo">
+          <Image src={logo} alt="Cal Poly JSA" width={62} densities={[1, 2, 3]} />
+        </span>
+        <h1>Cal Poly JSA</h1>
+        <p>Japanese Student Association</p>
+      </header>
+
+      <a class="ticket" href="/calendar" data-ticket data-empty={next ? undefined : ""}>
+        <span class="ticket__main">
+          <span class="ticket__kicker" data-kicker>
+            {next ? `Next up · ${weekdayOfKey(next.key)}` : "Calendar"}
+          </span>
+          <span class="ticket__title" data-title>
+            {next ? next.title : "See what's on"}
+          </span>
+          <span class="ticket__details" data-details>
+            {next ? [next.time, next.place].filter(Boolean).join("  ·  ") : "Meetings and events this week"}
+          </span>
+        </span>
+        <span class="ticket__stub">
+          <span class="ticket__month" data-month>
+            {next ? monthOf(next.key) : "JSA"}
+          </span>
+          <span class="ticket__day" data-day>
+            {next ? dayOf(next.key) : "→"}
+          </span>
+        </span>
+      </a>
+      <a class="links__more" href="/calendar">
+        see the full calendar <span aria-hidden="true">→</span>
+      </a>
+
+      <ul class="social">
+        {socials.map((social) => (
+          <li>
+            <a href={social.href} aria-label={social.label}>
+              <Image src={social.icon} alt="" width={26} height={26} />
+            </a>
+          </li>
+        ))}
+        <li>
+          <a href={`mailto:${email}`} aria-label="Email">
+            <svg
+              viewBox="0 0 24 24"
+              width="24"
+              height="24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.7"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <rect x="3" y="5" width="18" height="14" rx="2.5"></rect>
+              <path d="m4 7.5 8 6 8-6" stroke-linecap="round"></path>
+            </svg>
+          </a>
+        </li>
+      </ul>
+
+      <a class="primary" href={groupmeHref}>
+        <Image src={groupme} alt="" width={30} height={30} />
+        <span>
+          <strong>Join our GroupMe</strong>
+          <small>General and project updates</small>
+        </span>
+      </a>
+
+      <a class="card" href="/photos">
+        <span class="chip" aria-hidden="true">
+          <svg
+            viewBox="0 0 16 17"
+            width="20"
+            height="20"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linejoin="round"
+          >
+            <path d="M0.75 4.75h2.75L5 1.75h6l1.5 3h2.75v10.5H0.75z"></path>
+            <circle cx="8" cy="10" r="3"></circle>
+          </svg>
+        </span>
+        <span class="card__text">
+          <strong>Photos</strong>
+          <small>Pictures from our events</small>
+        </span>
+        <span class="card__arrow" aria-hidden="true">
+          ›
+        </span>
+      </a>
+
+      <a class="card" href={venmoHref}>
+        <span class="chip" aria-hidden="true">
+          <svg
+            viewBox="0 0 24 24"
+            width="20"
+            height="20"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.7"
+            stroke-linecap="round"
+            aria-hidden="true"
+          >
+            <path d="M12 3v18M16.5 7.5c-.8-1.4-2.4-2-4.5-2-2.6 0-4 1.2-4 3s1.4 2.6 4 3 4 1.200 4 3-1.600 3-4 3c-2.200 0-3.800-.8-4.600-2.300"></path>
+          </svg>
+        </span>
+        <span class="card__text">
+          <strong>JSA Venmo</strong>
+          <small>@{venmoHandle}</small>
+        </span>
+        <span class="card__arrow" aria-hidden="true">
+          ›
+        </span>
+      </a>
+
+      <a class="site" href="/">
+        Visit the full website →
+      </a>
+
+      <p class="links__copy">© Japanese Student Association, Cal Poly SLO</p>
+    </div>
+  </div>
+
+  <script type="application/json" id="upcoming-events" set:html={JSON.stringify(list)} />
+</BaseLayout>
+
+<script>
+  import { pickNext, todayInSlo, weekdayOfKey, type UpcomingEvent } from "../utils/calendar";
+
+  // Point the ticket at the next event that has not started yet, in Pacific time.
+  const ticket = document.querySelector<HTMLElement>("[data-ticket]");
+  const raw = document.getElementById("upcoming-events")?.textContent;
+
+  if (ticket && raw) {
+    const list: UpcomingEvent[] = JSON.parse(raw);
+    const hour =
+      Number(
+        new Intl.DateTimeFormat("en-US", { hour: "numeric", hour12: false, timeZone: "America/Los_Angeles" }).format(
+          new Date(),
+        ),
+      ) % 24;
+    const next = pickNext(list, todayInSlo(), hour);
+    const set = (name: string, text: string) => {
+      const el = ticket.querySelector<HTMLElement>(`[data-${name}]`);
+      if (el) el.textContent = text;
+    };
+
+    if (next) {
+      const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+      set("kicker", `Next up · ${next.key === todayInSlo() ? "Today" : weekdayOfKey(next.key)}`);
+      set("title", next.title);
+      set("details", [next.time, next.place].filter(Boolean).join("  ·  "));
+      set("month", months[Number(next.key.slice(5, 7)) - 1]);
+      set("day", String(Number(next.key.slice(8))));
+      ticket.removeAttribute("data-empty");
+    } else {
+      set("kicker", "Calendar");
+      set("title", "See what's on");
+      set("details", "Meetings and events this week");
+      set("month", "JSA");
+      set("day", "→");
+      ticket.setAttribute("data-empty", "");
+    }
+  }
+</script>
+
+<style>
+  .links {
+    position: relative;
+    min-height: var(--viewport-h, 100vh);
+    padding: 56px 20px 40px;
+    overflow: hidden;
+    background: linear-gradient(180deg, #fff3ee 0%, #ffe3dd 100%);
+  }
+
+  .links :global(.links__blossom) {
+    position: absolute;
+    pointer-events: none;
+  }
+
+  .links :global(.links__blossom--a) {
+    top: 70px;
+    left: max(-18px, calc(50% - 420px));
+    rotate: -18deg;
+  }
+
+  .links :global(.links__blossom--b) {
+    right: max(-10px, calc(50% - 400px));
+    bottom: 150px;
+    rotate: 24deg;
+  }
+
+  .links__column {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    width: 100%;
+    max-width: 440px;
+    margin-inline: auto;
+  }
+
+  .links__head {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 8px;
+    text-align: center;
+  }
+
+  .links__logo {
+    display: grid;
+    place-items: center;
+    width: 92px;
+    height: 92px;
+    border-radius: 50%;
+    background: var(--color-white);
+    box-shadow: 0 4px 14px rgba(133, 32, 36, 0.14);
+  }
+
+  .links__head h1 {
+    margin-top: 14px;
+    color: var(--color-maroon);
+    font-size: 27px;
+    font-weight: var(--weight-semibold);
+    line-height: 1.2;
+  }
+
+  .links__head p {
+    color: var(--color-maroon);
+    font-family: var(--font-hand);
+    font-size: 24px;
+    line-height: 1.1;
+  }
+
+  /* The ticket is the calendar: it shows the next event and opens the full week. */
+  .ticket {
+    display: flex;
+    min-height: 128px;
+    border-radius: 14px;
+    background: var(--color-coral);
+    color: var(--color-white);
+    rotate: -1deg;
+    filter: drop-shadow(0 3px 6px rgba(133, 32, 36, 0.22));
+    transition:
+      rotate 0.25s ease,
+      translate 0.25s ease;
+  }
+
+  .ticket:hover,
+  .ticket:focus-visible {
+    rotate: 0deg;
+    translate: 0 -2px;
+  }
+
+  .ticket__main {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    justify-content: center;
+    gap: 2px;
+    min-width: 0;
+    padding: 18px 20px 18px 24px;
+  }
+
+  .ticket__kicker,
+  .ticket__details {
+    color: #ffe8e2;
+    font-family: var(--font-mono);
+  }
+
+  .ticket__kicker {
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  .ticket__title {
+    font-family: var(--font-hand);
+    font-size: 38px;
+    font-weight: var(--weight-bold);
+    line-height: 1.05;
+  }
+
+  .ticket__details {
+    margin-top: 6px;
+    font-size: 12px;
+  }
+
+  .ticket__stub {
+    position: relative;
+    display: flex;
+    flex: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 96px;
+    border-left: 1.6px dashed #fff;
+  }
+
+  /* The two little bites out of the ticket where the stub tears off. */
+  .ticket__stub::before,
+  .ticket__stub::after {
+    content: "";
+    position: absolute;
+    left: -10.3px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #ffeae5;
+  }
+
+  .ticket__stub::before {
+    top: -9px;
+  }
+
+  .ticket__stub::after {
+    bottom: -9px;
+  }
+
+  .ticket__month {
+    color: #ffe8e2;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: var(--weight-bold);
+    letter-spacing: 0.22em;
+  }
+
+  .ticket__day {
+    font-family: var(--font-hand);
+    font-size: 54px;
+    font-weight: var(--weight-bold);
+    line-height: 1;
+  }
+
+  .links__more {
+    margin-top: -4px;
+    color: var(--color-maroon);
+    font-family: var(--font-hand);
+    font-size: 22px;
+    font-weight: var(--weight-bold);
+    line-height: 1.2;
+    text-align: center;
+  }
+
+  .links__more:hover {
+    text-decoration: underline;
+  }
+
+  .social {
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+    margin: 8px 0 6px;
+    padding: 0;
+    list-style: none;
+  }
+
+  .social a {
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--color-white);
+    box-shadow: 0 2px 8px rgba(133, 32, 36, 0.1);
+    color: var(--color-maroon);
+    transition: translate 0.2s ease;
+  }
+
+  .social a:hover,
+  .social a:focus-visible {
+    translate: 0 -2px;
+  }
+
+  .primary,
+  .card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    border-radius: 18px;
+    transition:
+      translate 0.2s ease,
+      box-shadow 0.2s ease;
+  }
+
+  .primary:hover,
+  .card:hover,
+  .primary:focus-visible,
+  .card:focus-visible {
+    translate: 0 -2px;
+  }
+
+  strong {
+    display: block;
+    font-weight: var(--weight-semibold);
+  }
+
+  small {
+    display: block;
+    font-size: 13px;
+    font-weight: var(--weight-regular);
+  }
+
+  .primary {
+    justify-content: center;
+    min-height: 78px;
+    padding: 14px 22px;
+    background: var(--color-coral);
+    box-shadow: 0 6px 16px rgba(254, 97, 97, 0.35);
+    color: var(--color-white);
+    text-align: left;
+  }
+
+  .primary :global(img) {
+    filter: brightness(0) invert(1);
+  }
+
+  .primary strong {
+    font-size: 18px;
+  }
+
+  .primary small {
+    color: #ffe8e2;
+  }
+
+  .card {
+    min-height: 67px;
+    padding: 13px 20px 13px 14px;
+    background: var(--color-white);
+    box-shadow: 0 2px 10px rgba(133, 32, 36, 0.08);
+    color: var(--color-ink);
+  }
+
+  .chip {
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: #fde4e3;
+    color: var(--color-coral);
+  }
+
+  .card__text {
+    flex: 1;
+  }
+
+  .card__text strong {
+    font-size: 16px;
+  }
+
+  .card__text small {
+    color: var(--color-text-muted);
+  }
+
+  .card__arrow {
+    color: var(--color-pink);
+    font-size: 24px;
+    line-height: 1;
+  }
+
+  .site {
+    align-self: center;
+    margin-top: 10px;
+    padding: 10px 22px;
+    border: 1.5px solid var(--color-maroon);
+    border-radius: 999px;
+    color: var(--color-maroon);
+    font-size: 14px;
+    font-weight: var(--weight-medium);
+    transition:
+      background 0.2s ease,
+      color 0.2s ease;
+  }
+
+  .site:hover,
+  .site:focus-visible {
+    background: var(--color-maroon);
+    color: var(--color-white);
+  }
+
+  .links__copy {
+    margin-top: 6px;
+    color: var(--color-text-muted);
+    font-size: 12px;
+    text-align: center;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ticket,
+    .social a,
+    .primary,
+    .card {
+      transition: none;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .links {
+      padding-top: 40px;
+    }
+
+    .ticket__title {
+      font-size: 32px;
+    }
+
+    .ticket__stub {
+      width: 82px;
+    }
+
+    .ticket__day {
+      font-size: 46px;
+    }
+  }
+</style>
