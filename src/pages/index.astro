@@ -5,6 +5,7 @@ import ProjectCard from "../components/ProjectCard.astro";
 import HeroSlideshow from "../components/HeroSlideshow.astro";
 import TapedPhoto from "../components/TapedPhoto.astro";
 import BlossomDivider from "../components/BlossomDivider.astro";
+import { groupmeHref } from "../data/contact";
 
 import welcome from "../assets/home/welcome.jpg";
 import join from "../assets/home/join.jpg";
@@ -164,14 +165,8 @@ const projects = [
       <div class="story__inner">
         <div class="story__text story__text--white" data-reveal>
           <h2 class="story__heading story__heading--bold">Join the family!!</h2>
-          <p class="desktop-only">
-            The easiest way to join JSA is to drop by our general meetings - in Baker 107, every Wednesday at 7pm. We
-            hope to see you there!
-          </p>
-          <p class="phone-only">
-            The easiest way to join JSA is to drop by a general meeting. We hope to see you there!
-          </p>
-          <div class="story__ticket phone-only">
+          <p>The easiest way to join JSA is to drop by a general meeting. We hope to see you there!</p>
+          <div class="story__ticket">
             <div class="story__ticket-part">
               <span class="story__ticket-label">EVERY WEDNESDAY</span>
               <span class="story__ticket-value">7:00 PM</span>
@@ -187,14 +182,21 @@ const projects = [
             <a href="https://www.instagram.com/calpolyjsa" class="story__link">
               Cal Poly JSA Instagram
             </a>{" "}
-            (@calpolyjsa) where we post club updates and event/meeting reminders! You can also join the JSA GroupMe or
-            dm the instagram for more info!
+            (@calpolyjsa) where we post club updates and event/meeting reminders! You can also join the{" "}
+            <a href={groupmeHref} class="story__link">
+              JSA GroupMe
+            </a>{" "}
+            or dm the instagram for more info!
           </p>
           <a href="https://www.instagram.com/calpolyjsa" class="story__follow phone-only">
             Follow @calpolyjsa on Instagram →
           </a>
           <p class="story__small phone-only">
-            Updates and reminders are there. You can also join the GroupMe or DM us for more info!
+            Updates and reminders are there. You can also join the{" "}
+            <a href={groupmeHref} class="story__link">
+              GroupMe
+            </a>{" "}
+            or DM us for more info!
           </p>
         </div>
         <TapedPhoto
@@ -501,6 +503,87 @@ const projects = [
     text-decoration: underline;
   }
 
+  /* Meeting ticket: when, a dotted tear line with two notches, where. Phones and desktop share it. */
+  .story__ticket {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    align-self: flex-start;
+    width: 100%;
+    max-width: 440px;
+    padding: 14px 20px;
+    border-radius: 6px;
+    background: var(--color-peach);
+    color: var(--color-ink);
+  }
+
+  .story__ticket-part {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .story__ticket-part--where {
+    flex: none;
+    align-items: center;
+  }
+
+  .story__ticket-label {
+    color: var(--color-red);
+    font-size: 10px;
+    font-weight: var(--weight-semibold);
+    letter-spacing: 0.1em;
+  }
+
+  .story__ticket-value {
+    font-size: 24px;
+    font-weight: var(--weight-bold);
+    line-height: 30px;
+  }
+
+  .story__ticket-split {
+    position: relative;
+    align-self: stretch;
+    border-left: 2px dotted var(--color-red);
+  }
+
+  .story__ticket-split::before,
+  .story__ticket-split::after {
+    content: "";
+    position: absolute;
+    left: -8px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--color-red);
+  }
+
+  .story__ticket-split::before {
+    top: -21px;
+  }
+
+  .story__ticket-split::after {
+    bottom: -21px;
+  }
+
+  @media (min-width: 769px) {
+    .story__ticket {
+      gap: 22px;
+      padding: 18px 28px;
+      border-radius: 8px;
+    }
+
+    .story__ticket-label {
+      font-size: 12px;
+    }
+
+    .story__ticket-value {
+      font-size: 30px;
+      line-height: 36px;
+    }
+  }
+
   /* Pieces that only exist on phones stay hidden on desktop. */
   .story__thread,
   .story__wave,
@@ -709,7 +792,7 @@ const projects = [
       letter-spacing: -0.02em;
     }
 
-    .story__text--white > :not(.story__ticket):not(.story__follow) {
+    .story__text.story__text--white > :not(.story__ticket):not(.story__follow) {
       color: var(--color-white);
     }
 
@@ -746,67 +829,6 @@ const projects = [
       font-weight: var(--weight-medium);
       line-height: 23px;
       rotate: -1deg;
-    }
-
-    /* Meeting ticket: when, a dotted tear line with two notches, where. */
-    .story__ticket {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      padding: 14px 20px;
-      border-radius: 6px;
-      background: var(--color-peach);
-      color: var(--color-ink);
-    }
-
-    .story__ticket-part {
-      display: flex;
-      flex: 1;
-      flex-direction: column;
-      gap: 2px;
-    }
-
-    .story__ticket-part--where {
-      flex: none;
-      align-items: center;
-    }
-
-    .story__ticket-label {
-      color: var(--color-red);
-      font-size: 10px;
-      font-weight: var(--weight-semibold);
-      letter-spacing: 0.1em;
-    }
-
-    .story__ticket-value {
-      font-size: 24px;
-      font-weight: var(--weight-bold);
-      line-height: 30px;
-    }
-
-    .story__ticket-split {
-      position: relative;
-      align-self: stretch;
-      border-left: 2px dotted var(--color-red);
-    }
-
-    .story__ticket-split::before,
-    .story__ticket-split::after {
-      content: "";
-      position: absolute;
-      left: -8px;
-      width: 14px;
-      height: 14px;
-      border-radius: 50%;
-      background: var(--color-red);
-    }
-
-    .story__ticket-split::before {
-      top: -21px;
-    }
-
-    .story__ticket-split::after {
-      bottom: -21px;
     }
 
     /* Follow: a white pill button. */
