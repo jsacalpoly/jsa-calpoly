@@ -3,7 +3,8 @@
 title: Fishbowl
 type: regular
 order: 2
-image: ../../assets/events/craft-night-2026.jpg
+image: ../../assets/projects/fishbowl.jpg
+imageFocus: 50% 55%
 accent: pink
 summary: Study sessions at the library.
 schedule: Library · 3–6 PM

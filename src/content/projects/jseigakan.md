@@ -3,7 +3,8 @@
 title: Jseigakan
 type: regular
 order: 1
-image: ../../assets/events/first-gen-meeting-2026.jpg
+image: ../../assets/projects/jseigakan.jpg
+imageFocus: 50% 35%
 accent: orange
 summary: JSA’s movie night.
 schedule: Some Thursdays · 6:30–8 PM
