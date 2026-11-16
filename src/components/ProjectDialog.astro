@@ -1,0 +1,444 @@
+---
+import { render, type CollectionEntry } from "astro:content";
+import TapedPhoto from "./TapedPhoto.astro";
+import { groupmeHref } from "../data/contact";
+import { accents, leadNames } from "../utils/projects";
+
+interface Props {
+  entry: CollectionEntry<"projects">;
+  /** Rotation of the taped photo, in degrees. */
+  tilt?: number;
+}
+
+const { entry, tilt = -2 } = Astro.props;
+const { title, subtitleJp, type, image, imageFocus, accent, schedule, leads, facts, cta } = entry.data;
+const { Content } = await render(entry);
+
+// The highlighted line at the top: the schedule for a regular project, "Major project" for a major one.
+const tag = entry.data.tag ?? schedule ?? (type === "major" ? "Major project · open to everyone" : undefined);
+const href = cta ? (cta.href ?? groupmeHref) : undefined;
+---
+
+<dialog
+  class="project-dialog"
+  id={entry.id}
+  aria-labelledby={`${entry.id}-title`}
+  style={`--accent: ${accents[accent].color}; --on-accent: ${accents[accent].on};`}
+>
+  <button class="project-dialog__close" type="button" aria-label="Close" data-project-close>
+    ×
+  </button>
+  <!-- Takes focus when the popup opens, so no outline flashes on the close button. -->
+  <div class="project-dialog__paper" tabindex="-1" autofocus>
+    <div class="project-dialog__photo">
+      <TapedPhoto
+        src={image}
+        alt=""
+        width={300}
+        height={240}
+        tilt={tilt}
+        focus={imageFocus}
+        sizes="(max-width: 768px) 212px, 300px"
+      />
+    </div>
+    <div class="project-dialog__body">
+      <h2 class="project-dialog__title" id={`${entry.id}-title`}>
+        <span class:list={{ "is-jp": entry.data.jpTitle }}>{title}</span>
+        {subtitleJp && (
+          <span class="project-dialog__jp" lang="ja">
+            {subtitleJp}
+          </span>
+        )}
+        {leads.length > 0 && <span class="project-dialog__lead">led by {leadNames(leads)}</span>}
+      </h2>
+      {tag && <p class="project-dialog__tag">{tag}</p>}
+      <div class="project-dialog__text">
+        <Content />
+      </div>
+      {facts.length > 0 && (
+        <dl class="project-dialog__facts">
+          {facts.map((fact) => (
+            <>
+              <dt>{fact.label}</dt>
+              <dd>{fact.value}</dd>
+            </>
+          ))}
+        </dl>
+      )}
+      {cta && href && (
+        <a class="project-dialog__cta" href={href} target="_blank" rel="noopener noreferrer">
+          {cta.label} →
+        </a>
+      )}
+    </div>
+  </div>
+</dialog>
+
+<style>
+  /* A cream paper note, taped to the page, over a dimmed backdrop. The tape sits on the dialog itself so the paper can
+     scroll on short screens without cutting it off. */
+  .project-dialog {
+    width: min(900px, calc(100vw - 48px));
+    max-width: none;
+    max-height: none;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--color-ink);
+    overflow: visible;
+  }
+
+  .project-dialog::backdrop {
+    background: rgba(24, 24, 24, 0.6);
+  }
+
+  .project-dialog::before {
+    content: "";
+    position: absolute;
+    top: -14px;
+    left: calc(50% + 60px);
+    z-index: 1;
+    width: 120px;
+    height: 30px;
+    background: rgba(239, 224, 160, 0.9);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    rotate: -2deg;
+  }
+
+  .project-dialog__paper {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 30px;
+    align-items: center;
+    max-height: calc(100dvh - 48px);
+    padding: 52px 64px 52px 40px;
+    border-radius: 3px;
+    background: var(--color-peach);
+    box-shadow: 0 14px 40px rgba(0, 0, 0, 0.35);
+    overflow-y: auto;
+  }
+
+  .project-dialog:focus,
+  .project-dialog__paper:focus {
+    outline: none;
+  }
+
+  .project-dialog__close:focus-visible {
+    border-radius: 6px;
+    outline: 2px solid var(--color-red);
+    outline-offset: 2px;
+  }
+
+  .project-dialog__close {
+    position: absolute;
+    top: 10px;
+    right: 22px;
+    z-index: 2;
+    padding: 0 6px;
+    border: 0;
+    background: none;
+    color: var(--color-ink);
+    font-family: var(--font-body);
+    font-size: 44px;
+    font-weight: var(--weight-light);
+    line-height: 1.2;
+    cursor: pointer;
+  }
+
+  .project-dialog__photo :global(.taped) {
+    padding: 15px 15px 45px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+  }
+
+  .project-dialog__photo :global(.taped__tape) {
+    width: 100px;
+    height: 26px;
+  }
+
+  .project-dialog__body {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    min-width: 0;
+  }
+
+  .project-dialog__title {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 0 14px;
+    font-size: 42px;
+    font-weight: var(--weight-semibold);
+    line-height: 1.2;
+  }
+
+  .project-dialog__title .is-jp,
+  .project-dialog__jp {
+    font-family: var(--font-jp);
+    font-weight: var(--weight-bold);
+  }
+
+  .project-dialog__jp {
+    font-size: 24px;
+  }
+
+  .project-dialog__lead {
+    color: var(--color-red);
+    font-family: var(--font-hand);
+    font-size: 30px;
+    font-weight: var(--weight-bold);
+  }
+
+  /* A highlighter swipe in the project's color. */
+  .project-dialog__tag {
+    padding: 2px 8px 3px;
+    background: var(--accent);
+    color: var(--on-accent);
+    font-family: var(--font-mono);
+    font-size: 14px;
+    font-weight: var(--weight-bold);
+    letter-spacing: 0.02em;
+    line-height: 1.4;
+    text-transform: uppercase;
+    rotate: -0.6deg;
+  }
+
+  .project-dialog__text {
+    color: var(--color-text-soft);
+    font-size: 17px;
+    font-weight: var(--weight-light);
+    line-height: 27px;
+  }
+
+  .project-dialog__facts {
+    display: grid;
+    grid-template-columns: 96px 1fr;
+    gap: 10px 14px;
+    margin: 0;
+  }
+
+  .project-dialog__facts dt {
+    padding-top: 3px;
+    color: var(--color-text-muted);
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: var(--weight-bold);
+    letter-spacing: 0.02em;
+  }
+
+  .project-dialog__facts dd {
+    margin: 0;
+    font-size: 15px;
+    font-weight: var(--weight-semibold);
+    line-height: 24px;
+  }
+
+  /* The same coral pill as the home page button. */
+  .project-dialog__cta {
+    display: inline-flex;
+    align-items: center;
+    padding: 15px 32px;
+    border-radius: 999px;
+    background: var(--color-coral);
+    color: var(--color-white);
+    font-family: var(--font-jp);
+    font-size: 15px;
+    font-weight: var(--weight-bold);
+    transition: background-color 0.4s ease;
+  }
+
+  .project-dialog__cta:hover,
+  .project-dialog__cta:focus-visible {
+    background: var(--color-red);
+  }
+
+  /* The page behind stays put while a popup is open. */
+  :global(html:has(dialog.project-dialog[open])) {
+    overflow: hidden;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .project-dialog[open] {
+      animation: dialog-in 0.25s ease-out;
+    }
+
+    .project-dialog[open]::backdrop {
+      animation: dialog-fade 0.25s ease-out;
+    }
+  }
+
+  @keyframes dialog-in {
+    from {
+      opacity: 0;
+      translate: 0 14px;
+    }
+  }
+
+  @keyframes dialog-fade {
+    from {
+      opacity: 0;
+    }
+  }
+
+  /* Phone: a sheet that slides up from the bottom, with the photo on top (from the mobile Figma frames). */
+  @media (max-width: 768px) {
+    .project-dialog {
+      width: 100%;
+      margin: auto 0 0;
+    }
+
+    .project-dialog::before {
+      display: none;
+    }
+
+    .project-dialog__paper {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 14px;
+      max-height: 90dvh;
+      padding: 30px 24px 28px;
+      border-radius: 20px 20px 0 0;
+      box-shadow: 0 -6px 24px rgba(0, 0, 0, 0.3);
+    }
+
+    /* The little handle at the top of the sheet. */
+    .project-dialog__paper::before {
+      content: "";
+      align-self: center;
+      flex: none;
+      width: 40px;
+      height: 4px;
+      margin: -16px 0 0;
+      border-radius: 2px;
+      background: #d9c7c0;
+    }
+
+    .project-dialog__close {
+      top: 18px;
+      right: 18px;
+      font-size: 36px;
+    }
+
+    .project-dialog__photo {
+      align-self: center;
+    }
+
+    .project-dialog__photo :global(.taped) {
+      --photo-w: 212px !important;
+      --photo-h: 170px !important;
+      padding: 12px 12px 34px;
+    }
+
+    .project-dialog__photo :global(.taped__tape) {
+      top: -10px;
+      width: 72px;
+      height: 22px;
+    }
+
+    .project-dialog__body {
+      align-items: stretch;
+      gap: 14px;
+    }
+
+    .project-dialog__title {
+      font-size: 30px;
+    }
+
+    .project-dialog__jp {
+      font-size: 18px;
+    }
+
+    .project-dialog__lead {
+      font-size: 26px;
+    }
+
+    .project-dialog__tag {
+      align-self: flex-start;
+      font-size: 11px;
+    }
+
+    .project-dialog__text {
+      font-size: 15px;
+      line-height: 23px;
+    }
+
+    .project-dialog__facts {
+      grid-template-columns: 64px 1fr;
+      gap: 10px 12px;
+    }
+
+    .project-dialog__facts dt {
+      font-size: 12px;
+    }
+
+    .project-dialog__facts dd {
+      font-size: 14px;
+      line-height: 22px;
+    }
+
+    .project-dialog__cta {
+      justify-content: center;
+      padding: 15px 24px;
+    }
+
+    @keyframes dialog-in {
+      from {
+        opacity: 0;
+        translate: 0 40px;
+      }
+    }
+  }
+</style>
+
+<script>
+  // Opens and closes the project popups. A popup has the project's slug as its id, so /projects#torii opens Torii:
+  // that link can be shared, and the Back button closes the popup.
+  const dialogs = Array.from(document.querySelectorAll<HTMLDialogElement>("dialog.project-dialog"));
+
+  if (dialogs.length) {
+    const byId = new Map(dialogs.map((dialog) => [dialog.id, dialog]));
+    // True when the popup was opened by following a link (so there is a history entry to go back to).
+    let openedByLink = false;
+
+    const sync = () => {
+      const target = byId.get(location.hash.slice(1));
+      for (const dialog of dialogs) if (dialog !== target && dialog.open) dialog.close();
+      if (target && !target.open) target.showModal();
+    };
+
+    window.addEventListener("hashchange", (event) => {
+      const next = new URL(event.newURL).hash.slice(1);
+      const previous = new URL(event.oldURL).hash.slice(1);
+      if (byId.has(next) && !byId.has(previous)) openedByLink = true;
+      if (!byId.has(next)) openedByLink = false;
+      sync();
+    });
+
+    // Closing goes back one step if the popup was opened by a link, so Back and the X agree.
+    const requestClose = (dialog: HTMLDialogElement) => {
+      if (openedByLink) {
+        openedByLink = false;
+        history.back();
+      } else {
+        history.replaceState(null, "", location.pathname + location.search);
+        dialog.close();
+      }
+    };
+
+    for (const dialog of dialogs) {
+      dialog.addEventListener("cancel", (event) => {
+        event.preventDefault();
+        requestClose(dialog);
+      });
+      // A click on the dimmed area lands on the dialog itself, outside the paper.
+      dialog.addEventListener("click", (event) => {
+        if (event.target === dialog) requestClose(dialog);
+      });
+      dialog.querySelector("[data-project-close]")?.addEventListener("click", () => requestClose(dialog));
+    }
+
+    sync();
+  }
+</script>
