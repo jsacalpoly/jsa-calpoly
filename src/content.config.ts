@@ -97,4 +97,56 @@ const calendar = defineCollection({
     }),
 });
 
-export const collections = { boards, eras, events, calendar };
+// One Markdown file per project, shown on the Projects page (/projects) and, for a few, on the home page.
+// The front matter is the card; the Markdown body is the longer description shown in the popup.
+const projects = defineCollection({
+  loader: glob({ pattern: "**/*.md", base: "./src/content/projects" }),
+  schema: ({ image }) =>
+    z.object({
+      title: z.string(),
+      /** "program" is the one featured block at the top (Big-Little), "major" projects get big paper cards, and
+       *  "regular" ones are the smaller recurring meetups. */
+      type: z.enum(["program", "major", "regular"]),
+      /** Sort order within its type, lowest first. */
+      order: z.number(),
+      /** A paused project is kept here but left off the page until it comes back. */
+      status: z.enum(["active", "paused"]).default("active"),
+      /** Use the Japanese font for the title (GenKey). */
+      jpTitle: z.boolean().default(false),
+      /** A second title in Japanese, shown beside the title (the program). */
+      subtitleJp: z.string().optional(),
+      image: image(),
+      /** Which part of the photo stays in view when it is cropped, e.g. "50% 0%" to keep the top. */
+      imageFocus: z.string().optional(),
+      /** The project's color: the paper behind a major project, the schedule tag on a regular one. */
+      accent: z.enum(["coral", "orange", "pink", "green"]),
+      /** One short sentence, used on the home page cards. */
+      summary: z.string(),
+      /** The longer card text on the Projects page (major projects and the program). */
+      blurb: z.string().optional(),
+      /** Small label above the program's title, e.g. "Big-Little program". */
+      eyebrow: z.string().optional(),
+      /** A handwritten line on the program block. */
+      note: z.string().optional(),
+      /** The highlighted line at the top of the popup. Defaults to the schedule (regular) or "Major project". */
+      tag: z.string().optional(),
+      /** When it meets, written as it should read on the card, e.g. "Sundays · around 2 PM". */
+      schedule: z.string().optional(),
+      /** The short where/how line on a regular project's card. */
+      detail: z.string().optional(),
+      /** First names of the project leads. */
+      leads: z.array(z.string()).default([]),
+      /** Label and value rows in the popup, e.g. WHERE / Building 52, Room 22. */
+      facts: z.array(z.object({ label: z.string(), value: z.string() })).default([]),
+      /** The button in the popup. Leave out `href` to link the GroupMe; leave out `cta` for no button. */
+      cta: z.object({ label: z.string(), href: z.string().url().optional() }).optional(),
+      /** Show on the home page, in this order (lowest first). */
+      homeOrder: z.number().optional(),
+      /** How the paper and photo are tilted and staggered, in degrees and px. */
+      photoTilt: z.number().default(0),
+      paperTilt: z.number().default(0),
+      offset: z.number().default(0),
+    }),
+});
+
+export const collections = { boards, eras, events, calendar, projects };

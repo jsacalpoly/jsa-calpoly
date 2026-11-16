@@ -9,6 +9,7 @@ export const presetIds = [
   "matcha-run",
   "cookbook",
   "jseigakan",
+  "break",
 ] as const;
 
 export type PresetId = (typeof presetIds)[number];
@@ -25,6 +26,9 @@ export const doodles: Record<PresetId, string> = {
   "matcha-run": "M3 11 L21 11 C21 17 17 21 12 21 C7 21 3 17 3 11 Z M8 7 C7 5 9 4 8 2 M13 7 C12 5 14 4 13 2",
   cookbook: "M5 4 L19 4 L19 20 L5 20 Z M9 4 L9 20 M12 9 L16 9",
   jseigakan: "M3 10 L21 10 L21 20 L3 20 Z M3 10 L5 5 L21 3 L21 10 M8 10 L10 4 M14 10 L16 4",
+  // A leaf, for school breaks like Thanksgiving.
+  break:
+    "M12 3 C18 4 21 10 19 15 C17 19 13 21 12 21 C11 21 7 19 5 15 C3 10 6 4 12 3 Z M12 21 L12 9 M12 13 L16 10 M12 16 L8 13",
 };
 
 /** A calendar file as the page needs it. */
@@ -87,9 +91,10 @@ export const todayInSlo = (now = new Date()) =>
 /** The Wednesday that starts the week containing this day. */
 export const weekStartFor = (key: string) => addDays(key, -((weekdayOf(key) - WEDNESDAY + 7) % 7));
 
-/** Hour an event starts, to place it in its column. All day goes to the top, and "5:30 & 6:30 PM" starts at 5:30. */
+/** Hour an event starts, to place it in its column. All day (and "No events", for a break) goes to the top, and
+ *  "5:30 & 6:30 PM" starts at 5:30. */
 export function startHour(time?: string): number {
-  if (!time || /all day/i.test(time)) return 8;
+  if (!time || /all day|no events/i.test(time)) return 8;
   const match = time.match(/(\d{1,2})(?::(\d{2}))?/);
   if (!match) return 12;
   let hour = Number(match[1]) % 12;
@@ -171,12 +176,13 @@ export interface UpcomingEvent {
   hour: number;
 }
 
-/** The next few events in date order, for the /links ticket. The page script drops any that have already started. */
+/** The next few events in date order, for the /links ticket. The page script drops any that have already started.
+ *  A break is a note on the board, not something to show up to, so it is left out. */
 export function upcoming(entries: CalendarEntry[], today: string, count = 8): UpcomingEvent[] {
   return buildWeeks(entries, today, 26)
     .flatMap((week) => week.days)
     .flatMap((day) => day.events.map((event) => ({ day, event })))
-    .filter(({ day }) => day.key >= today)
+    .filter(({ day, event }) => day.key >= today && event.preset !== "break")
     .slice(0, count)
     .map(({ day, event }) => ({
       key: day.key,

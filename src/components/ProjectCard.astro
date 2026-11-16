@@ -18,8 +18,8 @@ interface Props {
   offset?: number;
   /** Which part of the photo stays in view when it is cropped, e.g. "50% 0%" to keep the top. */
   focus?: string;
-  /** Where "Learn more" goes. The link is left out until the project has a page. */
-  href?: string;
+  /** The project's slug. When set, "Learn more" opens that project's popup (see ProjectDialog). Left out, there is no link. */
+  popup?: string;
 }
 
 const {
@@ -32,7 +32,7 @@ const {
   paperTilt = 0,
   offset = 0,
   focus,
-  href,
+  popup,
 } = Astro.props;
 ---
 
@@ -44,8 +44,8 @@ const {
     </div>
     <h3 class:list={["paper__title", { "paper__title--jp": jpTitle }]}>{title}</h3>
     <p class="paper__description">{description}</p>
-    {href && (
-      <a class="paper__link" href={href}>
+    {popup && (
+      <a class="paper__link" href={`#${popup}`} data-project-open={popup}>
         Learn more →
       </a>
     )}
@@ -104,6 +104,14 @@ const {
   .paper__link:hover,
   .paper__link:focus-visible {
     text-decoration: underline;
+  }
+
+  /* The whole paper opens the popup, not just the words. */
+  .paper__link::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
   }
 
   /* Phone: a 300px paper with a smaller taped photo, from the mobile Figma frame. */

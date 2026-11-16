@@ -169,8 +169,9 @@ const changelogHref = "https://github.com/jsacalpoly/jsa-calpoly/commits/main";
   .site-footer__nav {
     grid-area: nav;
     display: grid;
+    /* Three links down the first column, two down the second. */
     grid-template-columns: 132px auto;
-    grid-template-rows: repeat(2, auto);
+    grid-template-rows: repeat(3, auto);
     grid-auto-flow: column;
     row-gap: 20px;
     align-content: start;
@@ -360,9 +361,13 @@ const changelogHref = "https://github.com/jsacalpoly/jsa-calpoly/commits/main";
       line-height: 21px;
     }
 
+    /* Three links on the first row and two on the second, both centered. The width stops a fourth from fitting. */
     :global(html.responsive) .site-footer__nav {
       display: flex;
-      gap: 22px;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px 22px;
+      max-width: 240px;
     }
 
     :global(html.responsive) .site-footer__nav a {

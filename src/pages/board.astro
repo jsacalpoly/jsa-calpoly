@@ -3,7 +3,6 @@ import { Image } from "astro:assets";
 import BaseLayout from "../layouts/BaseLayout.astro";
 
 import aboutPhoto from "../assets/about/about-photo.jpg";
-import senpaiPhoto from "../assets/about/senpai-photo.jpg";
 
 const year = [
   { season: "Fall", kanji: "秋", title: "Big-Little Reveal", text: "Kouhai finally find out who their senpai are." },
@@ -13,6 +12,28 @@ const year = [
     kanji: "春",
     title: "Camping & Soubetsukai",
     text: "A camping trip, then a banquet to send off our seniors.",
+  },
+];
+
+// What keeps going between the big days.
+const allYear = [
+  {
+    title: "General meetings",
+    when: "Wednesdays · 7 PM · Baker 107",
+    text: "Drop in any week to hang out and meet people.",
+    bar: "var(--color-red)",
+  },
+  {
+    title: "Projects",
+    when: "All year",
+    text: "Torii, ゲンKEY, Kazuma Daiko, Cookbook, Matcha Run, and more.",
+    bar: "var(--color-orange)",
+  },
+  {
+    title: "Sports",
+    when: "Weekly",
+    text: "Volleyball almost every semester, plus basketball, softball, and futsal.",
+    bar: "var(--color-pink)",
   },
 ];
 ---
@@ -86,50 +107,27 @@ const year = [
     <p class="year__hint">Slides on its own · swipe to take over</p>
   </section>
 
-  <!-- Senpai x Kouhai -->
-  <section class="senpai">
-    <div class="senpai__card container">
-      <div class="senpai__photo" data-reveal>
-        <Image
-          src={senpaiPhoto}
-          alt="JSA members posing together in their senpai-kouhai cords"
-          widths={[380, 760]}
-          sizes="380px"
-          quality={85}
-        />
-      </div>
-      <div class="senpai__copy" data-reveal="up" style="--reveal-delay: 0.1s">
-        <p class="eyebrow">
-          <span class="eyebrow__rule"></span>
-          <span class="eyebrow__label">Big-little program</span>
-          <span class="eyebrow__jp">先輩・後輩</span>
-        </p>
-        <h2 class="senpai__title">Find your senpai.</h2>
-        <p class="senpai__text">
-          Our “big-little” program — known as senpai-kouhai — pairs older members with new members to create a
-          closer-knit social circle. It’s the heart of the JSA family.
-        </p>
-        <a class="button-solid" aria-disabled="true">
-          Learn about Senpai × Kouhai&nbsp;&nbsp;→
-        </a>
-      </div>
+  <!-- All year long: what keeps going between the big days -->
+  <section class="allyear">
+    <div class="allyear__heading" data-reveal="up">
+      <h2 class="allyear__title">All year long</h2>
+      <p class="allyear__subtitle">
+        Between the big days, there’s always something going on, and you’re always free to pull up.
+      </p>
     </div>
-  </section>
-
-  <!-- Phone only: a nudge to the projects instead of the senpai block. -->
-  <section class="pointer">
-    <div class="pointer__card">
-      <p class="eyebrow">
-        <span class="eyebrow__rule"></span>
-        <span class="eyebrow__label">JSA projects</span>
-        <span class="eyebrow__jp">プロジェクト</span>
-      </p>
-      <h2 class="pointer__title">More than meetings.</h2>
-      <p class="pointer__text">
-        JSA also runs projects, each one started by dedicated members exploring their own interests.
-      </p>
-      <a class="button-solid pointer__button" aria-disabled="true">
-        See our projects&nbsp;&nbsp;→
+    <div class="allyear__columns container">
+      {allYear.map((item, i) => (
+        <div class="allyear__column" data-reveal="up" style={`--reveal-delay: ${i * 0.08}s; --bar: ${item.bar}`}>
+          <h3 class="allyear__name">{item.title}</h3>
+          <p class="allyear__when">{item.when}</p>
+          <p class="allyear__text">{item.text}</p>
+        </div>
+      ))}
+    </div>
+    <div class="allyear__cta" data-reveal="up">
+      <p class="allyear__hand">find your thing</p>
+      <a class="allyear__button" href="/projects">
+        See all projects →
       </a>
     </div>
   </section>
@@ -288,23 +286,6 @@ const year = [
     font-weight: var(--weight-medium);
   }
 
-  .button-solid {
-    display: inline-flex;
-    align-items: center;
-    padding: 13px 24px;
-    border-radius: 999px;
-    background: var(--color-maroon);
-    color: var(--color-white);
-    font-size: 14px;
-    font-weight: var(--weight-medium);
-    transition: background-color 0.2s ease;
-  }
-
-  .button-solid:hover,
-  .button-solid:focus-visible {
-    background: var(--color-crimson);
-  }
-
   /* ---------- Hero ---------- */
   .hero {
     padding: 56px 0;
@@ -444,66 +425,125 @@ const year = [
     line-height: 1.55;
   }
 
-  /* ---------- Senpai x Kouhai ---------- */
-  .senpai {
-    padding: 56px 0 64px;
-  }
-
-  .senpai__card {
-    display: flex;
-    align-items: center;
-    gap: 48px;
-    padding: 32px;
-    border-radius: 32px;
-    background: var(--color-peach);
-  }
-
-  .senpai__photo {
-    flex: none;
-    width: 380px;
-    height: 300px;
-    border-radius: 24px;
-    overflow: hidden;
-  }
-
-  .senpai__photo :global(img) {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .senpai__copy {
+  /* ---------- All year long ---------- */
+  .allyear {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    gap: 18px;
-    min-width: 0;
+    align-items: center;
+    gap: 56px;
+    padding: 100px 0 120px;
   }
 
-  .senpai__title {
+  .allyear__heading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    text-align: center;
+  }
+
+  .allyear__title {
     color: var(--color-ink);
-    font-size: 34px;
-    font-weight: var(--weight-semibold);
-    letter-spacing: -0.01em;
-    line-height: 1.1;
+    font-size: 40px;
+    font-weight: var(--weight-bold);
+    line-height: 1.2;
   }
 
-  .senpai__text {
+  .allyear__subtitle {
+    color: var(--color-text-soft);
+    font-size: 17px;
+    font-weight: var(--weight-light);
+  }
+
+  .allyear__columns {
+    display: flex;
+    justify-content: center;
+    gap: 56px;
+  }
+
+  .allyear__column {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    max-width: 290px;
+  }
+
+  /* A short bar in the column's color. */
+  .allyear__column::before {
+    content: "";
+    width: 44px;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--bar);
+  }
+
+  .allyear__name {
+    color: var(--color-ink);
+    font-size: 24px;
+    font-weight: var(--weight-semibold);
+    line-height: 1.2;
+  }
+
+  .allyear__when {
+    color: var(--color-text-muted);
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: var(--weight-bold);
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+  }
+
+  .allyear__text {
     color: var(--color-text-soft);
     font-size: 16px;
     font-weight: var(--weight-light);
-    line-height: 1.65;
+    line-height: 25px;
   }
 
-  /* The belt, dots, hint and pointer only exist on phones. */
+  .allyear__cta {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+  }
+
+  .allyear__hand {
+    color: var(--color-red);
+    font-family: var(--font-hand);
+    font-size: 46px;
+    font-weight: var(--weight-bold);
+    line-height: 1;
+  }
+
+  /* The same coral pill as the home page button. */
+  .allyear__button {
+    display: inline-flex;
+    align-items: center;
+    padding: 15px 34px;
+    border-radius: 999px;
+    background: var(--color-coral);
+    color: var(--color-white);
+    font-family: var(--font-jp);
+    font-size: 15px;
+    font-weight: var(--weight-bold);
+    transition: background-color 0.4s ease;
+  }
+
+  .allyear__button:hover,
+  .allyear__button:focus-visible {
+    background: var(--color-red);
+  }
+
+  /* The belt, dots and hint only exist on phones. */
   .year__track {
     display: contents;
   }
 
   .year__rail,
   .year__dots,
-  .year__hint,
-  .pointer {
+  .year__hint {
     display: none;
   }
 
@@ -672,42 +712,57 @@ const year = [
       text-align: center;
     }
 
-    /* The senpai block gives way to a short pointer to the projects. */
-    .senpai {
-      display: none;
+    /* All year long: the three columns stack. */
+    .allyear {
+      gap: 36px;
+      padding: 64px 24px 72px;
     }
 
-    .pointer {
-      display: block;
-      padding: 36px 24px 44px;
+    .allyear__title {
+      font-size: 30px;
     }
 
-    .pointer__card {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      padding: 24px 22px;
-      border-radius: 28px;
-      background: var(--color-peach);
-    }
-
-    .pointer__title {
-      color: var(--color-ink);
-      font-size: 26px;
-      font-weight: var(--weight-semibold);
-      letter-spacing: -0.01em;
-      line-height: 32px;
-    }
-
-    .pointer__text {
-      color: var(--color-text-soft);
+    .allyear__subtitle {
+      max-width: 300px;
       font-size: 15px;
-      font-weight: var(--weight-light);
-      line-height: 24px;
+      line-height: 23px;
     }
 
-    .pointer__button {
-      justify-content: center;
+    .allyear__columns {
+      flex-direction: column;
+      gap: 28px;
+      width: 310px;
+    }
+
+    .allyear__column {
+      flex: none;
+      max-width: none;
+      gap: 8px;
+    }
+
+    .allyear__name {
+      font-size: 22px;
+    }
+
+    .allyear__when {
+      font-size: 12px;
+    }
+
+    .allyear__text {
+      font-size: 15px;
+      line-height: 23px;
+    }
+
+    .allyear__cta {
+      gap: 14px;
+    }
+
+    .allyear__hand {
+      font-size: 40px;
+    }
+
+    .allyear__button {
+      padding: 14px 32px;
     }
   }
 </style>
