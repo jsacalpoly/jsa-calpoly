@@ -12,8 +12,6 @@ leads: [Noah]
 facts:
   - label: WHERE
     value: Building 52, Room 22
-cta:
-  label: Join the GroupMe for dates
 ---
 
 Jseigakan is JSA’s movie night. It runs on some Thursdays, and the dates are posted on the GroupMe.

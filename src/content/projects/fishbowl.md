@@ -12,8 +12,6 @@ leads: [Lennon]
 facts:
   - label: WHERE
     value: A library study room, posted the week of
-cta:
-  label: Join the GroupMe for the room
 ---
 
 Fishbowl is JSA’s study session in a library study room. The room is usually booked the week of, so check the GroupMe to find out where we’ll be.

@@ -100,6 +100,12 @@ const weekendPhotos = [
       ))}
     </div>
     <p class="regular__idea">
+      Dates and rooms are announced on the GroupMe.
+      <a href={groupmeHref} target="_blank" rel="noopener noreferrer">
+        Join the GroupMe →
+      </a>
+    </p>
+    <p class="regular__idea">
       Got an idea for a project? We’d love to hear it.
       <a href={`mailto:${email}`}>Talk to the board →</a>
     </p>
@@ -292,6 +298,10 @@ const weekendPhotos = [
     color: var(--color-text-soft);
     font-size: 18px;
     font-weight: var(--weight-light);
+  }
+
+  .regular__idea + .regular__idea {
+    margin-top: 18px;
   }
 
   .regular__idea a {
@@ -579,6 +589,10 @@ const weekendPhotos = [
       margin-top: 28px;
       font-size: 15px;
       text-align: center;
+    }
+
+    .regular__idea + .regular__idea {
+      margin-top: 20px;
     }
 
     .regular__idea a {
