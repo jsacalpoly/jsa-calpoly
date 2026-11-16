@@ -1,0 +1,115 @@
+---
+import type { CollectionEntry } from "astro:content";
+import ProjectCard from "./ProjectCard.astro";
+import { accents } from "../utils/projects";
+
+interface Props {
+  entries: CollectionEntry<"projects">[];
+  /** Which text goes on the paper: the one-line summary (home page) or the longer blurb (Projects page). */
+  text?: "summary" | "blurb";
+  /** Give each card a "Learn more" that opens its popup. */
+  popups?: boolean;
+}
+
+const { entries, text = "summary", popups = false } = Astro.props;
+---
+
+<div class="project-cards" data-project-cards>
+  <div class="project-cards__row">
+    {entries.map((entry) => (
+      <ProjectCard
+        title={entry.data.title}
+        description={text === "blurb" ? (entry.data.blurb ?? entry.data.summary) : entry.data.summary}
+        image={entry.data.image}
+        color={accents[entry.data.accent].color}
+        jpTitle={entry.data.jpTitle}
+        photoTilt={entry.data.photoTilt}
+        paperTilt={entry.data.paperTilt}
+        offset={entry.data.offset}
+        focus={entry.data.imageFocus}
+        popup={popups ? entry.id : undefined}
+      />
+    ))}
+  </div>
+  <!-- Phone only: which card you are on. -->
+  <div class="project-cards__dots" aria-hidden="true">
+    {entries.map((_, index) => (
+      <span class:list={{ "is-active": index === 0 }} />
+    ))}
+  </div>
+</div>
+
+<style>
+  /* The photos stick out above the papers, so leave room for them above the row. */
+  .project-cards__row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 32px;
+  }
+
+  .project-cards__dots {
+    display: none;
+  }
+
+  /* Phone: the papers in a row you swipe, with dots underneath. */
+  @media (max-width: 768px) {
+    /* Extra top and bottom room so the taped photos and the shadows are not cut off by the scroll area. */
+    .project-cards__row {
+      justify-content: flex-start;
+      gap: 16px;
+      padding: 16px 24px 20px;
+      overflow-x: auto;
+      scroll-padding-inline: 24px;
+      scroll-snap-type: x mandatory;
+      scrollbar-width: none;
+    }
+
+    .project-cards__row::-webkit-scrollbar {
+      display: none;
+    }
+
+    .project-cards__row > :global(*) {
+      scroll-snap-align: start;
+    }
+
+    .project-cards__dots {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    .project-cards__dots span {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #d9d9d9;
+      transition: background-color 0.2s ease;
+    }
+
+    .project-cards__dots span.is-active {
+      background: var(--color-red);
+    }
+  }
+</style>
+
+<script>
+  // Phones: light up the dot for the card that is in view.
+  document.querySelectorAll<HTMLElement>("[data-project-cards]").forEach((wrapper) => {
+    const row = wrapper.querySelector<HTMLElement>(".project-cards__row");
+    const dots = wrapper.querySelectorAll<HTMLElement>(".project-cards__dots span");
+
+    row?.addEventListener(
+      "scroll",
+      () => {
+        const first = row.firstElementChild as HTMLElement | null;
+        if (!first) return;
+        const step = first.offsetWidth + parseFloat(getComputedStyle(row).columnGap || "0");
+        const active = Math.min(dots.length - 1, Math.max(0, Math.round(row.scrollLeft / step)));
+        dots.forEach((dot, i) => dot.classList.toggle("is-active", i === active));
+      },
+      { passive: true },
+    );
+  });
+</script>
