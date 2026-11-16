@@ -3,7 +3,7 @@
 title: Hiking
 type: regular
 order: 5
-image: ../../assets/events/arch-graveyard-hike-2026.jpg
+image: ../../assets/projects/hiking.jpg
 accent: orange
 summary: Hiking trips with the club.
 schedule: Every ~2 months
