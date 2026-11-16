@@ -19,6 +19,7 @@ export const navLinks: NavLink[] = [
       { name: "Previous eras", href: "/eras" },
     ],
   },
+  { name: "Projects", href: "/projects", gap: 29.25 },
   { name: "Photos", href: "/photos", gap: 29.25 },
   { name: "Calendar", href: "/calendar", gap: 29.25 },
 ];
