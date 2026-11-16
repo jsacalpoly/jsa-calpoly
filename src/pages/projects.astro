@@ -11,7 +11,7 @@ import { email, groupmeHref } from "../data/contact";
 import camping from "../assets/events/camping-lopez-lake-2026.jpg";
 import soubetsukai from "../assets/events/soubetsukai-2026.jpg";
 import pismo from "../assets/events/pismo-2026.jpg";
-import sportsSocial from "../assets/events/sports-social-2026.jpg";
+import volleyball from "../assets/projects/volleyball.jpg";
 
 // Paused projects stay in the collection but are left off the page.
 const all = (await getCollection("projects"))
@@ -174,12 +174,12 @@ const weekendPhotos = [
       <div class="events__photos events__photos--single">
         <figure class="snap snap--big" style="--x: 90px; --y: 24px; --r: -3deg; --mx: 30px; --my: 14px;">
           <Image
-            src={sportsSocial}
-            alt="A volleyball game at night"
-            width={632}
-            height={624}
-            widths={[316, 632]}
-            sizes="(max-width: 768px) 238px, 316px"
+            src={volleyball}
+            alt="A group of JSA members posing with a volleyball in front of the net"
+            width={672}
+            height={504}
+            widths={[336, 672]}
+            sizes="(max-width: 768px) 238px, 336px"
             quality={80}
           />
           <figcaption>volleyball</figcaption>
@@ -426,7 +426,7 @@ const weekendPhotos = [
   }
 
   .events__photos--single {
-    height: 440px;
+    height: 390px;
   }
 
   .events__block--sports .events__photos {
@@ -478,8 +478,9 @@ const weekendPhotos = [
     text-align: center;
   }
 
+  /* The volleyball photo is a wide group shot, so its print is 4:3 to keep everyone in frame. */
   .snap--big {
-    width: 340px;
+    width: 360px;
     padding: 12px 12px 68px;
   }
 
@@ -489,8 +490,8 @@ const weekendPhotos = [
   }
 
   .snap--big :global(img) {
-    width: 316px;
-    height: 312px;
+    width: 336px;
+    height: 252px;
   }
 
   .snap--big figcaption {
@@ -500,8 +501,9 @@ const weekendPhotos = [
   /* A sticker on the volleyball photo. */
   .events__sticker {
     position: absolute;
-    left: 310px;
-    top: 322px;
+    left: 262px;
+    top: 4px;
+    white-space: nowrap;
     z-index: 2;
     padding: 9px 16px;
     border-radius: 3px;
@@ -667,7 +669,7 @@ const weekendPhotos = [
     }
 
     .events__photos--single {
-      height: 350px;
+      height: 270px;
     }
 
     .events__block--sports .events__photos {
@@ -709,7 +711,7 @@ const weekendPhotos = [
 
     .snap--big :global(img) {
       width: 238px;
-      height: 228px;
+      height: 178px;
     }
 
     .snap--big figcaption {
@@ -717,8 +719,8 @@ const weekendPhotos = [
     }
 
     .events__sticker {
-      left: 170px;
-      top: 262px;
+      left: 188px;
+      top: 8px;
       padding: 7px 13px;
       font-size: 12px;
     }
