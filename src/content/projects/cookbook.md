@@ -2,7 +2,9 @@
 title: Cookbook
 type: regular
 order: 4
-image: ../../assets/projects/cookbook.png
+image: ../../assets/projects/cookbook.jpg
+# The square card crops the sides, so lean left to keep everyone at the cutting boards in frame.
+imageFocus: 40% 45%
 accent: coral
 summary: Recipes, cooking events, and more. Everyone’s welcome.
 schedule: Sundays · around 2 PM
