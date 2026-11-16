@@ -1,0 +1,712 @@
+---
+import { getCollection } from "astro:content";
+import { Image } from "astro:assets";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import BigLittleFeature from "../components/BigLittleFeature.astro";
+import ProjectCards from "../components/ProjectCards.astro";
+import RegularProjectCard from "../components/RegularProjectCard.astro";
+import ProjectDialog from "../components/ProjectDialog.astro";
+import { email, groupmeHref } from "../data/contact";
+
+import camping from "../assets/events/camping-lopez-lake-2026.jpg";
+import soubetsukai from "../assets/events/soubetsukai-2026.jpg";
+import pismo from "../assets/events/pismo-2026.jpg";
+import sportsSocial from "../assets/events/sports-social-2026.jpg";
+
+// Paused projects stay in the collection but are left off the page.
+const all = (await getCollection("projects"))
+  .filter((entry) => entry.data.status === "active")
+  .sort((a, b) => a.data.order - b.data.order);
+const program = all.find((entry) => entry.data.type === "program");
+const major = all.filter((entry) => entry.data.type === "major");
+const regular = all.filter((entry) => entry.data.type === "regular");
+
+// Weekend events and sports are not projects: they are hosted by the whole club, so they are written here
+// instead of in the projects collection, and nothing in that section is clickable.
+const weekendPhotos = [
+  { image: camping, caption: "camping at Lopez Lake", x: 0, y: 64, r: -4, mx: 0, my: 56 },
+  { image: soubetsukai, caption: "soubetsukai", x: 134, y: 0, r: 3, mx: 94, my: 0, z: 1 },
+  { image: pismo, caption: "Pismo", x: 272, y: 84, r: -2, mx: 186, my: 70 },
+];
+---
+
+<BaseLayout
+  title="Projects | Cal Poly JSA"
+  description="The projects, weekend events, and sports you can join at Cal Poly JSA."
+  flushFooter
+  responsive
+>
+  <!-- Intro -->
+  <section class="intro">
+    <h1 class="intro__title">JSA Projects</h1>
+    <p class="intro__text">
+      Everyone’s welcome to pull up. Join the{" "}
+      <a href={groupmeHref} class="intro__link">
+        GroupMe
+      </a>{" "}
+      to see what’s coming up, then just show up.
+    </p>
+  </section>
+
+  <!-- The Big-Little program, featured -->
+  {program && (
+    <BigLittleFeature
+      slug={program.id}
+      title={program.data.title}
+      subtitleJp={program.data.subtitleJp}
+      eyebrow={program.data.eyebrow}
+      note={program.data.note}
+      description={program.data.blurb ?? program.data.summary}
+      image={program.data.image}
+      focus={program.data.imageFocus}
+      tilt={program.data.photoTilt}
+    />
+  )}
+
+  <!-- Major projects -->
+  <section class="major" id="major-projects">
+    <header class="heading">
+      <h2 class="heading__title">Major projects</h2>
+      <p class="heading__sub">
+        Ongoing groups with their own teams, and new people are always welcome.{" "}
+        <span class="desktop-only">Open a card to see how to join.</span>
+        <span class="phone-only">Swipe, then tap a card.</span>
+      </p>
+    </header>
+    <ProjectCards entries={major} text="blurb" popups />
+  </section>
+
+  <!-- Regular projects -->
+  <section class="regular" id="regular-projects">
+    <header class="heading">
+      <h2 class="heading__title">Regular projects</h2>
+      <p class="heading__sub">
+        Casual meetups run by project leads. Drop in whenever you can, and check the GroupMe for dates and rooms.
+      </p>
+    </header>
+    <div class="regular__grid">
+      {regular.map((entry, index) => (
+        <RegularProjectCard
+          slug={entry.id}
+          title={entry.data.title}
+          image={entry.data.image}
+          accent={entry.data.accent}
+          schedule={entry.data.schedule}
+          detail={entry.data.detail}
+          leads={entry.data.leads}
+          focus={entry.data.imageFocus}
+          tilt={index % 2 === 0 ? -2 : 1.6}
+        />
+      ))}
+    </div>
+    <p class="regular__idea">
+      Got an idea for a project? We’d love to hear it.
+      <a href={`mailto:${email}`}>Talk to the board →</a>
+    </p>
+  </section>
+
+  <!-- Club events: weekend events and sports. Hosted by the whole club, so not clickable. -->
+  <section class="events" id="club-events">
+    <header class="events__head">
+      <p class="events__eyebrow">The heart of JSA</p>
+      <h2 class="events__title">Club events</h2>
+      <p class="events__intro">
+        Weekend events and sports are the biggest, most regular things JSA does, and anyone is free to pull up. No need
+        to be a member, JSA is open to everyone at Cal Poly. Dates are on the Calendar page.
+      </p>
+    </header>
+
+    <div class="events__block">
+      <div class="events__text">
+        <h3 class="events__heading">Weekend events</h3>
+        <p class="events__tag">Friday–Sunday · usually Saturday</p>
+        <p class="events__body">
+          Weekend events are what JSA is known for. Most weekends there’s something going on, usually on a Saturday:
+          bonfires, camping trips, the Soubetsukai send-off, the Winter Formal and more. Bring a friend, pull up
+          whenever you can, and check the GroupMe for what to bring.
+        </p>
+        <p class="events__examples">
+          <span class="events__examples-label">the big ones:</span>
+          senpai kouhai reveal, winter formal, camping, soubetsukai
+        </p>
+      </div>
+      <div class="events__photos">
+        {weekendPhotos.map((photo) => (
+          <figure
+            class="snap"
+            style={`--x: ${photo.x}px; --y: ${photo.y}px; --r: ${photo.r}deg; --mx: ${photo.mx}px; --my: ${photo.my}px; --z: ${photo.z ?? 0};`}
+          >
+            <Image
+              src={photo.image}
+              alt=""
+              width={400}
+              height={368}
+              widths={[200, 400]}
+              sizes="(max-width: 768px) 132px, 200px"
+              quality={80}
+            />
+            <figcaption>{photo.caption}</figcaption>
+          </figure>
+        ))}
+      </div>
+    </div>
+
+    <div class="events__block events__block--sports">
+      <div class="events__text">
+        <h3 class="events__heading">Sports</h3>
+        <p class="events__tag">Weekly · competitive or recreational</p>
+        <p class="events__lead">Volleyball is a huge part of JSA.</p>
+        <p class="events__body">
+          Sports run weekly, and volleyball is almost every semester. Play on a competitive team (D3 to D2) or jump into
+          recreational, which anyone can play, so just pull up. Other sports rotate in and out too.
+        </p>
+        <p class="events__examples">
+          <span class="events__examples-label">also on rotation:</span>
+          basketball, softball, futsal
+        </p>
+      </div>
+      <div class="events__photos events__photos--single">
+        <figure class="snap snap--big" style="--x: 90px; --y: 24px; --r: -3deg; --mx: 30px; --my: 14px;">
+          <Image
+            src={sportsSocial}
+            alt="A volleyball game at night"
+            width={632}
+            height={624}
+            widths={[316, 632]}
+            sizes="(max-width: 768px) 238px, 316px"
+            quality={80}
+          />
+          <figcaption>volleyball</figcaption>
+        </figure>
+        <span class="events__sticker">Our biggest sport</span>
+      </div>
+    </div>
+  </section>
+
+  {all.map((entry) => (
+    <ProjectDialog entry={entry} tilt={entry.data.type === "regular" ? 1.6 : -2} />
+  ))}
+</BaseLayout>
+
+<style>
+  .desktop-only {
+    display: inline;
+  }
+
+  .phone-only {
+    display: none;
+  }
+
+  /* ---------- Intro ---------- */
+  .intro {
+    padding: 70px 80px 64px;
+    text-align: center;
+  }
+
+  .intro__title {
+    color: var(--color-red);
+    font-size: 60px;
+    font-weight: var(--weight-semibold);
+    letter-spacing: -0.015em;
+    line-height: 1.05;
+  }
+
+  .intro__text {
+    max-width: 640px;
+    margin: 22px auto 0;
+    color: var(--color-text-soft);
+    font-size: 18px;
+    font-weight: var(--weight-light);
+    line-height: 28px;
+  }
+
+  .intro__link {
+    text-decoration: underline;
+  }
+
+  /* ---------- Section headings (Major, Regular) ---------- */
+  .heading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    text-align: center;
+  }
+
+  .heading__title {
+    color: var(--color-red);
+    font-size: 40px;
+    font-weight: var(--weight-semibold);
+    line-height: 1.2;
+  }
+
+  .heading__sub {
+    max-width: 780px;
+    color: var(--color-text-soft);
+    font-size: 17px;
+    font-weight: var(--weight-light);
+    line-height: 26px;
+  }
+
+  /* ---------- Major projects ---------- */
+  .major {
+    padding: 100px 0 110px;
+  }
+
+  /* The photos stick out above the papers, so leave room for them under the heading. */
+  .major .heading {
+    margin-bottom: 84px;
+  }
+
+  /* ---------- Regular projects ---------- */
+  .regular {
+    padding: 90px 0 100px;
+    background: var(--color-peach);
+  }
+
+  .regular .heading {
+    margin-bottom: 56px;
+  }
+
+  .regular__grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 28px;
+    width: var(--content-width);
+    margin-inline: auto;
+  }
+
+  /* With an odd number of projects, the last one sits in the middle of its row. */
+  .regular__grid > :global(:last-child:nth-child(odd)) {
+    grid-column: 1 / -1;
+    justify-self: center;
+    width: calc(50% - 14px);
+  }
+
+  .regular__idea {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    margin-top: 48px;
+    color: var(--color-text-soft);
+    font-size: 18px;
+    font-weight: var(--weight-light);
+  }
+
+  .regular__idea a {
+    color: var(--color-red);
+    font-family: var(--font-mono);
+    font-size: 16px;
+    font-weight: var(--weight-bold);
+    text-decoration: underline;
+  }
+
+  /* ---------- Club events ---------- */
+  .events {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 96px;
+    padding: 104px 0 120px;
+    background: var(--color-maroon);
+    color: var(--color-white);
+  }
+
+  .events__head {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    text-align: center;
+  }
+
+  .events__eyebrow {
+    color: #efe0a0;
+    font-family: var(--font-mono);
+    font-size: 14px;
+    font-weight: var(--weight-bold);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .events__title {
+    font-size: 52px;
+    font-weight: var(--weight-semibold);
+    line-height: 1.2;
+  }
+
+  .events__intro {
+    max-width: 780px;
+    font-size: 19px;
+    font-weight: var(--weight-light);
+    line-height: 30px;
+  }
+
+  .events__block {
+    display: flex;
+    align-items: center;
+    gap: 70px;
+    width: 1000px;
+  }
+
+  .events__text {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 18px;
+    min-width: 0;
+  }
+
+  .events__heading {
+    font-size: 38px;
+    font-weight: var(--weight-semibold);
+    line-height: 1.2;
+  }
+
+  /* A highlighter swipe. */
+  .events__tag {
+    padding: 2px 8px 3px;
+    background: rgba(245, 174, 93, 0.95);
+    color: var(--color-ink);
+    font-family: var(--font-mono);
+    font-size: 14px;
+    font-weight: var(--weight-bold);
+    letter-spacing: 0.02em;
+    line-height: 1.4;
+    text-transform: uppercase;
+    rotate: -0.6deg;
+  }
+
+  .events__lead {
+    font-size: 24px;
+    font-weight: var(--weight-semibold);
+    line-height: 1.3;
+  }
+
+  .events__body {
+    max-width: 430px;
+    font-size: 17px;
+    font-weight: var(--weight-light);
+    line-height: 28px;
+  }
+
+  .events__examples {
+    max-width: 430px;
+    font-family: var(--font-hand);
+    font-size: 28px;
+    line-height: 34px;
+  }
+
+  .events__examples-label {
+    display: block;
+    color: #efe0a0;
+    font-size: 30px;
+    font-weight: var(--weight-bold);
+    line-height: 1.1;
+  }
+
+  /* Photos: scattered taped prints. The sports block puts its photo on the left. */
+  .events__photos {
+    position: relative;
+    flex: none;
+    width: 500px;
+    height: 370px;
+  }
+
+  .events__photos--single {
+    height: 440px;
+  }
+
+  .events__block--sports .events__photos {
+    order: -1;
+  }
+
+  .snap {
+    position: absolute;
+    left: var(--x);
+    top: var(--y);
+    z-index: var(--z, 0);
+    width: 224px;
+    margin: 0;
+    padding: 12px 12px 60px;
+    border-radius: 2px;
+    background: var(--color-white);
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.35);
+    color: var(--color-ink);
+    rotate: var(--r);
+  }
+
+  .snap::before {
+    content: "";
+    position: absolute;
+    top: -9px;
+    left: 50%;
+    width: 72px;
+    height: 22px;
+    translate: -50% 0;
+    rotate: -4deg;
+    background: rgba(239, 224, 160, 0.9);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  }
+
+  .snap :global(img) {
+    width: 200px;
+    height: 184px;
+    object-fit: cover;
+  }
+
+  .snap figcaption {
+    position: absolute;
+    right: 12px;
+    bottom: 14px;
+    left: 12px;
+    font-family: var(--font-hand);
+    font-size: 24px;
+    line-height: 1.1;
+    text-align: center;
+  }
+
+  .snap--big {
+    width: 340px;
+    padding: 12px 12px 68px;
+  }
+
+  .snap--big::before {
+    width: 104px;
+    height: 30px;
+  }
+
+  .snap--big :global(img) {
+    width: 316px;
+    height: 312px;
+  }
+
+  .snap--big figcaption {
+    font-size: 36px;
+  }
+
+  /* A sticker on the volleyball photo. */
+  .events__sticker {
+    position: absolute;
+    left: 310px;
+    top: 322px;
+    z-index: 2;
+    padding: 9px 16px;
+    border-radius: 3px;
+    background: var(--color-coral);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+    color: var(--color-ink);
+    font-family: var(--font-mono);
+    font-size: 15px;
+    font-weight: var(--weight-bold);
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    rotate: 6deg;
+  }
+
+  /* ---------- Phone, from the mobile Figma frame ---------- */
+  @media (max-width: 768px) {
+    .desktop-only {
+      display: none;
+    }
+
+    .phone-only {
+      display: inline;
+    }
+
+    .intro {
+      padding: 48px 24px 44px;
+    }
+
+    .intro__title {
+      font-size: 40px;
+    }
+
+    .intro__text {
+      margin-top: 16px;
+      font-size: 15px;
+      line-height: 23px;
+    }
+
+    .heading {
+      gap: 8px;
+      padding-inline: 24px;
+    }
+
+    .heading__title {
+      font-size: 30px;
+    }
+
+    .heading__sub {
+      max-width: 320px;
+      font-size: 14px;
+      line-height: 21px;
+    }
+
+    .major {
+      padding: 68px 0 72px;
+    }
+
+    .major .heading {
+      margin-bottom: 14px;
+    }
+
+    .regular {
+      padding: 64px 24px 72px;
+    }
+
+    .regular .heading {
+      margin-bottom: 28px;
+      padding-inline: 0;
+    }
+
+    .regular__grid {
+      grid-template-columns: 1fr;
+      gap: 16px;
+      width: auto;
+    }
+
+    .regular__grid > :global(:last-child:nth-child(odd)) {
+      grid-column: auto;
+      width: auto;
+    }
+
+    .regular__idea {
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 28px;
+      font-size: 15px;
+      text-align: center;
+    }
+
+    .regular__idea a {
+      font-size: 14px;
+    }
+
+    .events {
+      gap: 60px;
+      padding: 64px 24px 80px;
+    }
+
+    .events__head {
+      gap: 12px;
+    }
+
+    .events__eyebrow {
+      font-size: 12px;
+    }
+
+    .events__title {
+      font-size: 36px;
+    }
+
+    .events__intro {
+      font-size: 15px;
+      line-height: 23px;
+    }
+
+    .events__block {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 18px;
+      width: 100%;
+      max-width: 342px;
+    }
+
+    .events__text {
+      gap: 16px;
+    }
+
+    .events__heading {
+      font-size: 30px;
+    }
+
+    .events__tag {
+      font-size: 11px;
+    }
+
+    .events__lead {
+      font-size: 22px;
+    }
+
+    .events__body {
+      max-width: none;
+      font-size: 15px;
+      line-height: 23px;
+    }
+
+    .events__examples {
+      max-width: none;
+      font-size: 24px;
+      line-height: 30px;
+    }
+
+    .events__examples-label {
+      font-size: 26px;
+    }
+
+    .events__photos {
+      width: 342px;
+      height: 290px;
+    }
+
+    .events__photos--single {
+      height: 350px;
+    }
+
+    .events__block--sports .events__photos {
+      order: 0;
+    }
+
+    .snap {
+      left: var(--mx);
+      top: var(--my);
+      width: 156px;
+      padding: 12px 12px 54px;
+    }
+
+    .snap::before {
+      top: -8px;
+      width: 56px;
+      height: 18px;
+    }
+
+    .snap :global(img) {
+      width: 132px;
+      height: 120px;
+    }
+
+    .snap figcaption {
+      bottom: 10px;
+      font-size: 18px;
+    }
+
+    .snap--big {
+      width: 262px;
+      padding: 12px 12px 66px;
+    }
+
+    .snap--big::before {
+      width: 84px;
+      height: 24px;
+    }
+
+    .snap--big :global(img) {
+      width: 238px;
+      height: 228px;
+    }
+
+    .snap--big figcaption {
+      font-size: 28px;
+    }
+
+    .events__sticker {
+      left: 170px;
+      top: 262px;
+      padding: 7px 13px;
+      font-size: 12px;
+    }
+  }
+</style>
