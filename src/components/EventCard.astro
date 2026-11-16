@@ -147,6 +147,18 @@ const { preset, title, time, place, wobble = 0 } = Astro.props;
     --edge: 1.8px dashed #966941;
   }
 
+  /* A break from school: warm amber paper with a stitched line. The long title is set a little smaller. */
+  .event-card[data-preset="break"] {
+    --paper: #fbe4b8;
+    --ink: #7a3b12;
+    --soft: #9a6a3c;
+    --edge: 2.5px dashed #cc7a22;
+  }
+
+  .event-card[data-preset="break"] .event-card__title {
+    font-size: 17px;
+  }
+
   /* The cinema one: a dark card with film holes down both sides. */
   .event-card[data-preset="jseigakan"] {
     --paper: #261e22;
