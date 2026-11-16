@@ -1,0 +1,199 @@
+---
+import { Image } from "astro:assets";
+import type { ImageMetadata } from "astro";
+import { accents, leadNames, type Accent } from "../utils/projects";
+
+interface Props {
+  /** The project's slug; "Learn more" opens its popup. */
+  slug: string;
+  title: string;
+  image: ImageMetadata;
+  accent: Accent;
+  /** When it meets, shown in the colored tag. */
+  schedule?: string;
+  /** Where or how, shown under the tag. */
+  detail?: string;
+  leads?: string[];
+  /** Which part of the photo stays in view when it is cropped. */
+  focus?: string;
+  /** Rotation of the taped photo, in degrees. */
+  tilt?: number;
+}
+
+const { slug, title, image, accent, schedule, detail, leads = [], focus = "50% 50%", tilt = -2 } = Astro.props;
+
+const line = [detail, leads.length ? `Led by ${leadNames(leads)}` : ""].filter(Boolean).join(" · ");
+---
+
+<article
+  class="regular"
+  style={`--accent: ${accents[accent].color}; --on-accent: ${accents[accent].on}; --tilt: ${tilt}deg;`}
+>
+  <div class="regular__photo" aria-hidden="true">
+    <span class="regular__tape"></span>
+    <Image
+      src={image}
+      alt=""
+      width={248}
+      height={248}
+      widths={[124, 248]}
+      sizes="124px"
+      quality={80}
+      style={`object-position: ${focus};`}
+    />
+  </div>
+  <div class="regular__text">
+    <h3 class="regular__title">{title}</h3>
+    {schedule && <p class="regular__tag">{schedule}</p>}
+    {line && <p class="regular__detail">{line}</p>}
+    <a class="regular__link" href={`#${slug}`} data-project-open={slug}>
+      Learn more →
+    </a>
+  </div>
+</article>
+
+<style>
+  .regular {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 22px;
+    padding: 22px;
+    border-radius: 6px;
+    background: var(--color-white);
+    box-shadow: 0 5px 12px rgba(0, 0, 0, 0.18);
+  }
+
+  /* A small taped print. The 156px slot leaves room for its tilt. */
+  .regular__photo {
+    position: relative;
+    flex: none;
+    width: 144px;
+    margin: 10px 6px 0 6px;
+    padding: 10px 10px 24px;
+    border-radius: 2px;
+    background: var(--color-white);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.22);
+    rotate: var(--tilt);
+  }
+
+  .regular__photo :global(img) {
+    width: 124px;
+    height: 124px;
+    object-fit: cover;
+    background: var(--color-divider);
+  }
+
+  .regular__tape {
+    position: absolute;
+    top: -9px;
+    left: 50%;
+    width: 64px;
+    height: 20px;
+    translate: -50% 0;
+    rotate: -4deg;
+    background: rgba(239, 224, 160, 0.9);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  }
+
+  .regular__text {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    min-width: 0;
+  }
+
+  .regular__title {
+    font-size: 24px;
+    font-weight: var(--weight-semibold);
+    line-height: 1.2;
+  }
+
+  .regular__tag {
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: var(--accent);
+    color: var(--on-accent);
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: var(--weight-bold);
+    letter-spacing: 0.02em;
+    line-height: 1.3;
+    text-transform: uppercase;
+  }
+
+  .regular__detail {
+    color: var(--color-text-soft);
+    font-size: 14px;
+    font-weight: var(--weight-light);
+    line-height: 21px;
+  }
+
+  .regular__link {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    font-weight: var(--weight-bold);
+  }
+
+  .regular__link:hover,
+  .regular__link:focus-visible {
+    text-decoration: underline;
+  }
+
+  /* The whole card opens the popup, not just the words. */
+  .regular__link::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+  }
+
+  /* Phone: a smaller print beside the text, from the mobile Figma frame. */
+  @media (max-width: 768px) {
+    .regular {
+      gap: 14px;
+      padding: 16px;
+    }
+
+    .regular__photo {
+      width: 100px;
+      margin: 8px 6px 0 4px;
+      padding: 8px 8px 20px;
+    }
+
+    .regular__photo :global(img) {
+      width: 84px;
+      height: 84px;
+    }
+
+    .regular__tape {
+      top: -7px;
+      width: 48px;
+      height: 16px;
+    }
+
+    .regular__text {
+      gap: 6px;
+    }
+
+    .regular__title {
+      font-size: 20px;
+    }
+
+    .regular__tag {
+      padding: 3px 8px;
+      font-size: 10px;
+    }
+
+    .regular__detail {
+      font-size: 13px;
+      line-height: 19px;
+    }
+
+    .regular__link {
+      font-size: 13px;
+    }
+  }
+</style>
