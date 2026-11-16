@@ -2,11 +2,12 @@
 import { getCollection } from "astro:content";
 import { Image } from "astro:assets";
 import BaseLayout from "../layouts/BaseLayout.astro";
+import PageBanner from "../components/PageBanner.astro";
 import BigLittleFeature from "../components/BigLittleFeature.astro";
 import ProjectCards from "../components/ProjectCards.astro";
 import RegularProjectCard from "../components/RegularProjectCard.astro";
 import ProjectDialog from "../components/ProjectDialog.astro";
-import { email, groupmeHref } from "../data/contact";
+import { email, groupmeHref, instagramHref } from "../data/contact";
 
 import camping from "../assets/events/camping-lopez-lake-2026.jpg";
 import soubetsukai from "../assets/events/soubetsukai-2026.jpg";
@@ -36,17 +37,7 @@ const weekendPhotos = [
   flushFooter
   responsive
 >
-  <!-- Intro -->
-  <section class="intro">
-    <h1 class="intro__title">JSA Projects</h1>
-    <p class="intro__text">
-      Everyone’s welcome to pull up. Join the{" "}
-      <a href={groupmeHref} class="intro__link">
-        GroupMe
-      </a>{" "}
-      to see what’s coming up, then just show up.
-    </p>
-  </section>
+  <PageBanner title="JSA Projects" subtitle="The Heart of JSA" />
 
   <!-- The Big-Little program, featured -->
   {program && (
@@ -81,7 +72,8 @@ const weekendPhotos = [
     <header class="heading">
       <h2 class="heading__title">Regular projects</h2>
       <p class="heading__sub">
-        Casual meetups run by project leads. Drop in whenever you can, and check the GroupMe for dates and rooms.
+        Casual meetups run by project leads. Come by whenever you can and if you have questions feel free to DM the
+        project lead!
       </p>
     </header>
     <div class="regular__grid">
@@ -118,7 +110,11 @@ const weekendPhotos = [
       <h2 class="events__title">Club events</h2>
       <p class="events__intro">
         Weekend events and sports are the biggest, most regular things JSA does, and anyone is free to pull up. No need
-        to be a member, JSA is open to everyone at Cal Poly. Dates are on the Calendar page.
+        to be a member! Dates are posted on the{" "}
+        <a href={instagramHref} class="events__link" target="_blank" rel="noopener noreferrer">
+          instagram
+        </a>
+        , and you can always ask for a ride :)
       </p>
     </header>
 
@@ -164,7 +160,7 @@ const weekendPhotos = [
         <p class="events__lead">Volleyball is a huge part of JSA.</p>
         <p class="events__body">
           Sports run weekly, and volleyball is almost every semester. Play on a competitive team (D3 to D2) or jump into
-          recreational, which anyone can play, so just pull up. Other sports rotate in and out too.
+          recreational, which anyone can play, so just pull up. Other sports rotate in and out too!
         </p>
         <p class="events__examples">
           <span class="events__examples-label">also on rotation:</span>
@@ -201,33 +197,6 @@ const weekendPhotos = [
 
   .phone-only {
     display: none;
-  }
-
-  /* ---------- Intro ---------- */
-  .intro {
-    padding: 70px 80px 64px;
-    text-align: center;
-  }
-
-  .intro__title {
-    color: var(--color-red);
-    font-size: 60px;
-    font-weight: var(--weight-semibold);
-    letter-spacing: -0.015em;
-    line-height: 1.05;
-  }
-
-  .intro__text {
-    max-width: 640px;
-    margin: 22px auto 0;
-    color: var(--color-text-soft);
-    font-size: 18px;
-    font-weight: var(--weight-light);
-    line-height: 28px;
-  }
-
-  .intro__link {
-    text-decoration: underline;
   }
 
   /* ---------- Section headings (Major, Regular) ---------- */
@@ -351,6 +320,10 @@ const weekendPhotos = [
     font-size: 19px;
     font-weight: var(--weight-light);
     line-height: 30px;
+  }
+
+  .events__link {
+    text-decoration: underline;
   }
 
   .events__block {
@@ -526,20 +499,6 @@ const weekendPhotos = [
 
     .phone-only {
       display: inline;
-    }
-
-    .intro {
-      padding: 48px 24px 44px;
-    }
-
-    .intro__title {
-      font-size: 40px;
-    }
-
-    .intro__text {
-      margin-top: 16px;
-      font-size: 15px;
-      line-height: 23px;
     }
 
     .heading {
