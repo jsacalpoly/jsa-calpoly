@@ -4,8 +4,8 @@ jpTitle: true
 type: major
 order: 3
 image: ../../assets/projects/genkey.jpg
-# Keep the top of the photo so both performers' faces stay in frame.
-imageFocus: 50% 0%
+# The popup crops tighter than the cards, so lean a little left to keep both faces in frame.
+imageFocus: 45% 50%
 accent: pink
 summary: JSA’s own band. Come make or enjoy music with us.
 blurb: JSA's very own band performing at JSA events, PCW, and more! GenKey is the place for creating, sharing, or enjoying music!
