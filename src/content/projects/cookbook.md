@@ -9,7 +9,7 @@ accent: coral
 summary: Recipes, cooking events, and more. Everyone’s welcome.
 schedule: Sundays · around 2 PM
 detail: Not every week, check the GroupMe
-leads: [Maileia]
+leads: [Maileia, Lindsay]
 homeOrder: 1
 photoTilt: -2.5
 paperTilt: -1.2
