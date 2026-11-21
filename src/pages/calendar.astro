@@ -7,6 +7,7 @@ import TicketCard from "../components/TicketCard.astro";
 import {
   buildWeeks,
   comingUp,
+  doodles,
   layoutWeek,
   monthName,
   ticketLook,
@@ -112,8 +113,8 @@ const shifts = [14, -18, 6];
               >
                 <path d={layout.thread} />
               </svg>
-              {layout.days.map(({ day, slots, phoneHeight }) => (
-                <li class="day" data-date={day.key} style={`--day-height: ${phoneHeight}px`}>
+              {layout.days.map(({ day, slots, breaks, phoneHeight }, dayIndex) => (
+                <li class="day" data-date={day.key} style={`--day-height: ${phoneHeight}px; --col: ${dayIndex + 1}`}>
                   <div class="day__pill">
                     <span class="day__badge">TODAY</span>
                     <span class="day__name">{day.name}</span>
@@ -135,9 +136,37 @@ const shifts = [14, -18, 6];
                           />
                         </div>
                       ))}
+                      {breaks
+                        .filter(({ first }) => first)
+                        .map(({ event }) => (
+                          <div class="slot slot--break">
+                            <EventCard
+                              preset={event.preset}
+                              title={event.title}
+                              time={event.time}
+                              place={event.place}
+                            />
+                          </div>
+                        ))}
                     </div>
-                    {slots.length === 0 && <p class="day__quiet">nothing planned</p>}
+                    {slots.length === 0 && breaks.length === 0 && <p class="day__quiet">nothing planned</p>}
+                    {breaks.length > 0 && !breaks[0].first && slots.length === 0 && (
+                      <p class="day__quiet day__quiet--break">no events, break</p>
+                    )}
                   </div>
+                </li>
+              ))}
+              {layout.spans.map(({ event, start, length }) => (
+                <li class="break-span" style={`--col: ${start + 1}; --len: ${length}`}>
+                  <article class="break-banner">
+                    <svg class="break-banner__doodle" viewBox="0 0 24 24" aria-hidden="true">
+                      <path d={doodles[event.preset]} />
+                    </svg>
+                    <div class="break-banner__text">
+                      <h3>{event.title}</h3>
+                      <p>{[event.time, event.place].filter(Boolean).join("  ·  ")}</p>
+                    </div>
+                  </article>
                 </li>
               ))}
             </ol>
@@ -477,7 +506,8 @@ const shifts = [14, -18, 6];
       transition: color 0.45s cubic-bezier(0.37, 0, 0.63, 1);
     }
 
-    .slot {
+    .slot,
+    .break-banner {
       transition: opacity 0.4s ease;
     }
   }
@@ -501,7 +531,8 @@ const shifts = [14, -18, 6];
     border-style: dashed;
   }
 
-  .board.is-preview .slot {
+  .board.is-preview .slot,
+  .board.is-preview .break-banner {
     opacity: 0.8;
   }
 
@@ -529,6 +560,10 @@ const shifts = [14, -18, 6];
     display: flex;
     flex-direction: column;
     gap: 12px;
+
+    /* Each day sits in its own grid column, so the wide break card can lie across several of them. */
+    grid-column: var(--col);
+    grid-row: 1;
   }
 
   .day__pill {
@@ -599,6 +634,62 @@ const shifts = [14, -18, 6];
 
   .day__quiet {
     display: none;
+  }
+
+  /* A break (Thanksgiving) is one wide card across its days on desktop, so the per-day pieces stay hidden here. */
+  .slot--break {
+    display: none;
+  }
+
+  .break-span {
+    z-index: 1;
+    grid-row: 1;
+    grid-column: var(--col) / span var(--len);
+    align-self: start;
+    margin: 190px 8px 0;
+    list-style: none;
+    pointer-events: none;
+  }
+
+  .break-banner {
+    display: flex;
+    gap: 24px;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 34px 20px 30px;
+    border: 2.5px dashed #cc7a22;
+    border-radius: 20px;
+    background: #fbe4b8;
+    color: #7a3b12;
+    rotate: 0.8deg;
+  }
+
+  .break-banner__doodle {
+    flex: none;
+    width: 45px;
+    height: 45px;
+    overflow: visible;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    rotate: -6deg;
+  }
+
+  .break-banner__text h3 {
+    font-family: var(--font-hand);
+    font-size: 34px;
+    font-weight: var(--weight-bold);
+    line-height: 1.1;
+  }
+
+  .break-banner__text p {
+    margin-top: 4px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: var(--weight-bold);
+    text-transform: uppercase;
   }
 
   .day.is-today .day__pill {
@@ -761,6 +852,15 @@ const shifts = [14, -18, 6];
     .days {
       display: block;
       height: var(--phone-height);
+    }
+
+    /* On a phone the break is one card on its first day, then "no events, break" on the days after it. */
+    .break-span {
+      display: none;
+    }
+
+    .slot--break {
+      display: block;
     }
 
     .thread {
