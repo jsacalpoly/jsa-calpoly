@@ -14,7 +14,7 @@
     "lint:fix": "eslint . --fix"
   },
   "dependencies": {
-    "astro": "^7.4.7"
+    "astro": "^7.4.13"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
