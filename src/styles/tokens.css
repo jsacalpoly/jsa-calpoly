@@ -9,7 +9,6 @@
 
   /* Extra colors used by the Wix design (sampled from Figma) */
   --color-maroon: #852024; /* header wordmark */
-  --color-crimson: #c93136; /* photo frames, board-card badge */
   --color-lavender: #ccc8f1; /* hero fallback */
   --color-cream: #f6f2ef; /* 26-27 page backdrop */
   --color-cream-photos: #f7f3ef; /* photo gallery banner */
@@ -19,7 +18,6 @@
   --color-rose: #dd7376; /* eras reflection band */
   --color-salmon: #ff6161; /* era names */
   --color-off-white: #fafafa; /* eras banner */
-  --color-border: #959595; /* language select border */
   --color-muted: #8c8c8c; /* footer text */
   --color-divider: #e6e6e6; /* footer top rule */
   --color-peach: #fff6f3; /* About page soft sections */
@@ -29,9 +27,7 @@
 
   /* Fonts. Swap the families here (and the <link> in BaseLayout) in one place. */
   --font-body: "Poppins", system-ui, sans-serif;
-  --font-display: "Krona One", "Poppins", system-ui, sans-serif; /* hero + contact button */
   --font-hero: "Montserrat", "Poppins", system-ui, sans-serif; /* home hero title */
-  --font-ui: "Nunito Sans", "Poppins", system-ui, sans-serif; /* language select, buttons */
   --font-serif-jp: "Noto Serif JP", "Noto Sans JP", serif; /* About page Japanese accents */
   --font-jp: "Noto Sans JP", "Poppins", system-ui, sans-serif;
   --font-mono: "Courier Prime", "Courier New", monospace; /* photo event titles */
