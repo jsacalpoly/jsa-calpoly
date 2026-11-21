@@ -1,9 +1,9 @@
 ---
 title: Thanksgiving Break
 preset: break
-# Saturday to Tuesday.
+# Saturday the 21st to Sunday the 29th.
 date: 2026-11-21
-endDate: 2026-11-24
+endDate: 2026-11-29
 time: NO EVENTS
-place: Sat 21 – Tue 24
+place: Sat 21 – Sun 29
 ---
