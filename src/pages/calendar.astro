@@ -63,9 +63,13 @@ const shifts = [14, -18, 6];
               <Image src={flowerDivider} alt="" width={20} />
             </div>
             <p class="board__range">
-              <span data-heading>This week at JSA</span> &nbsp;·&nbsp; <span data-range>{weeks[0].week.label}</span>
+              <span class="heading heading--now">This week at JSA</span>
+              <span class="heading heading--next">Next week (preview) &nbsp;·&nbsp; plans may change</span>
+              <span class="heading heading--next-short">Preview &nbsp;·&nbsp; may change</span>
+              &nbsp;·&nbsp; <span data-range>{weeks[0].week.label}</span>
             </p>
             <div class="board__toggle" role="group" aria-label="Choose a week">
+              <span class="board__thumb" aria-hidden="true"></span>
               <button type="button" data-view="current" aria-pressed="true">This week</button>
               <button type="button" data-view="next" aria-pressed="false">Next week <span>preview</span></button>
             </div>
@@ -86,10 +90,6 @@ const shifts = [14, -18, 6];
             </svg>
           </div>
         </div>
-
-        <p class="board__notice" data-notice hidden role="status">
-          Just a sneak peek! Next week's plans aren't set in stone and might change.
-        </p>
 
         {weeks.map(({ week, layout }, index) => (
           <div class="week" data-week-start={week.start} data-label={week.label} hidden={index !== 0}>
@@ -181,15 +181,28 @@ const shifts = [14, -18, 6];
   // The next week can be previewed. It is marked as tentative so nobody treats it as final.
   const next = weeks[weeks.indexOf(current) + 1];
   const board = document.querySelector<HTMLElement>(".board")!;
-  const heading = document.querySelector("[data-heading]");
   const range = document.querySelector("[data-range]");
-  const notice = document.querySelector<HTMLElement>("[data-notice]");
+  const toggle = document.querySelector<HTMLElement>(".board__toggle");
+  const thumb = document.querySelector<HTMLElement>(".board__thumb");
   const buttons = [...document.querySelectorAll<HTMLButtonElement>("[data-view]")];
 
   const calm = window.matchMedia("(prefers-reduced-motion: reduce)");
   let showing: HTMLElement | undefined;
 
   let latest = 0;
+
+  // The red oval slides under the chosen button instead of blinking between them.
+  function moveThumb() {
+    const on = buttons.find((button) => button.getAttribute("aria-pressed") === "true");
+    if (!toggle || !thumb || !on) return;
+    thumb.style.width = `${on.offsetWidth}px`;
+    thumb.style.translate = `${on.offsetLeft - 4}px 0`;
+    toggle.classList.add("has-thumb");
+    // Turn the sliding on only after the first placement, so the oval does not fly in from the corner on load.
+    requestAnimationFrame(() => requestAnimationFrame(() => toggle.classList.add("is-ready")));
+  }
+  window.addEventListener("resize", moveThumb);
+  void document.fonts?.ready.then(moveThumb);
 
   // The week you leave eases out (slow in, slow out), then the new one eases in from the side you are heading to.
   // CSS does the animating; this only swaps the weeks in between.
@@ -200,6 +213,7 @@ const shifts = [14, -18, 6];
     const changed = leaving !== undefined && leaving !== shown;
     const mine = ++latest;
     buttons.forEach((button) => button.setAttribute("aria-pressed", String(button.dataset.view === view)));
+    moveThumb();
 
     function swap() {
       if (mine !== latest) return; // a newer click took over
@@ -214,9 +228,7 @@ const shifts = [14, -18, 6];
       }
       showing = shown;
       board.classList.toggle("is-preview", preview);
-      if (heading) heading.textContent = preview ? "Next week (preview)" : "This week at JSA";
       if (range) range.textContent = shown.dataset.label ?? "";
-      if (notice) notice.hidden = !preview;
     }
 
     if (changed && !calm.matches) {
@@ -352,6 +364,7 @@ const shifts = [14, -18, 6];
 
   /* ---------- Week switch and preview notice ---------- */
   .board__toggle {
+    position: relative;
     display: flex;
     gap: 4px;
     margin-top: 6px;
@@ -360,7 +373,23 @@ const shifts = [14, -18, 6];
     background: #fff;
   }
 
+  /* The red oval. The script puts it under the chosen button. */
+  .board__thumb {
+    position: absolute;
+    top: 4px;
+    bottom: 4px;
+    left: 4px;
+    display: none;
+    border-radius: 999px;
+    background: var(--color-coral);
+  }
+
+  .board__toggle.has-thumb .board__thumb {
+    display: block;
+  }
+
   .board__toggle button {
+    position: relative;
     padding: 6px 16px;
     border: 0;
     border-radius: 999px;
@@ -379,8 +408,12 @@ const shifts = [14, -18, 6];
   }
 
   .board__toggle button[aria-pressed="true"] {
-    background: var(--color-coral);
     color: #fff;
+  }
+
+  /* Until the script has placed the oval, the chosen button carries the color itself. */
+  .board__toggle:not(.has-thumb) button[aria-pressed="true"] {
+    background: var(--color-coral);
   }
 
   .board__toggle button:focus-visible {
@@ -388,23 +421,23 @@ const shifts = [14, -18, 6];
     outline-offset: 2px;
   }
 
-  .board__notice {
-    margin: -8px 0 22px;
-    padding: 10px 18px;
-    border: 1.5px dashed var(--color-coral);
-    border-radius: 18px;
-    background: #fff4f1;
-    color: var(--color-maroon);
-    font-family: var(--font-hand);
-    font-size: 22px;
-    text-align: center;
+  /* The note that next week may change lives in the title line, so nothing on the board changes size. */
+  .heading--next,
+  .heading--next-short {
+    display: none;
+    font-weight: var(--weight-semibold);
   }
 
-  .board__notice[hidden] {
+  .board.is-preview .heading--now,
+  .board.is-preview .heading--next-short {
     display: none;
   }
 
-  /* Switching weeks: the new week fades in sliding from the side you are heading to, and the notice drops in. */
+  .board.is-preview .heading--next {
+    display: inline;
+  }
+
+  /* Switching weeks: the old week eases out, the new one eases in, and the red oval slides across. */
   @media (prefers-reduced-motion: no-preference) {
     /* Slow in, slow out: the old week eases away, then the new one eases in. */
     .week[data-leave] {
@@ -427,8 +460,14 @@ const shifts = [14, -18, 6];
       --from: -24px;
     }
 
-    .board__notice:not([hidden]) {
-      animation: notice-in 0.4s cubic-bezier(0.645, 0.045, 0.355, 1) both;
+    .board__toggle.is-ready .board__thumb {
+      transition:
+        translate 0.45s cubic-bezier(0.37, 0, 0.63, 1),
+        width 0.45s cubic-bezier(0.37, 0, 0.63, 1);
+    }
+
+    .board__toggle button {
+      transition: color 0.45s cubic-bezier(0.37, 0, 0.63, 1);
     }
 
     .slot {
@@ -447,13 +486,6 @@ const shifts = [14, -18, 6];
     from {
       opacity: 0;
       translate: var(--from) 0;
-    }
-  }
-
-  @keyframes notice-in {
-    from {
-      opacity: 0;
-      translate: 0 -6px;
     }
   }
 
@@ -700,11 +732,13 @@ const shifts = [14, -18, 6];
       display: none;
     }
 
-    .board__notice {
-      margin: -6px 0 16px;
-      padding: 8px 12px;
-      border-radius: 14px;
-      font-size: 18px;
+    /* The phone's title line is narrow, so the note is the shorter one. */
+    .board.is-preview .heading--next {
+      display: none;
+    }
+
+    .board.is-preview .heading--next-short {
+      display: inline;
     }
 
     .days {
