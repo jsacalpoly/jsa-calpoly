@@ -13,10 +13,8 @@ The official website of the Japanese Student Association at Cal Poly San Luis Ob
 | Framework       | [Astro](https://astro.build)              | Builds static HTML from reusable components                                                  |
 | Styling         | Plain CSS                                 | Design tokens as CSS custom properties; flexbox and grid for layout; component-scoped styles |
 | Fonts           | Google Fonts                              | Loaded through font variables so they can be swapped in one place                            |
-| Content         | Astro content collections (Markdown/JSON) | Board members, eras, photo events and projects stored as data                                |
+| Content         | Astro content collections (Markdown/JSON) | Board members, eras, photo events, calendar events and projects stored as data               |
 | Images          | `astro:assets`                            | Resizes and compresses images at build time                                                  |
-| Contact form    | Cloudflare Worker (or Formspree)          | Sends submissions to jsacalpoly@gmail.com                                                    |
-| Embeds          | Google Calendar, Instagram                | Calendar and social content                                                                  |
 | Version control | GitHub (`jsacalpoly` organization)        | Pull-request workflow                                                                        |
 | Hosting         | Cloudflare Workers (static assets)        | Builds on every push via Workers Builds; production deploys on merge to `main`               |
 
@@ -62,35 +60,32 @@ Every pull request runs `npm run format:check`, `npm run lint` and `npm run buil
 
 ```
 /
-├── public/                  # Static files served as-is (favicon, robots.txt)
+├── public/                  # Static files served as-is (favicons)
 ├── src/
-│   ├── assets/              # Images processed by astro:assets
-│   │   ├── board/
-│   │   ├── events/
-│   │   └── projects/
+│   ├── assets/              # Images processed by astro:assets (one folder per page or section)
 │   ├── components/          # Reusable pieces (match the Figma components)
-│   │   ├── Header.astro
-│   │   ├── Footer.astro
-│   │   ├── BoardCard.astro
-│   │   ├── PhotoEventCard.astro
-│   │   └── ProjectCard.astro
 │   ├── content/             # Site data (edit these to update content)
 │   │   ├── boards/          # One file per board year
-│   │   ├── events/          # One file per photo gallery event
+│   │   ├── calendar/        # One file per event on the Forecast calendar (/calendar)
+│   │   ├── eras/            # One file per past board era
+│   │   ├── events/          # One file per photo gallery album
 │   │   └── projects/        # One file per project, shown on /projects (and some on the home page)
+│   ├── data/                # Small shared lists (navigation links, contact details)
 │   ├── layouts/
 │   │   └── BaseLayout.astro # Shared <head>, header and footer
 │   ├── pages/               # Each file becomes a route
-│   │   ├── index.astro
-│   │   ├── board.astro
-│   │   ├── eras.astro
-│   │   ├── events.astro
-│   │   ├── photos.astro
+│   │   ├── index.astro      # Home
+│   │   ├── board.astro      # About
+│   │   ├── 26-27.astro      # This year's board
+│   │   ├── eras.astro       # Previous eras
 │   │   ├── projects.astro
-│   │   └── contact.astro
+│   │   ├── photos.astro
+│   │   ├── calendar.astro   # Forecast
+│   │   └── links.astro      # Standalone link page (no header or footer)
+│   ├── utils/               # Helpers for the calendar, eras and projects
 │   └── styles/
 │       ├── tokens.css       # Colors, fonts, spacing, type scale
-│       └── global.css       # Resets and base element styles
+│       └── global.css       # Resets, base element styles and the scroll-in animations
 ├── astro.config.mjs
 ├── wrangler.jsonc           # Cloudflare Workers config
 └── package.json
@@ -109,13 +104,12 @@ All shared values live in `src/styles/tokens.css` as CSS custom properties. Use 
   --color-coral: #fe6161;
   --color-orange: #f5ae5d;
   --color-pink: #e6999b;
-  --color-mint: #abd9d6;
   --color-ink: #181818;
   --color-white: #ffffff;
 
-  /* Fonts (replace with Google Fonts once imported) */
+  /* Fonts */
   --font-body: "Poppins", system-ui, sans-serif;
-  --font-display: "Poppins", system-ui, sans-serif;
+  --font-hand: "Caveat", "Segoe Script", cursive;
 }
 ```
 
@@ -134,12 +128,12 @@ Most yearly updates are edits to files in `src/content/`, not page code.
 ```json
 {
   "year": "2026-2027",
-  "eraName": "",
   "members": [
     {
       "name": "Lorraina Uyeno",
       "role": "President",
-      "photo": "../../assets/board/lorraina-uyeno.jpg"
+      "tier": "executive",
+      "photo": "../../assets/board/lorraina-uyeno.png"
     }
   ]
 }
@@ -149,12 +143,13 @@ Most yearly updates are edits to files in `src/content/`, not page code.
 
 ```markdown
 ---
-title: "Pismo! 11.7.26"
+title: "Pismo!"
 date: 2026-11-07
 cover: ../../assets/events/pismo-2026.jpg
+album: https://photos.app.goo.gl/JeKWkxqGPSBRFiBp6 # the Google Photos album
 ---
 
-This weekend JSA took a trip down to Pismo Beach!
+this weekend jsa took a trip down to pismo beach!!
 ```
 
 **Example: adding a project** (`src/content/projects/jseigakan.md`)

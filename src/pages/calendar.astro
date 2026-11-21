@@ -7,6 +7,7 @@ import TicketCard from "../components/TicketCard.astro";
 import {
   buildWeeks,
   comingUp,
+  doodles,
   layoutWeek,
   monthName,
   ticketLook,
@@ -63,8 +64,23 @@ const shifts = [14, -18, 6];
               <Image src={flowerDivider} alt="" width={20} />
             </div>
             <p class="board__range">
-              This week at JSA &nbsp;·&nbsp; <span data-range>{weeks[0].week.label}</span>
+              <span class="heading heading--now">This week at JSA</span>
+              <span class="heading heading--next">Next week (preview) &nbsp;·&nbsp; plans may change</span>
+              <span class="heading heading--next-short">Preview &nbsp;·&nbsp; may change</span>
+              <span class="range-dot">&nbsp;·&nbsp;</span>{" "}
+              <span class="range-dates" data-range>
+                {weeks[0].week.label}
+              </span>
             </p>
+            <div class="board__toggle" role="group" aria-label="Choose a week">
+              <span class="board__thumb" aria-hidden="true"></span>
+              <button type="button" data-view="current" aria-pressed="true">
+                This week
+              </button>
+              <button type="button" data-view="next" aria-pressed="false">
+                Next week <span>preview</span>
+              </button>
+            </div>
           </div>
 
           <div class="tile tile--calendar" aria-hidden="true">
@@ -97,8 +113,8 @@ const shifts = [14, -18, 6];
               >
                 <path d={layout.thread} />
               </svg>
-              {layout.days.map(({ day, slots, phoneHeight }) => (
-                <li class="day" data-date={day.key} style={`--day-height: ${phoneHeight}px`}>
+              {layout.days.map(({ day, slots, breaks, phoneHeight }, dayIndex) => (
+                <li class="day" data-date={day.key} style={`--day-height: ${phoneHeight}px; --col: ${dayIndex + 1}`}>
                   <div class="day__pill">
                     <span class="day__badge">TODAY</span>
                     <span class="day__name">{day.name}</span>
@@ -120,9 +136,37 @@ const shifts = [14, -18, 6];
                           />
                         </div>
                       ))}
+                      {breaks
+                        .filter(({ first }) => first)
+                        .map(({ event }) => (
+                          <div class="slot slot--break">
+                            <EventCard
+                              preset={event.preset}
+                              title={event.title}
+                              time={event.time}
+                              place={event.place}
+                            />
+                          </div>
+                        ))}
                     </div>
-                    {slots.length === 0 && <p class="day__quiet">nothing planned</p>}
+                    {slots.length === 0 && breaks.length === 0 && <p class="day__quiet">nothing planned</p>}
+                    {breaks.length > 0 && !breaks[0].first && slots.length === 0 && (
+                      <p class="day__quiet day__quiet--break">no events, break</p>
+                    )}
                   </div>
+                </li>
+              ))}
+              {layout.spans.map(({ event, start, length }) => (
+                <li class="break-span" style={`--col: ${start + 1}; --len: ${length}`}>
+                  <article class="break-banner">
+                    <svg class="break-banner__doodle" viewBox="0 0 24 24" aria-hidden="true">
+                      <path d={doodles[event.preset]} />
+                    </svg>
+                    <div class="break-banner__text">
+                      <h3>{event.title}</h3>
+                      <p>{[event.time, event.place].filter(Boolean).join("  ·  ")}</p>
+                    </div>
+                  </article>
                 </li>
               ))}
             </ol>
@@ -164,14 +208,76 @@ const shifts = [14, -18, 6];
     weeks.find((week) => today >= week.dataset.weekStart! && today <= addDays(week.dataset.weekStart!, 6)) ??
     (today < weeks[0].dataset.weekStart! ? weeks[0] : weeks[weeks.length - 1]);
 
-  weeks.forEach((week) => (week.hidden = week !== current));
   current.querySelectorAll<HTMLElement>("[data-date]").forEach((day) => {
     const date = day.dataset.date!;
     day.classList.toggle("is-today", date === today);
     day.classList.toggle("is-past", date < today);
   });
+
+  // The next week can be previewed. It is marked as tentative so nobody treats it as final.
+  const next = weeks[weeks.indexOf(current) + 1];
+  const board = document.querySelector<HTMLElement>(".board")!;
   const range = document.querySelector("[data-range]");
-  if (range) range.textContent = current.dataset.label ?? "";
+  const toggle = document.querySelector<HTMLElement>(".board__toggle");
+  const thumb = document.querySelector<HTMLElement>(".board__thumb");
+  const buttons = [...document.querySelectorAll<HTMLButtonElement>("[data-view]")];
+
+  const calm = window.matchMedia("(prefers-reduced-motion: reduce)");
+  let showing: HTMLElement | undefined;
+
+  let latest = 0;
+
+  // The red oval slides under the chosen button instead of blinking between them.
+  function moveThumb() {
+    const on = buttons.find((button) => button.getAttribute("aria-pressed") === "true");
+    if (!toggle || !thumb || !on) return;
+    thumb.style.width = `${on.offsetWidth}px`;
+    thumb.style.translate = `${on.offsetLeft - 4}px 0`;
+    toggle.classList.add("has-thumb");
+    // Turn the sliding on only after the first placement, so the oval does not fly in from the corner on load.
+    requestAnimationFrame(() => requestAnimationFrame(() => toggle.classList.add("is-ready")));
+  }
+  window.addEventListener("resize", moveThumb);
+  void document.fonts?.ready.then(moveThumb);
+
+  // The week you leave eases out (slow in, slow out), then the new one eases in from the side you are heading to.
+  // CSS does the animating; this only swaps the weeks in between.
+  function show(view: "current" | "next") {
+    const shown = view === "next" && next ? next : current;
+    const preview = shown !== current;
+    const leaving = showing;
+    const changed = leaving !== undefined && leaving !== shown;
+    const mine = ++latest;
+    buttons.forEach((button) => button.setAttribute("aria-pressed", String(button.dataset.view === view)));
+    moveThumb();
+
+    function swap() {
+      if (mine !== latest) return; // a newer click took over
+      weeks.forEach((week) => {
+        week.hidden = week !== shown;
+        delete week.dataset.leave;
+        delete week.dataset.enter;
+      });
+      if (changed && !calm.matches) {
+        shown.dataset.enter = preview ? "next" : "prev";
+        shown.addEventListener("animationend", () => delete shown.dataset.enter, { once: true });
+      }
+      showing = shown;
+      board.classList.toggle("is-preview", preview);
+      if (range) range.textContent = shown.dataset.label ?? "";
+    }
+
+    if (changed && !calm.matches) {
+      leaving.dataset.leave = preview ? "next" : "prev";
+      leaving.addEventListener("animationend", swap, { once: true });
+    } else {
+      swap();
+    }
+  }
+
+  buttons.forEach((button) => button.addEventListener("click", () => show(button.dataset.view as "current" | "next")));
+  if (!next) document.querySelector<HTMLElement>(".board__toggle")?.remove();
+  show("current");
 </script>
 
 <style>
@@ -292,6 +398,144 @@ const shifts = [14, -18, 6];
     font-weight: var(--weight-medium);
   }
 
+  /* ---------- Week switch and next-week preview ---------- */
+  .board__toggle {
+    position: relative;
+    display: flex;
+    gap: 4px;
+    margin-top: 6px;
+    padding: 4px;
+    border-radius: 999px;
+    background: #fff;
+  }
+
+  /* The red oval. The script puts it under the chosen button. */
+  .board__thumb {
+    position: absolute;
+    top: 4px;
+    bottom: 4px;
+    left: 4px;
+    display: none;
+    border-radius: 999px;
+    background: var(--color-coral);
+  }
+
+  .board__toggle.has-thumb .board__thumb {
+    display: block;
+  }
+
+  .board__toggle button {
+    position: relative;
+    padding: 6px 16px;
+    border: 0;
+    border-radius: 999px;
+    background: none;
+    color: var(--color-maroon);
+    font: inherit;
+    font-size: 13px;
+    font-weight: var(--weight-medium);
+    cursor: pointer;
+  }
+
+  .board__toggle button span {
+    margin-left: 4px;
+    font-size: 11px;
+    font-weight: var(--weight-light);
+  }
+
+  .board__toggle button[aria-pressed="true"] {
+    color: #fff;
+  }
+
+  /* Until the script has placed the oval, the chosen button carries the color itself. */
+  .board__toggle:not(.has-thumb) button[aria-pressed="true"] {
+    background: var(--color-coral);
+  }
+
+  .board__toggle button:focus-visible {
+    outline: 2px solid var(--color-maroon);
+    outline-offset: 2px;
+  }
+
+  /* The note that next week may change lives in the title line, so nothing on the board changes size. */
+  .heading--next,
+  .heading--next-short {
+    display: none;
+    font-weight: var(--weight-semibold);
+  }
+
+  .board.is-preview .heading--now,
+  .board.is-preview .heading--next-short {
+    display: none;
+  }
+
+  .board.is-preview .heading--next {
+    display: inline;
+  }
+
+  /* Switching weeks: the old week eases out, the new one eases in, and the red oval slides across. */
+  @media (prefers-reduced-motion: no-preference) {
+    /* Slow in, slow out: the old week eases away, then the new one eases in. */
+    .week[data-leave] {
+      --to: -24px;
+
+      animation: week-out 0.3s cubic-bezier(0.37, 0, 0.63, 1) forwards;
+    }
+
+    .week[data-leave="prev"] {
+      --to: 24px;
+    }
+
+    .week[data-enter] {
+      --from: 24px;
+
+      animation: week-in 0.5s cubic-bezier(0.37, 0, 0.63, 1) both;
+    }
+
+    .week[data-enter="prev"] {
+      --from: -24px;
+    }
+
+    .board__toggle.is-ready .board__thumb {
+      transition:
+        translate 0.45s cubic-bezier(0.37, 0, 0.63, 1),
+        width 0.45s cubic-bezier(0.37, 0, 0.63, 1);
+    }
+
+    .board__toggle button {
+      transition: color 0.45s cubic-bezier(0.37, 0, 0.63, 1);
+    }
+
+    .slot,
+    .break-banner {
+      transition: opacity 0.4s ease;
+    }
+  }
+
+  @keyframes week-out {
+    to {
+      opacity: 0;
+      translate: var(--to) 0;
+    }
+  }
+
+  @keyframes week-in {
+    from {
+      opacity: 0;
+      translate: var(--from) 0;
+    }
+  }
+
+  /* A previewed week looks unfinished: dashed frame, softer cards. */
+  .board.is-preview {
+    border-style: dashed;
+  }
+
+  .board.is-preview .slot,
+  .board.is-preview .break-banner {
+    opacity: 0.8;
+  }
+
   /* ---------- Days (desktop: seven tall columns) ---------- */
   .week[hidden] {
     display: none;
@@ -316,6 +560,10 @@ const shifts = [14, -18, 6];
     display: flex;
     flex-direction: column;
     gap: 12px;
+
+    /* Each day sits in its own grid column, so the wide break card can lie across several of them. */
+    grid-column: var(--col);
+    grid-row: 1;
   }
 
   .day__pill {
@@ -386,6 +634,62 @@ const shifts = [14, -18, 6];
 
   .day__quiet {
     display: none;
+  }
+
+  /* A break (Thanksgiving) is one wide card across its days on desktop, so the per-day pieces stay hidden here. */
+  .slot--break {
+    display: none;
+  }
+
+  .break-span {
+    z-index: 1;
+    grid-row: 1;
+    grid-column: var(--col) / span var(--len);
+    align-self: start;
+    margin: 190px 8px 0;
+    list-style: none;
+    pointer-events: none;
+  }
+
+  .break-banner {
+    display: flex;
+    gap: 24px;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 34px 20px 30px;
+    border: 2.5px dashed #cc7a22;
+    border-radius: 20px;
+    background: #fbe4b8;
+    color: #7a3b12;
+    rotate: 0.8deg;
+  }
+
+  .break-banner__doodle {
+    flex: none;
+    width: 45px;
+    height: 45px;
+    overflow: visible;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    rotate: -6deg;
+  }
+
+  .break-banner__text h3 {
+    font-family: var(--font-hand);
+    font-size: 34px;
+    font-weight: var(--weight-bold);
+    line-height: 1.1;
+  }
+
+  .break-banner__text p {
+    margin-top: 4px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: var(--weight-bold);
+    text-transform: uppercase;
   }
 
   .day.is-today .day__pill {
@@ -493,13 +797,70 @@ const shifts = [14, -18, 6];
       width: 16px;
     }
 
+    /* Centered, with the dates on a line of their own under the heading (in both views, so nothing changes height). */
     .board__range {
       font-size: 11px;
+      text-align: center;
+    }
+
+    .range-dot {
+      display: none;
+    }
+
+    .range-dates {
+      display: block;
+    }
+
+    .week[data-enter] {
+      --from: 12px;
+    }
+
+    .week[data-enter="prev"] {
+      --from: -12px;
+    }
+
+    .week[data-leave] {
+      --to: -12px;
+    }
+
+    .week[data-leave="prev"] {
+      --to: 12px;
+    }
+
+    .board__toggle {
+      margin-top: 4px;
+    }
+
+    .board__toggle button {
+      padding: 5px 12px;
+      font-size: 11px;
+    }
+
+    .board__toggle button span {
+      display: none;
+    }
+
+    /* The phone's title line is narrow, so the note is the shorter one. */
+    .board.is-preview .heading--next {
+      display: none;
+    }
+
+    .board.is-preview .heading--next-short {
+      display: inline;
     }
 
     .days {
       display: block;
       height: var(--phone-height);
+    }
+
+    /* On a phone the break is one card on its first day, then "no events, break" on the days after it. */
+    .break-span {
+      display: none;
+    }
+
+    .slot--break {
+      display: block;
     }
 
     .thread {

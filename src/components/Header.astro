@@ -1,7 +1,6 @@
 ---
 import { Image } from "astro:assets";
 import logo from "../assets/shared/jsa-logo.png";
-import chevron from "../assets/shared/select-chevron.png";
 import { navLinks } from "../data/navigation";
 
 // Which page we are on, for the phone menu's highlighted link.
@@ -48,13 +47,6 @@ const path = Astro.url.pathname.replace(/\/$/, "") || "/";
         ),
       )}
     </nav>
-
-    <div class="site-header__language">
-      <select aria-label="Language">
-        <option>English</option>
-      </select>
-      <Image class="site-header__chevron" src={chevron} alt="" width={12} height={6} />
-    </div>
 
     <!-- Phone only: the menu button. -->
     <button
@@ -105,14 +97,6 @@ const path = Astro.url.pathname.replace(/\/$/, "") || "/";
         </>
       ))}
     </nav>
-    <div class="mobile-menu__language" role="group" aria-label="Language">
-      <span class="is-active" aria-current="true">
-        EN
-      </span>
-      <span lang="ja" aria-disabled="true">
-        日本語
-      </span>
-    </div>
   </div>
   <button class="mobile-menu__dim" type="button" aria-label="Close menu" tabindex="-1" data-menu-close></button>
 </div>
@@ -137,7 +121,7 @@ const path = Astro.url.pathname.replace(/\/$/, "") || "/";
     margin-inline: auto;
     display: flex;
     align-items: flex-start;
-    padding-left: 53px; /* logo left edge, same as Figma */
+    padding-inline: 53px; /* logo left edge, same as Figma; the links end the same distance from the right edge */
   }
 
   .site-header__logo {
@@ -256,35 +240,6 @@ const path = Astro.url.pathname.replace(/\/$/, "") || "/";
     color: var(--color-coral);
   }
 
-  .site-header__language {
-    position: relative;
-    margin: 20px 136.4px 0 40px;
-    width: 132px;
-    height: 52px;
-  }
-
-  .site-header__language select {
-    appearance: none;
-    width: 100%;
-    height: 100%;
-    padding: 0 0 0 12px;
-    border: 1px solid var(--color-border);
-    border-radius: 0;
-    background: var(--color-white);
-    color: #000;
-    font-family: var(--font-ui);
-    font-size: 18px;
-    font-weight: var(--weight-light);
-    cursor: pointer;
-  }
-
-  .site-header__chevron {
-    position: absolute;
-    right: 16px;
-    top: 23px;
-    pointer-events: none;
-  }
-
   /* Phone-only pieces stay out of the desktop header. */
   .site-header__menu,
   .mobile-menu {
@@ -330,9 +285,8 @@ const path = Astro.url.pathname.replace(/\/$/, "") || "/";
       font-size: 10px;
     }
 
-    /* The desktop links and language select move into the menu. */
-    :global(html.responsive) .site-header__nav,
-    :global(html.responsive) .site-header__language {
+    /* The desktop links move into the menu. */
+    :global(html.responsive) .site-header__nav {
       display: none;
     }
 
@@ -457,7 +411,7 @@ const path = Astro.url.pathname.replace(/\/$/, "") || "/";
     :global(html.responsive) .mobile-menu__links {
       display: flex;
       flex-direction: column;
-      padding: 4px 32px 8px;
+      padding: 4px 32px 28px;
     }
 
     :global(html.responsive) .mobile-menu__links a {
@@ -497,35 +451,6 @@ const path = Astro.url.pathname.replace(/\/$/, "") || "/";
       height: 6px;
       border-radius: 50%;
       background: var(--color-maroon);
-    }
-
-    /* EN / 日本語 pill. Only English exists for now, so the Japanese side is shown but not clickable. */
-    :global(html.responsive) .mobile-menu__language {
-      display: flex;
-      gap: 2px;
-      width: 130px;
-      margin: 8px 32px 28px;
-      padding: 4px;
-      border-radius: 22px;
-      background: #f4f4f4;
-    }
-
-    :global(html.responsive) .mobile-menu__language span {
-      display: grid;
-      flex: 1;
-      place-items: center;
-      height: 36px;
-      border-radius: 18px;
-      color: #737373;
-      font-family: var(--font-jp);
-      font-size: 14px;
-    }
-
-    :global(html.responsive) .mobile-menu__language .is-active {
-      background: var(--color-ink);
-      color: var(--color-white);
-      font-family: var(--font-body);
-      font-weight: var(--weight-medium);
     }
 
     @keyframes menu-fade {

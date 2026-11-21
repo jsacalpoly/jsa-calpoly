@@ -159,6 +159,11 @@ const { preset, title, time, place, wobble = 0 } = Astro.props;
     font-size: 17px;
   }
 
+  /* The dates line, like "SAT 21 – SUN 29". */
+  .event-card[data-preset="break"] .event-card__place {
+    text-transform: uppercase;
+  }
+
   /* The cinema one: a dark card with film holes down both sides. */
   .event-card[data-preset="jseigakan"] {
     --paper: #261e22;

@@ -230,9 +230,26 @@ export interface Slot {
   wobble: number;
 }
 
+/** A break (like Thanksgiving) on one day. It is one wide card across all its days on desktop, one card on its first
+ *  day on phones, and a handwritten note on the days after that. */
+export interface BreakDay {
+  event: Occurrence;
+  /** True on the first day of the break within this week. */
+  first: boolean;
+}
+
+/** A run of consecutive days with the same break, for the wide desktop card. */
+export interface BreakSpan {
+  event: Occurrence;
+  /** Index of its first day in the week, 0 to 6. */
+  start: number;
+  length: number;
+}
+
 export interface DayLayout {
   day: Day;
   slots: Slot[];
+  breaks: BreakDay[];
   phoneHeight: number;
 }
 
@@ -240,7 +257,22 @@ export interface DayLayout {
 export function layoutWeek(week: Week) {
   const range = COLUMN_BASE - KANJI_ZONE - CARD_HEIGHT - CARD_TOP;
   let columnHeight = COLUMN_BASE;
-  const days: DayLayout[] = week.days.map((day) => {
+  const spans: BreakSpan[] = [];
+  let previousBreaks = new Set<string>();
+  const days: DayLayout[] = week.days.map((fullDay, dayIndex) => {
+    // Breaks are drawn apart from the other events, so they do not push the cards in the column around.
+    const day = { ...fullDay, events: fullDay.events.filter((event) => event.preset !== "break") };
+    const breaks = fullDay.events
+      .filter((event) => event.preset === "break")
+      .map((event): BreakDay => {
+        const first = !previousBreaks.has(event.id);
+        const open = spans.find((span) => span.event.id === event.id && span.start + span.length === dayIndex);
+        if (open) open.length += 1;
+        else spans.push({ event, start: dayIndex, length: 1 });
+        return { event, first };
+      });
+    previousBreaks = new Set(breaks.map(({ event }) => event.id));
+
     let previousBottom = -Infinity;
     const slots = day.events.map((event): Slot => {
       const fraction = Math.min(1, Math.max(0, (startHour(event.time) - 8) / 13));
@@ -250,8 +282,10 @@ export function layoutWeek(week: Week) {
       const h = hash(`${event.id}${day.key}`);
       return { event, top: Math.round(top), tilt: tilts[h % tilts.length], wobble: (h >> 4) % 3 };
     });
-    const phoneHeight = day.events.length === 0 ? PHONE_QUIET_HEIGHT : day.events.length * PHONE_EVENT_HEIGHT;
-    return { day, slots, phoneHeight };
+    // On a phone only the first day of a break holds a card; the rest are quiet days.
+    const cards = slots.length + breaks.filter(({ first }) => first).length;
+    const phoneHeight = cards === 0 ? PHONE_QUIET_HEIGHT : cards * PHONE_EVENT_HEIGHT;
+    return { day: fullDay, slots, breaks, phoneHeight };
   });
 
   // The dotted line runs through the middle of every day, wavering left and right, with a loop now and then.
@@ -273,7 +307,7 @@ export function layoutWeek(week: Week) {
     const [a, b] = loop ? [0.98, 0.02] : [0.35, 0.65];
     thread += ` C ${middle + side * bend} ${from + length * a} ${middle - side * bend} ${from + length * b} ${middle} ${to}`;
   }
-  return { columnHeight, days, phoneHeight: y, thread };
+  return { columnHeight, days, spans, phoneHeight: y, thread };
 }
 
 /** Which look a big event's ticket gets. */
