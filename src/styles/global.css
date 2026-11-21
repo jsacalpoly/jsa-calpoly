@@ -115,36 +115,6 @@ a {
   }
 }
 
-/* Moving between pages: the old page fades out while the new one fades in with a small rise, instead of a hard cut
-   with a white flash. This is the browser's own cross-page transition (no router, so every page script still runs
-   normally). Browsers without support just load the page as before, and reduced motion skips it. */
-@media (prefers-reduced-motion: no-preference) {
-  @view-transition {
-    navigation: auto;
-  }
-
-  @keyframes page-out {
-    to {
-      opacity: 0;
-    }
-  }
-
-  @keyframes page-in {
-    from {
-      opacity: 0;
-      translate: 0 8px;
-    }
-  }
-
-  ::view-transition-old(root) {
-    animation: 0.2s cubic-bezier(0.445, 0.05, 0.55, 0.95) both page-out;
-  }
-
-  ::view-transition-new(root) {
-    animation: 0.35s cubic-bezier(0.645, 0.045, 0.355, 1) 0.1s both page-in;
-  }
-}
-
 /* Anchor links (like the hero button) glide instead of jumping. */
 @media (prefers-reduced-motion: no-preference) {
   html {
