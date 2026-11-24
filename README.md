@@ -2,8 +2,8 @@
 
 The official website of the Japanese Student Association (JSA) at Cal Poly San Luis Obispo.
 
-**Visit the site:** [https://YOUR-DOMAIN-HERE](https://YOUR-DOMAIN-HERE)  
-**Design in Figma:** [Cal Poly JSA Wix Site Recreation](https://www.figma.com/design/shOcawf7ftNzUNCOFnU6Is)
+**Visit the site:** [jsacalpoly.org](https://jsacalpoly.org)  
+**Design in Figma:** [Figma Design](https://www.figma.com/design/shOcawf7ftNzUNCOFnU6Is)
 
 ---
 
@@ -290,3 +290,5 @@ Pushes to `main` deploy to production. Pushes to other branches build a preview 
 
 Japanese Student Association, Cal Poly SLO
 jsacalpoly@gmail.com · Instagram [@calpolyjsa](https://www.instagram.com/calpolyjsa)
+
+Lead developer: [Ethan Ikenaga](https://github.com/ethanikenaga) on GitHub
