@@ -1,125 +1,46 @@
 # Cal Poly JSA Website
 
-The official website of the Japanese Student Association at Cal Poly San Luis Obispo, rebuilt from Wix as a static site with Astro and plain CSS, hosted on Cloudflare Workers.
+The official website of the Japanese Student Association (JSA) at Cal Poly San Luis Obispo.
 
-**Design reference:** [Figma — Cal Poly JSA Wix Site Recreation](https://www.figma.com/design/shOcawf7ftNzUNCOFnU6Is)
-
----
-
-## Tech stack
-
-| Layer           | Choice                                    | Purpose                                                                                      |
-| --------------- | ----------------------------------------- | -------------------------------------------------------------------------------------------- |
-| Framework       | [Astro](https://astro.build)              | Builds static HTML from reusable components                                                  |
-| Styling         | Plain CSS                                 | Design tokens as CSS custom properties; flexbox and grid for layout; component-scoped styles |
-| Fonts           | Google Fonts                              | Loaded through font variables so they can be swapped in one place                            |
-| Content         | Astro content collections (Markdown/JSON) | Board members, eras, photo events, calendar events and projects stored as data               |
-| Images          | `astro:assets`                            | Resizes and compresses images at build time                                                  |
-| Version control | GitHub (`jsacalpoly` organization)        | Pull-request workflow                                                                        |
-| Hosting         | Cloudflare Workers (static assets)        | Builds on every push via Workers Builds; production deploys on merge to `main`               |
+**Visit the site:** [https://YOUR-DOMAIN-HERE](https://YOUR-DOMAIN-HERE)  
+**Design in Figma:** [Cal Poly JSA Wix Site Recreation](https://www.figma.com/design/shOcawf7ftNzUNCOFnU6Is)
 
 ---
 
-## Getting started
+## About
 
-### Requirements
+JSA is a community for students who love Japanese culture, food, language and friendship, and everyone is welcome. This site is where members find out who we are, what we do and when we meet.
 
-- [Node.js](https://nodejs.org) (current LTS)
-- npm (comes with Node)
-- Git
+## What's on the site
 
-### Run locally
+| Page                 | What you'll find                                         |
+| -------------------- | -------------------------------------------------------- |
+| **Home** (`/`)       | An overview of JSA and some of our projects              |
+| **About** (`/board`) | Who we are and what a year with JSA looks like           |
+| **26-27**            | This year's board                                        |
+| **Eras**             | Past boards and the history of the club                  |
+| **Projects**         | Recurring meetups, big events and the Big-Little program |
+| **Photos**           | Photo albums from our events                             |
+| **Calendar**         | What's coming up                                         |
+| **Links**            | One page with all of our important links                 |
 
-```bash
-git clone https://github.com/jsacalpoly/<repo-name>.git
-cd <repo-name>
-npm install
-npm run dev
-```
+## Get involved
 
-The site runs at `http://localhost:4321` and reloads as you edit.
+- Follow us on Instagram: [@calpolyjsa](https://www.instagram.com/calpolyjsa)
+- Email us: jsacalpoly@gmail.com
+- Check the **Projects** and **Calendar** pages for upcoming meetups.
 
-### Commands
+## Helping with the site
 
-| Command            | What it does                                                      |
-| ------------------ | ----------------------------------------------------------------- |
-| `npm run dev`      | Start the local dev server                                        |
-| `npm run build`    | Build the production site into `dist/`                            |
-| `npm run preview`  | Serve the built site locally to check it before deploying         |
-| `npx wrangler dev` | Preview the built site in Cloudflare's local runtime              |
-| `npm run format`   | Format all files with Prettier                                    |
-| `npm run lint`     | Check the code with ESLint (`npm run lint:fix` fixes what it can) |
-
-### Checks
-
-Every pull request runs `npm run format:check`, `npm run lint` and `npm run build` in GitHub Actions (`.github/workflows/ci.yml`). Run `npm run format` and `npm run lint` before you push so the checks pass.
+You don't need to be a developer to keep the site current. Most yearly updates (board members, photo albums, projects and calendar events) are edits to small data files, with no page code involved. See [Updating the content](#updating-the-content) and the [contributing steps](#contributing).
 
 ---
 
-## Project structure
+## For developers
 
-```
-/
-├── public/                  # Static files served as-is (favicons)
-├── src/
-│   ├── assets/              # Images processed by astro:assets (one folder per page or section)
-│   ├── components/          # Reusable pieces (match the Figma components)
-│   ├── content/             # Site data (edit these to update content)
-│   │   ├── boards/          # One file per board year
-│   │   ├── calendar/        # One file per event on the Forecast calendar (/calendar)
-│   │   ├── eras/            # One file per past board era
-│   │   ├── events/          # One file per photo gallery album
-│   │   └── projects/        # One file per project, shown on /projects (and some on the home page)
-│   ├── data/                # Small shared lists (navigation links, contact details)
-│   ├── layouts/
-│   │   └── BaseLayout.astro # Shared <head>, header and footer
-│   ├── pages/               # Each file becomes a route
-│   │   ├── index.astro      # Home
-│   │   ├── board.astro      # About
-│   │   ├── 26-27.astro      # This year's board
-│   │   ├── eras.astro       # Previous eras
-│   │   ├── projects.astro
-│   │   ├── photos.astro
-│   │   ├── calendar.astro   # Forecast
-│   │   └── links.astro      # Standalone link page (no header or footer)
-│   ├── utils/               # Helpers for the calendar, eras and projects
-│   └── styles/
-│       ├── tokens.css       # Colors, fonts, spacing, type scale
-│       └── global.css       # Resets, base element styles and the scroll-in animations
-├── astro.config.mjs
-├── wrangler.jsonc           # Cloudflare Workers config
-└── package.json
-```
+Everything below is technical: how the site is built, run, styled and deployed. It is a static site built with Astro and plain CSS, hosted on Cloudflare Workers.
 
----
-
-## Styling conventions
-
-All shared values live in `src/styles/tokens.css` as CSS custom properties. Use the variables instead of hard-coding values so the palette and fonts stay consistent.
-
-```css
-:root {
-  /* Brand palette */
-  --color-red: #ed4545;
-  --color-coral: #fe6161;
-  --color-orange: #f5ae5d;
-  --color-pink: #e6999b;
-  --color-ink: #181818;
-  --color-white: #ffffff;
-
-  /* Fonts */
-  --font-body: "Poppins", system-ui, sans-serif;
-  --font-hand: "Caveat", "Segoe Script", cursive;
-}
-```
-
-- **Component styles** go in a `<style>` block inside the `.astro` component. Astro scopes these to that component automatically, so they won't leak into other pages.
-- **Class names** describe what an element is, like `board-card` or `event-title`, not how it looks.
-- **Fonts:** import Google Fonts in `BaseLayout.astro`, then update the font variables in `tokens.css`.
-
----
-
-## Updating content
+### Updating the content
 
 Most yearly updates are edits to files in `src/content/`, not page code.
 
@@ -185,11 +106,136 @@ Put images in the matching folder under `src/assets/`. Astro resizes them automa
 
 ---
 
-## Deployment
+### Contributing
+
+1. Create a branch from `main` (for example, `update-board-2027`).
+2. Make your changes and check them with `npm run dev`.
+3. Open a pull request from your personal GitHub account.
+4. Check the Cloudflare preview URL for your branch.
+5. Merge once it looks right; the site deploys automatically.
+
+Please don't commit directly to `main`.
+
+---
+
+### Tech stack
+
+| Layer           | Choice                                    | Purpose                                                                                      |
+| --------------- | ----------------------------------------- | -------------------------------------------------------------------------------------------- |
+| Framework       | [Astro](https://astro.build)              | Builds static HTML from reusable components                                                  |
+| Styling         | Plain CSS                                 | Design tokens as CSS custom properties; flexbox and grid for layout; component-scoped styles |
+| Fonts           | Google Fonts                              | Loaded through font variables so they can be swapped in one place                            |
+| Content         | Astro content collections (Markdown/JSON) | Board members, eras, photo events, calendar events and projects stored as data               |
+| Images          | `astro:assets`                            | Resizes and compresses images at build time                                                  |
+| Version control | GitHub (`jsacalpoly` organization)        | Pull-request workflow                                                                        |
+| Hosting         | Cloudflare Workers (static assets)        | Builds on every push via Workers Builds; production deploys on merge to `main`               |
+
+---
+
+### Getting started
+
+#### Requirements
+
+- [Node.js](https://nodejs.org) (current LTS)
+- npm (comes with Node)
+- Git
+
+#### Run locally
+
+```bash
+git clone https://github.com/jsacalpoly/<repo-name>.git
+cd <repo-name>
+npm install
+npm run dev
+```
+
+The site runs at `http://localhost:4321` and reloads as you edit.
+
+#### Commands
+
+| Command            | What it does                                                      |
+| ------------------ | ----------------------------------------------------------------- |
+| `npm run dev`      | Start the local dev server                                        |
+| `npm run build`    | Build the production site into `dist/`                            |
+| `npm run preview`  | Serve the built site locally to check it before deploying         |
+| `npx wrangler dev` | Preview the built site in Cloudflare's local runtime              |
+| `npm run format`   | Format all files with Prettier                                    |
+| `npm run lint`     | Check the code with ESLint (`npm run lint:fix` fixes what it can) |
+
+#### Checks
+
+Every pull request runs `npm run format:check`, `npm run lint` and `npm run build` in GitHub Actions (`.github/workflows/ci.yml`). Run `npm run format` and `npm run lint` before you push so the checks pass.
+
+---
+
+### Project structure
+
+```
+/
+├── public/                  # Static files served as-is (favicons)
+├── src/
+│   ├── assets/              # Images processed by astro:assets (one folder per page or section)
+│   ├── components/          # Reusable pieces (match the Figma components)
+│   ├── content/             # Site data (edit these to update content)
+│   │   ├── boards/          # One file per board year
+│   │   ├── calendar/        # One file per event on the Forecast calendar (/calendar)
+│   │   ├── eras/            # One file per past board era
+│   │   ├── events/          # One file per photo gallery album
+│   │   └── projects/        # One file per project, shown on /projects (and some on the home page)
+│   ├── data/                # Small shared lists (navigation links, contact details)
+│   ├── layouts/
+│   │   └── BaseLayout.astro # Shared <head>, header and footer
+│   ├── pages/               # Each file becomes a route
+│   │   ├── index.astro      # Home
+│   │   ├── board.astro      # About
+│   │   ├── 26-27.astro      # This year's board
+│   │   ├── eras.astro       # Previous eras
+│   │   ├── projects.astro
+│   │   ├── photos.astro
+│   │   ├── calendar.astro   # Forecast
+│   │   └── links.astro      # Standalone link page (no header or footer)
+│   ├── utils/               # Helpers for the calendar, eras and projects
+│   └── styles/
+│       ├── tokens.css       # Colors, fonts, spacing, type scale
+│       └── global.css       # Resets, base element styles and the scroll-in animations
+├── astro.config.mjs
+├── wrangler.jsonc           # Cloudflare Workers config
+└── package.json
+```
+
+---
+
+### Styling conventions
+
+All shared values live in `src/styles/tokens.css` as CSS custom properties. Use the variables instead of hard-coding values so the palette and fonts stay consistent.
+
+```css
+:root {
+  /* Brand palette */
+  --color-red: #ed4545;
+  --color-coral: #fe6161;
+  --color-orange: #f5ae5d;
+  --color-pink: #e6999b;
+  --color-ink: #181818;
+  --color-white: #ffffff;
+
+  /* Fonts */
+  --font-body: "Poppins", system-ui, sans-serif;
+  --font-hand: "Caveat", "Segoe Script", cursive;
+}
+```
+
+- **Component styles** go in a `<style>` block inside the `.astro` component. Astro scopes these to that component automatically, so they won't leak into other pages.
+- **Class names** describe what an element is, like `board-card` or `event-title`, not how it looks.
+- **Fonts:** import Google Fonts in `BaseLayout.astro`, then update the font variables in `tokens.css`.
+
+---
+
+### Deployment
 
 The site deploys to Cloudflare Workers as static assets, connected to this GitHub repository through Workers Builds. It's a static site, so no Astro adapter is needed.
 
-### `wrangler.jsonc`
+#### `wrangler.jsonc`
 
 ```jsonc
 {
@@ -202,7 +248,7 @@ The site deploys to Cloudflare Workers as static assets, connected to this GitHu
 }
 ```
 
-### Cloudflare dashboard setup
+#### Cloudflare dashboard setup
 
 1. Go to **Workers & Pages** and select **Create**.
 2. Under **Import a repository**, connect the `jsacalpoly` GitHub organization and select this repo.
@@ -220,27 +266,15 @@ Pushes to `main` deploy to production. Pushes to other branches build a preview 
 
 ---
 
-## Contributing
+### Roadmap
 
-1. Create a branch from `main` (for example, `update-board-2027`).
-2. Make your changes and check them with `npm run dev`.
-3. Open a pull request from your personal GitHub account.
-4. Check the Cloudflare preview URL for your branch.
-5. Merge once it looks right; the site deploys automatically.
-
-Please don't commit directly to `main`.
-
----
-
-## Roadmap
-
-### Phase 1: Exact replica
+#### Phase 1: Exact replica
 
 - Rebuild every page of the current Wix desktop site to match the Figma reference.
 - Restore the contact form, Google Calendar and Instagram embeds.
 - Re-upload images that are broken on the Wix site.
 
-### Phase 2: Improvements
+#### Phase 2: Improvements
 
 - Mobile layouts for every page.
 - One shared board template for every year, with the Eras page as an index.
