@@ -5,6 +5,8 @@ The official website of the Japanese Student Association (JSA) at Cal Poly San L
 **Visit the site:** [jsacalpoly.org](https://jsacalpoly.org)  
 **Design in Figma:** [Figma Design](https://www.figma.com/design/shOcawf7ftNzUNCOFnU6Is)
 
+![The JSA website home page](docs/images/home.png)
+
 ---
 
 ## About
@@ -52,8 +54,6 @@ Everything below is technical: how the site is built, run, styled and deployed. 
 | Version control | GitHub (`jsacalpoly` organization)        | Pull-request workflow                                                                        |
 | Hosting         | Cloudflare Workers (static assets)        | Builds on every push via Workers Builds; production deploys on merge to `main`               |
 
----
-
 ### Getting started
 
 #### Requirements
@@ -65,8 +65,8 @@ Everything below is technical: how the site is built, run, styled and deployed. 
 #### Run locally
 
 ```bash
-git clone https://github.com/jsacalpoly/<repo-name>.git
-cd <repo-name>
+git clone https://github.com/jsacalpoly/jsa-calpoly.git
+cd jsa-calpoly
 npm install
 npm run dev
 ```
@@ -84,6 +84,8 @@ The site runs at `http://localhost:4321` and reloads as you edit.
 | `npm run format`   | Format all files with Prettier                                    |
 | `npm run lint`     | Check the code with ESLint (`npm run lint:fix` fixes what it can) |
 
+---
+
 ### Developer docs
 
 | Doc                                              | What's in it                                         |
@@ -98,8 +100,5 @@ The site runs at `http://localhost:4321` and reloads as you edit.
 ---
 
 ## Contact
-
-Japanese Student Association, Cal Poly SLO
-jsacalpoly@gmail.com · Instagram [@calpolyjsa](https://www.instagram.com/calpolyjsa)
 
 Lead developer: [Ethan Ikenaga](https://github.com/ethanikenaga) on GitHub
